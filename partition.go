@@ -10,7 +10,7 @@ type Partition struct {
 }
 
 func FromInts(ints ...int) *Partition {
-	p := &Partition{}
+	p := &Partition{items: []Ordered{}}
 	for _, i := range ints {
 		p.items = append(p.items, Int(i))
 	}
