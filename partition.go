@@ -6,27 +6,27 @@ import (
 )
 
 type Partition struct {
-	items []Ordered
+	Items []Ordered
 }
 
 func FromInts(ints ...int) *Partition {
-	p := &Partition{items: []Ordered{}}
+	p := &Partition{Items: []Ordered{}}
 	for _, i := range ints {
-		p.items = append(p.items, Int(i))
+		p.Items = append(p.Items, Int(i))
 	}
 	return p
 }
 
 func (p *Partition) Len() int {
-	return len(p.items)
+	return len(p.Items)
 }
 
 func (p *Partition) Less(i, j int) bool {
-	return p.items[i].Less(p.items[j])
+	return p.Items[i].Less(p.Items[j])
 }
 
 func (p *Partition) Swap(i, j int) {
-	p.items[i], p.items[j] = p.items[j], p.items[i]
+	p.Items[i], p.Items[j] = p.Items[j], p.Items[i]
 }
 
 func (p *Partition) Split() (p1, p2 *Partition) {
@@ -34,18 +34,18 @@ func (p *Partition) Split() (p1, p2 *Partition) {
 	count := p.Len()
 
 	medianIdx := count / 2
-	p1 = &Partition{items: p.items[0:medianIdx]}
-	p2 = &Partition{items: p.items[medianIdx:count]}
+	p1 = &Partition{Items: p.Items[0:medianIdx]}
+	p2 = &Partition{Items: p.Items[medianIdx:count]}
 	return
 }
 
 func (p *Partition) String() string {
-	return fmt.Sprint(p.items)
+	return fmt.Sprint(p.Items)
 }
 
 func Equal(p1 *Partition, p2 *Partition) bool {
-	a := p1.items
-	b := p2.items
+	a := p1.Items
+	b := p2.Items
 	if (a == nil) != (b == nil) {
 		return false
 	}
