@@ -18,3 +18,32 @@ func (h *Hierarchy) Levels() int {
 func (h *Hierarchy) GetLevel(level int) []*Partition {
 	return h.Partitions[level]
 }
+
+// Valid checks if all levels of the hierarchy are valid.
+// In practice this means, that each element should only appear once per hierarchy level.
+// In addition, combining all the partitions in each level should yield the same set as the highest generalization level.
+func (h *Hierarchy) Valid() bool {
+	last := h.Partitions[len(h.Partitions)-1][0]
+	for _, level := range h.Partitions {
+		occurrences := makeOccurrenceMap(level)
+		if len(occurrences) != len(last.items) {
+			return false
+		}
+		for item, value := range occurrences {
+			if value > 1 || !last.Contains(item) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func makeOccurrenceMap(level []*Partition) map[interface{}]int {
+	occurrences := make(map[interface{}]int)
+	for _, partition := range level {
+		for item := range partition.items {
+			occurrences[item] += 1
+		}
+	}
+	return occurrences
+}
