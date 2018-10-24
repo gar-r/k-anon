@@ -21,7 +21,7 @@ func Test_PartitionNotEquals(t *testing.T) {
 func Test_PartitionContains(t *testing.T) {
 	tests := []struct {
 		name     string
-		p        Partition
+		p        *Partition
 		item     interface{}
 		contains bool
 	}{

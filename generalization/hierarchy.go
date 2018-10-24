@@ -6,15 +6,15 @@ package generalization
 // On the highest level of the Hierarchy all elements are grouped into a single partition.
 // A given element can only appear once per generalization level across all partitions.
 type Hierarchy struct {
-	Partitions [][]Partition
+	Partitions [][]*Partition
 }
 
 // Levels returns the number of levels in the Hierarchy
-func (h Hierarchy) Levels() int {
+func (h *Hierarchy) Levels() int {
 	return len(h.Partitions)
 }
 
 // GetLevel returns the partitions on a given level
-func (h Hierarchy) GetLevel(level int) []Partition {
+func (h *Hierarchy) GetLevel(level int) []*Partition {
 	return h.Partitions[level]
 }

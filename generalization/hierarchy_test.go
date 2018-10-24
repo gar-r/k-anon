@@ -13,7 +13,7 @@ func Test_ExampleHierarchyLevels(t *testing.T) {
 
 func Test_ExampleHierarchyGetLevel(t *testing.T) {
 	h := getExampleHierarchy()
-	expected := []Partition{NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
+	expected := []*Partition{NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
 	actual := h.GetLevel(2)
 	if len(expected) != len(actual) {
 		t.Errorf("Partition sizes do not match")
@@ -26,7 +26,7 @@ func Test_ExampleHierarchyGetLevel(t *testing.T) {
 }
 
 func getExampleHierarchy() *Hierarchy {
-	return &Hierarchy{Partitions: [][]Partition{
+	return &Hierarchy{Partitions: [][]*Partition{
 		{
 			NewPartition("A+"),
 			NewPartition("A"),
