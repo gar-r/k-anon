@@ -51,3 +51,21 @@ func (g *StringGeneralizer) Generalize(item interface{}, n int) *Partition {
 	}
 	return NewPartition(s[0 : len(s)-n])
 }
+
+// Suppressor is a special kind of Generalizer, which only has a single generalization level, suppress.
+// Suppressing a value will simply replace it with the '*' token.
+type Suppressor struct {
+}
+
+// Generalize returns a Partition containing either the value itself (n=0), or the '*' token
+// representing the suppressed value (n=1).
+// In all other cases it returns nil.
+func (s *Suppressor) Generalize(item interface{}, n int) *Partition {
+	if n == 0 {
+		return NewPartition(item)
+	}
+	if n == 1 {
+		return NewPartition("*")
+	}
+	return nil
+}
