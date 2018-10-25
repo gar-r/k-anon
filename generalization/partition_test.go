@@ -11,8 +11,8 @@ func Test_PartitionEquals(t *testing.T) {
 }
 
 func Test_PartitionNotEquals(t *testing.T) {
-	p1 := NewPartition(1, 2, 3)
-	p2 := NewPartition(1, 2, 2)
+	p1 := NewPartition(1, 2, 3, 4)
+	p2 := NewPartition(1, 2, 3)
 	if p1.Equal(p2) {
 		t.Errorf("Expected partitions to differ")
 	}

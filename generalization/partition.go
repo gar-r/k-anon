@@ -32,8 +32,11 @@ func Combine(partitions ...*Partition) *Partition {
 
 // Equal compares the Partition to another one and returns true if the elements match.
 func (p *Partition) Equal(other *Partition) bool {
+	if len(p.items) != len(other.items) {
+		return false
+	}
 	for i := range p.items {
-		if p.items[i] != other.items[i] {
+		if !other.items[i] {
 			return false
 		}
 	}

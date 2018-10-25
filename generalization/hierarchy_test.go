@@ -1,6 +1,8 @@
 package generalization
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test_Levels(t *testing.T) {
 	h := getExampleHierarchy()
@@ -14,7 +16,7 @@ func Test_Levels(t *testing.T) {
 func Test_GetLevel(t *testing.T) {
 	h := getExampleHierarchy()
 	expected := []*Partition{NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
-	actual := h.GetLevel(2)
+	actual := h.getLevel(2)
 	if len(expected) != len(actual) {
 		t.Errorf("Partition sizes do not match")
 	}
@@ -62,6 +64,71 @@ func Test_InvalidItemsDoNotAddUp(t *testing.T) {
 	}}
 	if h.Valid() {
 		t.Errorf("This hierarchy should be invalid")
+	}
+}
+
+func Test_Find(t *testing.T) {
+	tests := []struct {
+		name     string
+		item     interface{}
+		level    int
+		expected *Partition
+	}{
+		{"Exists Level 0", "C", 0, NewPartition("C")},
+		{"Exists Level 1", "C", 1, NewPartition("C+", "C", "C-")},
+		{"Exists Level 2", "C", 2, NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")},
+		{"Missing Level 0", "X", 0, nil},
+		{"Missing Level 1", "X", 1, nil},
+		{"Missing Level 2", "X", 2, nil},
+	}
+	h := getExampleHierarchy()
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			actual := h.Find(test.item, test.level)
+			if test.expected == nil {
+				if actual != nil {
+					t.Errorf("Missing item was found in partition %v", actual)
+				}
+			} else if !test.expected.Equal(actual) {
+				t.Errorf("Item was not located in the correct partition: %v", actual)
+			}
+		})
+	}
+}
+
+func Test_GetLevelUnderIndex(t *testing.T) {
+	h := getExampleHierarchy()
+	idx := -1
+	actual := h.getLevel(idx)
+	if nil != actual {
+		t.Errorf("Expected nil, but got %v", actual)
+	}
+}
+
+func Test_GetLevelOverIndex(t *testing.T) {
+	h := getExampleHierarchy()
+	idx := h.Levels() // max index + 1
+	actual := h.getLevel(idx)
+	if nil != actual {
+		t.Errorf("Expected nil, but got %v", actual)
+	}
+}
+
+func Test_FindUnderIndex(t *testing.T) {
+	h := getExampleHierarchy()
+	idx := -1
+	actual := h.Find("C", idx)
+	if nil != actual {
+		t.Errorf("Expected nil, but got %v", actual)
+	}
+}
+
+func Test_FindOverIndex(t *testing.T) {
+	h := getExampleHierarchy()
+	idx := h.Levels() // max index + 1
+	actual := h.Find("C", idx)
+	if nil != actual {
+		t.Errorf("Expected nil, but got %v", actual)
 	}
 }
 

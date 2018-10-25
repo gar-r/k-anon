@@ -9,14 +9,30 @@ type Hierarchy struct {
 	Partitions [][]*Partition
 }
 
+// Find locates the single Partition on the given level, that 'item' belongs to.
+// If 'item' is not contained within any of the partitions, it returns nil.
+func (h *Hierarchy) Find(item interface{}, level int) *Partition {
+	l := h.getLevel(level)
+	if l != nil {
+		for _, partition := range l {
+			if partition.Contains(item) {
+				return partition
+			}
+		}
+	}
+	return nil
+}
+
 // Levels returns the number of levels in the Hierarchy
 func (h *Hierarchy) Levels() int {
 	return len(h.Partitions)
 }
 
-// GetLevel returns the partitions on a given level
-func (h *Hierarchy) GetLevel(level int) []*Partition {
-	return h.Partitions[level]
+func (h *Hierarchy) getLevel(level int) []*Partition {
+	if 0 <= level && level < h.Levels() {
+		return h.Partitions[level]
+	}
+	return nil
 }
 
 // Valid checks if all levels of the hierarchy are valid.
