@@ -31,3 +31,23 @@ func NewHierarchyGeneralizer(h *Hierarchy) *HierarchyGeneralizer {
 func (g *HierarchyGeneralizer) Generalize(item interface{}, n int) *Partition {
 	return g.hierarchy.Find(item, n)
 }
+
+// StringGeneralizer is an implementation of Generalizer which works on strings only.
+// When generalizing n levels on a string, it will truncate n characters off the end of the string,
+// until it is reduced to the fully suppressed value: '*'.
+type StringGeneralizer struct {
+}
+
+// Generalize returns a partition containing a single string, which is the n-generalized
+// version if the input parameter 'item'. The result will contain '*' if the value is fully suppressed.
+// The function returns nil if the value cannot be generalized further, or if it is not a string.
+func (g *StringGeneralizer) Generalize(item interface{}, n int) *Partition {
+	s, ok := item.(string)
+	if !ok || n > len(s) || n < 0 {
+		return nil
+	}
+	if n == len(s) {
+		return NewPartition("*")
+	}
+	return NewPartition(s[0 : len(s)-n])
+}

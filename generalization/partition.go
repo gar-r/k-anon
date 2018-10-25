@@ -36,7 +36,7 @@ func (p *Partition) Equal(other *Partition) bool {
 		return false
 	}
 	for i := range p.items {
-		if !other.items[i] {
+		if !other.Contains(i) {
 			return false
 		}
 	}
