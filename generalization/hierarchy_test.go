@@ -1,13 +1,14 @@
 package generalization
 
 import (
+	"strings"
 	"testing"
 )
 
 func Test_Levels(t *testing.T) {
 	h := getExampleHierarchy()
 	expected := 3
-	actual := h.Levels()
+	actual := h.GetLevelCount()
 	if expected != actual {
 		t.Errorf("Expected %d levels, but got %d", expected, actual)
 	}
@@ -16,12 +17,12 @@ func Test_Levels(t *testing.T) {
 func Test_GetLevel(t *testing.T) {
 	h := getExampleHierarchy()
 	expected := []*Partition{NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
-	actual := h.getLevel(2)
+	actual := h.GetLevel(2)
 	if len(expected) != len(actual) {
 		t.Errorf("Partition sizes do not match")
 	}
 	for i := range expected {
-		if !expected[i].Equal(actual[i]) {
+		if !expected[i].Equals(actual[i]) {
 			t.Errorf("Element mismatch at index %d", i)
 		}
 	}
@@ -29,7 +30,7 @@ func Test_GetLevel(t *testing.T) {
 
 func Test_Valid(t *testing.T) {
 	h := getExampleHierarchy()
-	if !h.Valid() {
+	if !h.IsValid() {
 		t.Errorf("Example hierarchy should be valid")
 	}
 }
@@ -41,7 +42,7 @@ func Test_InvalidMultipleValuesOnLevel(t *testing.T) {
 			NewPartition(5, 6, 3), // <= error: 3 is present in both partitions in the same level
 		},
 	}}
-	if h.Valid() {
+	if h.IsValid() {
 		t.Errorf("This hierarchy should be invalid")
 	}
 }
@@ -62,7 +63,7 @@ func Test_InvalidItemsDoNotAddUp(t *testing.T) {
 			NewPartition(1, 2, 3, 4),
 		},
 	}}
-	if h.Valid() {
+	if h.IsValid() {
 		t.Errorf("This hierarchy should be invalid")
 	}
 }
@@ -74,12 +75,12 @@ func Test_Find(t *testing.T) {
 		level    int
 		expected *Partition
 	}{
-		{"Exists Level 0", "C", 0, NewPartition("C")},
-		{"Exists Level 1", "C", 1, NewPartition("C+", "C", "C-")},
-		{"Exists Level 2", "C", 2, NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")},
-		{"Missing Level 0", "X", 0, nil},
-		{"Missing Level 1", "X", 1, nil},
-		{"Missing Level 2", "X", 2, nil},
+		{"Exists GetLevel 0", "C", 0, NewPartition("C")},
+		{"Exists GetLevel 1", "C", 1, NewPartition("C+", "C", "C-")},
+		{"Exists GetLevel 2", "C", 2, NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")},
+		{"Missing GetLevel 0", "X", 0, nil},
+		{"Missing GetLevel 1", "X", 1, nil},
+		{"Missing GetLevel 2", "X", 2, nil},
 	}
 	h := getExampleHierarchy()
 	for _, test := range tests {
@@ -89,7 +90,7 @@ func Test_Find(t *testing.T) {
 				if actual != nil {
 					t.Errorf("Missing item was found in partition %v", actual)
 				}
-			} else if !test.expected.Equal(actual) {
+			} else if !test.expected.Equals(actual) {
 				t.Errorf("Item was not located in the correct partition: %v", actual)
 			}
 		})
@@ -99,7 +100,7 @@ func Test_Find(t *testing.T) {
 func Test_GetLevelUnderIndex(t *testing.T) {
 	h := getExampleHierarchy()
 	idx := -1
-	actual := h.getLevel(idx)
+	actual := h.GetLevel(idx)
 	if nil != actual {
 		t.Errorf("Expected nil, but got %v", actual)
 	}
@@ -107,8 +108,8 @@ func Test_GetLevelUnderIndex(t *testing.T) {
 
 func Test_GetLevelOverIndex(t *testing.T) {
 	h := getExampleHierarchy()
-	idx := h.Levels() // max index + 1
-	actual := h.getLevel(idx)
+	idx := h.GetLevelCount() // max index + 1
+	actual := h.GetLevel(idx)
 	if nil != actual {
 		t.Errorf("Expected nil, but got %v", actual)
 	}
@@ -125,10 +126,29 @@ func Test_FindUnderIndex(t *testing.T) {
 
 func Test_FindOverIndex(t *testing.T) {
 	h := getExampleHierarchy()
-	idx := h.Levels() // max index + 1
+	idx := h.GetLevelCount() // max index + 1
 	actual := h.Find("C", idx)
 	if nil != actual {
 		t.Errorf("Expected nil, but got %v", actual)
+	}
+}
+
+func Test_StringEmpty(t *testing.T) {
+	h := &Hierarchy{}
+	expected := ""
+	actual := h.String()
+	if expected != actual {
+		t.Errorf("Expected %s, got %s", expected, actual)
+	}
+}
+
+func Test_StringSinglePartition(t *testing.T) {
+	p := NewPartition(1, 2)
+	h := &Hierarchy{Partitions: [][]*Partition{{p}}}
+	actual := h.String()
+	chunk := p.String()
+	if !strings.Contains(actual, chunk) {
+		t.Errorf("Expected %s to contain partition %s", actual, chunk)
 	}
 }
 

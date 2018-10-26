@@ -10,6 +10,9 @@ type IntegerHierarchyBuilder struct {
 }
 
 func (b *IntegerHierarchyBuilder) Build() *Hierarchy {
+	if len(b.Items) < 1 {
+		return &Hierarchy{}
+	}
 	b.deduplicate()
 	h := &Hierarchy{
 		Partitions: [][]*Partition{
@@ -23,7 +26,7 @@ func (b *IntegerHierarchyBuilder) Build() *Hierarchy {
 }
 
 func refine(h *Hierarchy) {
-	level := h.getLevel(0)
+	level := h.GetLevel(0)
 	var newPartitions []*Partition
 	for _, p := range level {
 		if len(p.items) > 1 {
@@ -39,7 +42,7 @@ func refine(h *Hierarchy) {
 }
 
 func refined(h *Hierarchy) bool {
-	level := h.getLevel(0)
+	level := h.GetLevel(0)
 	for _, p := range level {
 		if len(p.items) != 1 {
 			return false

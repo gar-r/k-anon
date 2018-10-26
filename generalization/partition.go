@@ -1,5 +1,10 @@
 package generalization
 
+import (
+	"fmt"
+	"strings"
+)
+
 // Partition is a single partition or node in the generalization hierarchy, which contains a set of items.
 type Partition struct {
 	items map[interface{}]bool
@@ -30,9 +35,9 @@ func Combine(partitions ...*Partition) *Partition {
 	return p
 }
 
-// Equal compares the Partition to another one and returns true if the elements match.
-func (p *Partition) Equal(other *Partition) bool {
-	if len(p.items) != len(other.items) {
+// Equals compares the Partition to another one and returns true if the elements match.
+func (p *Partition) Equals(other *Partition) bool {
+	if other == nil || len(p.items) != len(other.items) {
 		return false
 	}
 	for i := range p.items {
@@ -41,4 +46,15 @@ func (p *Partition) Equal(other *Partition) bool {
 		}
 	}
 	return true
+}
+
+// String returns the string representation of the partition
+func (p *Partition) String() string {
+	b := &strings.Builder{}
+	for item := range p.items {
+		b.WriteString(fmt.Sprintf("%v", item))
+		b.WriteString(", ")
+	}
+	s := strings.Trim(strings.TrimSpace(b.String()), ",")
+	return fmt.Sprintf("[%s]", s)
 }

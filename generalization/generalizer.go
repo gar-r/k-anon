@@ -17,7 +17,7 @@ type HierarchyGeneralizer struct {
 // Creates a new HierarchyGeneralizer from the given h Hierarchy.
 // In case the hierarchy is not valid, it returns nil.
 func NewHierarchyGeneralizer(h *Hierarchy) *HierarchyGeneralizer {
-	if !h.Valid() {
+	if !h.IsValid() {
 		return nil
 	}
 	return &HierarchyGeneralizer{
