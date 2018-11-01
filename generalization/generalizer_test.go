@@ -23,6 +23,14 @@ func Test_InvalidHierarchy(t *testing.T) {
 	}
 }
 
+func Test_InvalidValueForHierarchy(t *testing.T) {
+	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
+	actual := generalizer.Generalize("X", 1)
+	if nil != actual {
+		t.Errorf("Expected nil, got %v", actual)
+	}
+}
+
 func Test_HierarchyGeneralizer_Level1(t *testing.T) {
 	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
 	actual := generalizer.Generalize("C", 1)

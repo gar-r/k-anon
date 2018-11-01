@@ -146,9 +146,10 @@ func Test_StringSinglePartition(t *testing.T) {
 	p := NewPartition(1, 2)
 	h := &Hierarchy{Partitions: [][]*Partition{{p}}}
 	actual := h.String()
-	chunk := p.String()
-	if !strings.Contains(actual, chunk) {
-		t.Errorf("Expected %s to contain partition %s", actual, chunk)
+	expected1 := "[1, 2]"
+	expected2 := "[2, 1]"
+	if !strings.Contains(actual, expected1) && !strings.Contains(actual, expected2) {
+		t.Errorf("Expected %s to contain partition %s", actual, p.String())
 	}
 }
 

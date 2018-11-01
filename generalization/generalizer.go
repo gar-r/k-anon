@@ -6,6 +6,7 @@ package generalization
 type Generalizer interface {
 	// Generalize takes a value and generalizes it 'n' levels further.
 	// It returns a generalized Partition containing the item, and other items generalized into the same partition.
+	// This method will return nil if the value cannot be generalized to the given level.
 	Generalize(item interface{}, n int) *Partition
 }
 

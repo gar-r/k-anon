@@ -74,3 +74,41 @@ func Test_PartitionToString(t *testing.T) {
 		})
 	}
 }
+
+func TestPartition_IntRangeString(t *testing.T) {
+	tests := []struct {
+		partition *Partition
+		expected  string
+	}{
+		{NewPartition(1), "[1..1]"},
+		{NewPartition(2, 1), "[1..2]"},
+		{NewPartition(2, 1, 10, -5), "[-5..10]"},
+	}
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("Test #%d", i), func(t *testing.T) {
+			actual, err := test.partition.IntRangeString()
+			if err != nil {
+				t.Errorf("Unexpected error: %s", err)
+			}
+			if test.expected != actual {
+				t.Errorf("Expected %v, got %v", test.expected, actual)
+			}
+		})
+	}
+}
+
+func Test_IntRangeStringEmptyPartition(t *testing.T) {
+	p := NewPartition()
+	_, err := p.IntRangeString()
+	if err == nil {
+		t.Errorf("Expected error, got none")
+	}
+}
+
+func Test_IntRangeStringBadData(t *testing.T) {
+	p := NewPartition(1, 2, "x")
+	_, err := p.IntRangeString()
+	if err == nil {
+		t.Errorf("Expected error, got none")
+	}
+}

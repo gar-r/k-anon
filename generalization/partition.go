@@ -1,7 +1,9 @@
 package generalization
 
 import (
+	"errors"
 	"fmt"
+	"k-anon/util"
 	"strings"
 )
 
@@ -57,4 +59,27 @@ func (p *Partition) String() string {
 	}
 	s := strings.Trim(strings.TrimSpace(b.String()), ",")
 	return fmt.Sprintf("[%s]", s)
+}
+
+// Treats the partition data as int and prints the string representation of the range
+// If there is an error during number conversion, it will return an error
+func (p *Partition) IntRangeString() (string, error) {
+	if len(p.items) < 1 {
+		return "", errors.New("partition empty")
+	}
+	min := util.MaxInt
+	max := util.MinInt
+	for item := range p.items {
+		num, ok := item.(int)
+		if !ok {
+			return "", errors.New("error during int conversion")
+		}
+		if num < min {
+			min = num
+		}
+		if num > max {
+			max = num
+		}
+	}
+	return fmt.Sprintf("[%d..%d]", min, max), nil
 }
