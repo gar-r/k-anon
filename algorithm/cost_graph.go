@@ -18,10 +18,12 @@ func addCosts(g goraph.Graph, t *model.Table) {
 			if id1 != id2 {
 				i := getIndex(id1)
 				j := getIndex(id2)
-				v1 := t.Rows[i]
-				v2 := t.Rows[j]
-				cost := CalculateCost(v1, v2)
-				g.AddEdge(id1, id2, cost)
+				if j > i {
+					v1 := t.Rows[i]
+					v2 := t.Rows[j]
+					cost := CalculateCost(v1, v2)
+					g.AddEdge(id1, id2, cost)
+				}
 			}
 		}
 	}
