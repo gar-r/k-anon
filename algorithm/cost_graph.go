@@ -7,7 +7,7 @@ import (
 )
 
 func BuildCostGraph(t *model.Table) goraph.Graph {
-	g := buildCoreGraph(t)
+	g := BuildCoreGraph(t)
 	addCosts(g, t)
 	return g
 }
@@ -18,12 +18,10 @@ func addCosts(g goraph.Graph, t *model.Table) {
 			if id1 != id2 {
 				i := getIndex(id1)
 				j := getIndex(id2)
-				if j > i {
-					v1 := t.Rows[i]
-					v2 := t.Rows[j]
-					cost := CalculateCost(v1, v2)
-					g.AddEdge(id1, id2, cost)
-				}
+				v1 := t.Rows[i]
+				v2 := t.Rows[j]
+				cost := CalculateCost(v1, v2)
+				g.AddEdge(id1, id2, cost)
 			}
 		}
 	}
@@ -35,13 +33,4 @@ func getIndex(id goraph.ID) int {
 		panic("node ID cannot be converted back")
 	}
 	return i
-}
-
-func buildCoreGraph(t *model.Table) goraph.Graph {
-	g := goraph.NewGraph()
-	for i := range t.Rows {
-		node := goraph.NewNode(strconv.Itoa(i))
-		g.AddNode(node)
-	}
-	return g
 }

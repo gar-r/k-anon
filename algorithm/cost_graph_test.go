@@ -67,13 +67,19 @@ func TestBuildCostGraph2(t *testing.T) {
 func assertEdgeCost(t *testing.T, graph goraph.Graph, node1, node2 int, expectedCost float64) {
 	id1 := goraph.StringID(strconv.Itoa(node1))
 	id2 := goraph.StringID(strconv.Itoa(node2))
-	cost, err := graph.GetWeight(id1, id2)
-	if err != nil {
-		t.Errorf("graph weight error nodes: %d,%d graph: %v", node1, node2, graph)
-	}
-	if expectedCost != cost {
+	cost := getCost(t, graph, id1, id2)
+	cost2 := getCost(t, graph, id2, id1)
+	if expectedCost != cost || expectedCost != cost2 {
 		t.Errorf("expected cost %v, got %v", expectedCost, cost)
 	}
+}
+
+func getCost(t *testing.T, graph goraph.Graph, id1 goraph.StringID, id2 goraph.StringID) float64 {
+	cost, err := graph.GetWeight(id1, id2)
+	if err != nil {
+		t.Errorf("graph weight error nodes: %v,%v graph: %v", id1, id2, graph)
+	}
+	return cost
 }
 
 func getTestTable(generalizer generalization.Generalizer) *model.Table {
