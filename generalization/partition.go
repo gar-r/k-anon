@@ -3,7 +3,7 @@ package generalization
 import (
 	"errors"
 	"fmt"
-	"k-anon/util"
+	"math"
 	"strings"
 )
 
@@ -67,8 +67,8 @@ func (p *Partition) IntRangeString() (string, error) {
 	if len(p.items) < 1 {
 		return "", errors.New("partition empty")
 	}
-	min := util.MaxInt
-	max := util.MinInt
+	min := math.MaxInt64
+	max := math.MinInt64
 	for item := range p.items {
 		num, ok := item.(int)
 		if !ok {

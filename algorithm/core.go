@@ -1,15 +1,15 @@
 package algorithm
 
 import (
-	"github.com/gyuho/goraph"
+	"gonum.org/v1/gonum/graph/simple"
 	"k-anon/model"
-	"strconv"
+	"math"
 )
 
-func BuildCoreGraph(t *model.Table) goraph.Graph {
-	g := goraph.NewGraph()
+func BuildCoreGraph(t *model.Table) *simple.WeightedUndirectedGraph {
+	g := simple.NewWeightedUndirectedGraph(0, math.MaxFloat64)
 	for i := range t.Rows {
-		node := goraph.NewNode(strconv.Itoa(i))
+		node := simple.Node(i)
 		g.AddNode(node)
 	}
 	return g

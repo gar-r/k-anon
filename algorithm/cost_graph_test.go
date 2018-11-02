@@ -1,10 +1,9 @@
 package algorithm
 
 import (
-	"github.com/gyuho/goraph"
+	"gonum.org/v1/gonum/graph"
 	"k-anon/generalization"
 	"k-anon/model"
-	"strconv"
 	"testing"
 )
 
@@ -18,9 +17,6 @@ func TestBuildCostGraph1(t *testing.T) {
 	generalizer := getExampleGeneralizer()
 	table := getTestTable(generalizer)
 	graph := BuildCostGraph(table)
-	if graph.GetNodeCount() != 4 {
-		t.Errorf("Graph should contain 4 nodes")
-	}
 	assertEdgeCost(t, graph, 0, 1, 0.5)
 	assertEdgeCost(t, graph, 0, 2, 1.75)
 	assertEdgeCost(t, graph, 0, 3, 2.75)
@@ -57,29 +53,18 @@ func TestBuildCostGraph2(t *testing.T) {
 		},
 	}
 	graph := BuildCostGraph(table)
-	if graph.GetNodeCount() != 3 {
-		t.Errorf("Graph should contain 3 nodes")
-	}
 	assertEdgeCost(t, graph, 0, 1, 0.75)
 	assertEdgeCost(t, graph, 0, 2, 1.75)
 }
 
-func assertEdgeCost(t *testing.T, graph goraph.Graph, node1, node2 int, expectedCost float64) {
-	id1 := goraph.StringID(strconv.Itoa(node1))
-	id2 := goraph.StringID(strconv.Itoa(node2))
-	cost := getCost(t, graph, id1, id2)
-	cost2 := getCost(t, graph, id2, id1)
-	if expectedCost != cost || expectedCost != cost2 {
+func assertEdgeCost(t *testing.T, graph graph.WeightedUndirected, node1, node2 int, expectedCost float64) {
+	cost, exists := graph.Weight(int64(node1), int64(node2))
+	if !exists {
+		t.Errorf("expected edge between %d and %d, but was not found", node1, node2)
+	}
+	if expectedCost != cost {
 		t.Errorf("expected cost %v, got %v", expectedCost, cost)
 	}
-}
-
-func getCost(t *testing.T, graph goraph.Graph, id1 goraph.StringID, id2 goraph.StringID) float64 {
-	cost, err := graph.GetWeight(id1, id2)
-	if err != nil {
-		t.Errorf("graph weight error nodes: %v,%v graph: %v", id1, id2, graph)
-	}
-	return cost
 }
 
 func getTestTable(generalizer generalization.Generalizer) *model.Table {

@@ -1,13 +1,11 @@
 package algorithm
 
 import (
-	"github.com/gyuho/goraph"
 	"k-anon/model"
-	"strconv"
 	"testing"
 )
 
-func TestBuildCoreGraph_NodeCount(t *testing.T) {
+func TestBuildCoreGraph_Count(t *testing.T) {
 	table := &model.Table{
 		Rows: []*model.Vector{
 			{},
@@ -16,9 +14,13 @@ func TestBuildCoreGraph_NodeCount(t *testing.T) {
 		},
 	}
 	g := BuildCoreGraph(table)
-	nodeCount := g.GetNodeCount()
+	nodeCount := g.Nodes().Len()
+	edgeCount := g.Edges().Len()
 	if nodeCount != len(table.Rows) {
 		t.Errorf("Incorrect node count")
+	}
+	if edgeCount != 0 {
+		t.Errorf("Core graph should not contain edges")
 	}
 }
 
@@ -32,8 +34,8 @@ func TestBuildCoreGraph_NodeNames(t *testing.T) {
 	}
 	g := BuildCoreGraph(table)
 	for i := range table.Rows {
-		_, err := g.GetNode(goraph.StringID(strconv.Itoa(i)))
-		if err != nil {
+		node := g.Node(int64(i))
+		if node == nil {
 			t.Errorf("Node index %d was not in the graph", i)
 		}
 	}
