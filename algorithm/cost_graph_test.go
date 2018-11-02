@@ -14,7 +14,7 @@ import (
 // 1 -- 2.750 -→ 3
 // 1 -- 2.250 -→ 2
 // 2 -- 3.750 -→ 3
-func TestBuildCostGraph(t *testing.T) {
+func TestBuildCostGraph1(t *testing.T) {
 	generalizer := getExampleGeneralizer()
 	table := getTestTable(generalizer)
 	graph := BuildCostGraph(table)
@@ -29,6 +29,41 @@ func TestBuildCostGraph(t *testing.T) {
 	assertEdgeCost(t, graph, 2, 3, 3.75)
 }
 
+// 0 -- 0.750 -→ 1
+// 0 -- 1.750 -→ 2
+func TestBuildCostGraph2(t *testing.T) {
+	generalizer1 := getExampleGeneralizer()
+	generalizer2 := getExampleGeneralizer2()
+	table := &model.Table{
+		Rows: []*model.Vector{
+			{
+				Items: []*model.Data{
+					model.NewData(9, generalizer1),
+					model.NewData("A+", generalizer2),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewData(8, generalizer1),
+					model.NewData("A", generalizer2),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewData(5, generalizer1),
+					model.NewData("B-", generalizer2),
+				},
+			},
+		},
+	}
+	graph := BuildCostGraph(table)
+	if graph.GetNodeCount() != 3 {
+		t.Errorf("Graph should contain 3 nodes")
+	}
+	assertEdgeCost(t, graph, 0, 1, 0.75)
+	assertEdgeCost(t, graph, 0, 2, 1.75)
+}
+
 func assertEdgeCost(t *testing.T, graph goraph.Graph, node1, node2 int, expectedCost float64) {
 	id1 := goraph.StringID(strconv.Itoa(node1))
 	id2 := goraph.StringID(strconv.Itoa(node2))
@@ -41,14 +76,6 @@ func assertEdgeCost(t *testing.T, graph goraph.Graph, node1, node2 int, expected
 	}
 }
 
-func getNode(t *testing.T, graph goraph.Graph, id int) goraph.Node {
-	node, err := graph.GetNode(goraph.StringID(strconv.Itoa(id)))
-	if err != nil {
-		t.Errorf("Error getting node %d from graph %v", id, graph)
-	}
-	return node
-}
-
 func getTestTable(generalizer generalization.Generalizer) *model.Table {
 	return &model.Table{
 		Rows: []*model.Vector{
@@ -58,4 +85,27 @@ func getTestTable(generalizer generalization.Generalizer) *model.Table {
 			createVector([]int{1, 3, 5, 7}, generalizer),
 		},
 	}
+}
+
+func getExampleGeneralizer2() *generalization.HierarchyGeneralizer {
+	generalizer := generalization.NewHierarchyGeneralizer(&generalization.Hierarchy{
+		Partitions: [][]*generalization.Partition{
+			{
+				generalization.NewPartition("A+"),
+				generalization.NewPartition("A"),
+				generalization.NewPartition("A-"),
+				generalization.NewPartition("B+"),
+				generalization.NewPartition("B"),
+				generalization.NewPartition("B-"),
+			},
+			{
+				generalization.NewPartition("A+", "A", "A-"),
+				generalization.NewPartition("B+", "B", "B-"),
+			},
+			{
+				generalization.NewPartition("A+", "A", "A-", "B+", "B", "B-"),
+			},
+		},
+	})
+	return generalizer
 }
