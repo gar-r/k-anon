@@ -9,7 +9,7 @@ type IntegerHierarchyBuilder struct {
 	Items []int
 }
 
-func (b *IntegerHierarchyBuilder) Build() *Hierarchy {
+func (b *IntegerHierarchyBuilder) NewIntegerHierarchy() *Hierarchy {
 	if len(b.Items) < 1 {
 		return &Hierarchy{}
 	}

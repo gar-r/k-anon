@@ -49,45 +49,6 @@ func Test_HierarchyGeneralizer_Level2(t *testing.T) {
 	}
 }
 
-func Test_StringGeneralizerPartitionLength(t *testing.T) {
-	g := &StringGeneralizer{}
-	p := g.Generalize("test", 2)
-	if len(p.items) != 1 {
-		t.Errorf("Expected partition size to be exactly 1, got %d instead", len(p.items))
-	}
-}
-
-func Test_StringGeneralizer(t *testing.T) {
-	tests := []struct {
-		input    string
-		n        int
-		expected interface{}
-	}{
-		{"Greenland", 0, "Greenland"},
-		{"Greenland", 4, "Green"},
-		{"Greenland", 8, "G"},
-		{"Greenland", 9, "*"},
-		{"Greenland", 10, nil},
-		{"Greenland", -1, nil},
-	}
-	generalizer := &StringGeneralizer{}
-	for _, test := range tests {
-		t.Run(fmt.Sprintf("%s, %d", test.input, test.n), func(t *testing.T) {
-			p := generalizer.Generalize(test.input, test.n)
-			if test.expected == nil {
-				if p != nil {
-					t.Errorf("Expected nil, but got %v", p)
-				}
-			} else {
-				exp := NewPartition(test.expected)
-				if !exp.Equals(p) {
-					t.Errorf("Expected %v, got %v", exp, p)
-				}
-			}
-		})
-	}
-}
-
 func Test_SuppressorPartitionLength(t *testing.T) {
 	g := &Suppressor{}
 	p := g.Generalize("test", 1)

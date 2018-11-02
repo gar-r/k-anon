@@ -40,3 +40,7 @@ type stubGeneralizer struct {
 func (g *stubGeneralizer) Generalize(item interface{}, n int) *generalization.Partition {
 	return generalization.NewPartition(g.stubValue)
 }
+
+func (g *stubGeneralizer) Levels() int {
+	return 1
+}

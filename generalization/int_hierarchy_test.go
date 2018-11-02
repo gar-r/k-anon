@@ -79,5 +79,5 @@ func buildHierarchy(items ...int) *Hierarchy {
 	builder := &IntegerHierarchyBuilder{
 		Items: items,
 	}
-	return builder.Build()
+	return builder.NewIntegerHierarchy()
 }
