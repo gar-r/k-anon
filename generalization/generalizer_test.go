@@ -31,6 +31,15 @@ func Test_InvalidValueForHierarchy(t *testing.T) {
 	}
 }
 
+func Test_HierarchyGeneralizer_Level0(t *testing.T) {
+	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
+	actual := generalizer.Generalize("C", 0)
+	expected := NewPartition("C")
+	if !expected.Equals(actual) {
+		t.Errorf("Expected partition %v, got %v", expected, actual)
+	}
+}
+
 func Test_HierarchyGeneralizer_Level1(t *testing.T) {
 	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
 	actual := generalizer.Generalize("C", 1)

@@ -56,5 +56,5 @@ func (s *Suppressor) Generalize(item interface{}, n int) *Partition {
 }
 
 func (s *Suppressor) Levels() int {
-	return 1
+	return 2
 }

@@ -4,17 +4,67 @@ import (
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
+	"k-anon/generalization"
+	"k-anon/model"
 	"math"
 	"testing"
 )
 
-func TestBuildAnonGraph(t *testing.T) {
+// Table data:
+// 		(each column  -> int generalizer)
+// 1 1 1 1
+// 1 1 1 2
+// 4 5 1 1
+// 1 3 5 7
+func TestBuildAnonGraph_1(t *testing.T) {
 	table := getTestTable(getExampleGeneralizer())
-	g := BuildAnonGraph(table, 2)
+	k := 2
+	g := BuildAnonGraph(table, k)
+	verifyForestProperties(g, t, k)
+}
+
+// Table data:
+// 		(col1 -> suppress)
+// 		(col2 -> int)
+// 		(col3 -> int)
+// 		(col4 -> int)
+// 		(col5 -> grade)
+// Male		25 	0 	35 	A
+// Female	25	0	45	A+
+// Male		30	2	30	B
+// Female	30	1	35	B+
+// Male		28	1	40	A-
+// Female	28	1	15	B
+// Male		27	0	15	B-
+// Female	27	2	30	B
+func TestBuildAnonGraph_2(t *testing.T) {
+	dim1 := &generalization.Suppressor{}
+	dim2 := generalization.NewHierarchyGeneralizer((&generalization.IntegerHierarchyBuilder{Items: []int{25, 27, 28, 30}}).NewIntegerHierarchy())
+	dim3 := generalization.NewHierarchyGeneralizer((&generalization.IntegerHierarchyBuilder{Items: []int{0, 1, 2}}).NewIntegerHierarchy())
+	dim4 := generalization.NewHierarchyGeneralizer((&generalization.IntegerHierarchyBuilder{Items: []int{10, 15, 30, 35, 40, 45}}).NewIntegerHierarchy())
+	dim5 := getExampleGeneralizer2()
+	table := &model.Table{
+		Rows: []*model.Vector{
+			{Items: []*model.Data{model.NewData("Male", dim1), model.NewData(25, dim2), model.NewData(0, dim3), model.NewData(35, dim4), model.NewData("A", dim5)}},
+			{Items: []*model.Data{model.NewData("Female", dim1), model.NewData(25, dim2), model.NewData(0, dim3), model.NewData(45, dim4), model.NewData("A+", dim5)}},
+			{Items: []*model.Data{model.NewData("Male", dim1), model.NewData(30, dim2), model.NewData(2, dim3), model.NewData(30, dim4), model.NewData("B", dim5)}},
+			{Items: []*model.Data{model.NewData("Female", dim1), model.NewData(30, dim2), model.NewData(1, dim3), model.NewData(35, dim4), model.NewData("B+", dim5)}},
+			{Items: []*model.Data{model.NewData("Male", dim1), model.NewData(28, dim2), model.NewData(1, dim3), model.NewData(40, dim4), model.NewData("A-", dim5)}},
+			{Items: []*model.Data{model.NewData("Female", dim1), model.NewData(28, dim2), model.NewData(1, dim3), model.NewData(15, dim4), model.NewData("B", dim5)}},
+			{Items: []*model.Data{model.NewData("Male", dim1), model.NewData(27, dim2), model.NewData(0, dim3), model.NewData(15, dim4), model.NewData("B-", dim5)}},
+			{Items: []*model.Data{model.NewData("Female", dim1), model.NewData(27, dim2), model.NewData(2, dim3), model.NewData(30, dim4), model.NewData("B", dim5)}},
+		},
+	}
+	k := 3
+	g := BuildAnonGraph(table, k)
+	verifyForestProperties(g, t, k)
+}
+
+func verifyForestProperties(g graph.Directed, t *testing.T, k int) {
 	components := topo.ConnectedComponents(graph.Undirect{g})
 	for _, c := range components {
-		if len(c) < 2 {
-			t.Errorf("component size smaller than 2")
+		if len(c) < k {
+			t.Errorf("component size smaller than %d", k)
 		}
 		for _, n := range c {
 			outgoing := g.From(n.ID())
