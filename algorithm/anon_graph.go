@@ -15,6 +15,9 @@ func BuildAnonGraph(costGraph graph.WeightedUndirected, k int) graph.Directed {
 }
 
 func isComplete(g graph.Directed, k int) bool {
+	if isEmpty(g) {
+		return false
+	}
 	components := topo.ConnectedComponents(graph.Undirect{G: g})
 	for _, c := range components {
 		if len(c) < k {
@@ -22,4 +25,8 @@ func isComplete(g graph.Directed, k int) bool {
 		}
 	}
 	return true
+}
+
+func isEmpty(g graph.Directed) bool {
+	return g.Nodes() == nil || g.Nodes().Len() < 1
 }

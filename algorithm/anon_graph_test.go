@@ -5,6 +5,14 @@ import (
 	"testing"
 )
 
+// Empty graph always false
+func TestIsComplete_0(t *testing.T) {
+	g := simple.NewDirectedGraph()
+	if isComplete(g, 0) {
+		t.Error()
+	}
+}
+
 // k = 1
 // 0	1
 func TestIsComplete_1(t *testing.T) {
