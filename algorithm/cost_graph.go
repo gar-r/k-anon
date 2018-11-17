@@ -4,11 +4,21 @@ import (
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"k-anon/model"
+	"math"
 )
 
 func BuildCostGraph(t *model.Table) graph.WeightedUndirected {
-	g := BuildCoreGraph(t)
+	g := buildEmptyCostGraph(t)
 	addCosts(g, t)
+	return g
+}
+
+func buildEmptyCostGraph(t *model.Table) *simple.WeightedUndirectedGraph {
+	g := simple.NewWeightedUndirectedGraph(0, math.MaxFloat64)
+	for i := range t.Rows {
+		node := simple.Node(i)
+		g.AddNode(node)
+	}
 	return g
 }
 

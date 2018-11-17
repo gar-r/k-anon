@@ -16,13 +16,13 @@ import (
 func TestBuildCostGraph1(t *testing.T) {
 	generalizer := getExampleGeneralizer()
 	table := getTestTable(generalizer)
-	graph := BuildCostGraph(table)
-	assertEdgeCost(t, graph, 0, 1, 0.5)
-	assertEdgeCost(t, graph, 0, 2, 1.75)
-	assertEdgeCost(t, graph, 0, 3, 2.75)
-	assertEdgeCost(t, graph, 1, 3, 2.75)
-	assertEdgeCost(t, graph, 1, 2, 2.25)
-	assertEdgeCost(t, graph, 2, 3, 3.75)
+	g := BuildCostGraph(table)
+	assertEdgeCost(t, g, 0, 1, 0.5)
+	assertEdgeCost(t, g, 0, 2, 1.75)
+	assertEdgeCost(t, g, 0, 3, 2.75)
+	assertEdgeCost(t, g, 1, 3, 2.75)
+	assertEdgeCost(t, g, 1, 2, 2.25)
+	assertEdgeCost(t, g, 2, 3, 3.75)
 }
 
 // 0 -- 0.750 -→ 1
@@ -52,9 +52,45 @@ func TestBuildCostGraph2(t *testing.T) {
 			},
 		},
 	}
-	graph := BuildCostGraph(table)
-	assertEdgeCost(t, graph, 0, 1, 0.75)
-	assertEdgeCost(t, graph, 0, 2, 1.75)
+	g := BuildCostGraph(table)
+	assertEdgeCost(t, g, 0, 1, 0.75)
+	assertEdgeCost(t, g, 0, 2, 1.75)
+}
+
+func TestBuildEmptyCostGraph_Count(t *testing.T) {
+	table := &model.Table{
+		Rows: []*model.Vector{
+			{},
+			{},
+			{},
+		},
+	}
+	g := buildEmptyCostGraph(table)
+	nodeCount := g.Nodes().Len()
+	edgeCount := g.Edges().Len()
+	if nodeCount != len(table.Rows) {
+		t.Errorf("Incorrect node count")
+	}
+	if edgeCount != 0 {
+		t.Errorf("Core graph should not contain edges")
+	}
+}
+
+func TestBuildEmptyCostGraph_NodeNames(t *testing.T) {
+	table := &model.Table{
+		Rows: []*model.Vector{
+			{},
+			{},
+			{},
+		},
+	}
+	g := buildEmptyCostGraph(table)
+	for i := range table.Rows {
+		node := g.Node(int64(i))
+		if node == nil {
+			t.Errorf("Node index %d was not in the graph", i)
+		}
+	}
 }
 
 func assertEdgeCost(t *testing.T, graph graph.WeightedUndirected, node1, node2 int, expectedCost float64) {
