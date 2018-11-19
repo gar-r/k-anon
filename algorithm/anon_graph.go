@@ -13,7 +13,7 @@ func BuildAnonGraph(table *model.Table, k int) graph.Directed {
 	g := buildEmptyAnonGraph(table)
 	for {
 		components := getComponents(g)
-		c := pickComponent(components, k)
+		c := pickComponentToExtend(components, k)
 		if c == nil {
 			break
 		}
@@ -58,7 +58,7 @@ func containsNode(component []graph.Node, u graph.Node) bool {
 	return false
 }
 
-func pickComponent(components [][]graph.Node, k int) []graph.Node {
+func pickComponentToExtend(components [][]graph.Node, k int) []graph.Node {
 	for _, c := range components {
 		if len(c) < k {
 			return c

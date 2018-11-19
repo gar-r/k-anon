@@ -125,51 +125,51 @@ func TestPickSourceVertex(t *testing.T) {
 	}
 }
 
-func TestPickComponent_1(t *testing.T) {
+func TestPickComponentToExtend_1(t *testing.T) {
 	components := [][]graph.Node{
 		{simple.Node(0)},
 		{simple.Node(1)},
 	}
-	if pickComponent(components, 1) != nil {
+	if pickComponentToExtend(components, 1) != nil {
 		t.Error()
 	}
 }
 
-func TestPickComponent_2(t *testing.T) {
+func TestPickComponentToExtend_2(t *testing.T) {
 	components := [][]graph.Node{
 		{simple.Node(0)},
 		{simple.Node(1)},
 	}
-	if pickComponent(components, 2) == nil {
+	if pickComponentToExtend(components, 2) == nil {
 		t.Error()
 	}
 }
 
-func TestPickComponent_3(t *testing.T) {
+func TestPickComponentToExtend_3(t *testing.T) {
 	components := [][]graph.Node{
 		{simple.Node(0), simple.Node(1)},
 	}
-	if pickComponent(components, 2) != nil {
+	if pickComponentToExtend(components, 2) != nil {
 		t.Error()
 	}
 }
 
-func TestPickComponent_4(t *testing.T) {
+func TestPickComponentToExtend_4(t *testing.T) {
 	components := [][]graph.Node{
 		{simple.Node(0), simple.Node(1), simple.Node(2)},
 		{simple.Node(3), simple.Node(4)},
 	}
-	if pickComponent(components, 3) == nil {
+	if pickComponentToExtend(components, 3) == nil {
 		t.Error()
 	}
 }
 
-func TestPickComponent_5(t *testing.T) {
+func TestPickComponentToExtend_5(t *testing.T) {
 	components := [][]graph.Node{
 		{simple.Node(0), simple.Node(1), simple.Node(2)},
 		{simple.Node(3), simple.Node(4), simple.Node(5)},
 	}
-	if pickComponent(components, 3) != nil {
+	if pickComponentToExtend(components, 3) != nil {
 		t.Error()
 	}
 }
