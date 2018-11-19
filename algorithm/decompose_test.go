@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
+	"gonum.org/v1/gonum/graph/topo"
 	"testing"
 )
 
@@ -77,6 +78,32 @@ func TestPickComponentToSplit_Finished(t *testing.T) {
 	c := pickComponentToSplit(g, 2)
 	if c != nil {
 		t.Errorf("expected nil, got %v", c)
+	}
+}
+
+//       -----0-----
+//      |           |
+//   ---1---        2
+//  |       |       |
+//  3       4       5
+func TestPickRootVertex(t *testing.T) {
+	g := simple.NewUndirectedGraph()
+	g.AddNode(g.NewNode())
+	g.AddNode(g.NewNode())
+	g.AddNode(g.NewNode())
+	g.AddNode(g.NewNode())
+	g.AddNode(g.NewNode())
+	g.AddNode(g.NewNode())
+	g.SetEdge(g.NewEdge(g.Node(0), g.Node(1)))
+	g.SetEdge(g.NewEdge(g.Node(0), g.Node(2)))
+	g.SetEdge(g.NewEdge(g.Node(1), g.Node(3)))
+	g.SetEdge(g.NewEdge(g.Node(1), g.Node(4)))
+	g.SetEdge(g.NewEdge(g.Node(2), g.Node(5)))
+	c := topo.ConnectedComponents(g)[0]
+	k := 3
+	u := pickRootVertex(g, c, k)
+	if !(u.ID() == 0 || u.ID() == 1 || u.ID() == 2) {
+		t.Errorf("expected 0|1|2, got %v", u)
 	}
 }
 
