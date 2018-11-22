@@ -86,7 +86,7 @@ func TestPickComponentToSplit_Finished(t *testing.T) {
 //   ---1---        2
 //  |       |       |
 //  3       4       5
-func TestPickRootVertex(t *testing.T) {
+func TestGetSplitParams(t *testing.T) {
 	g := simple.NewUndirectedGraph()
 	g.AddNode(g.NewNode())
 	g.AddNode(g.NewNode())
@@ -101,10 +101,13 @@ func TestPickRootVertex(t *testing.T) {
 	g.SetEdge(g.NewEdge(g.Node(2), g.Node(5)))
 	c := topo.ConnectedComponents(g)[0]
 	k := 3
-	u := pickRootVertex(g, c, k)
-	if !(u.ID() == 0 || u.ID() == 1 || u.ID() == 2) {
-		t.Errorf("expected 0|1|2, got %v", u)
+	u, v, s := getSplitParams(g, c, k)
+	if u.ID() == 0 && v.ID() == 1 && s == 3 ||
+		u.ID() == 1 && v.ID() == 0 && s == 3 ||
+		u.ID() == 2 && v.ID() == 0 && s == 4 {
+		return
 	}
+	t.Errorf("invalid split params (%v,%v,%v)", u, v, s)
 }
 
 func assertComponentHasVertex(t *testing.T, component []graph.Node, vertex int64) {
