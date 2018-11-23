@@ -10,11 +10,11 @@ import (
 type Decomposer struct {
 	g           *simple.UndirectedGraph
 	k           int
-	vertexCount int
+	originalLen int
 }
 
 func NewDecomposer(g *simple.UndirectedGraph, k int) *Decomposer {
-	return &Decomposer{g: g, k: k, vertexCount: g.Nodes().Len()}
+	return &Decomposer{g: g, k: k, originalLen: g.Nodes().Len()}
 }
 
 func (d *Decomposer) Decompose() {
@@ -31,7 +31,7 @@ func (d *Decomposer) pickComponent() []graph.Node {
 	components := topo.ConnectedComponents(d.g)
 	threshold := d.getThreshold()
 	for _, c := range components {
-		if len(c) > threshold {
+		if d.calculateSize(c) > threshold {
 			return c
 		}
 	}
@@ -40,57 +40,68 @@ func (d *Decomposer) pickComponent() []graph.Node {
 
 func (d *Decomposer) partitionComponent(component []graph.Node) {
 	u, v, t := d.getSplitParams(component)
-	s := len(component)
+	s := d.calculateSize(component)
 	if t >= d.k && s-t >= d.k {
-		d.splitTypeA(u, v)
+		d.performSplitTypeA(u, v)
 	} else if s-t == d.k-1 {
-		d.splitTypeB(u, v)
+		d.performSplitTypeB(u, v)
 	} else if t == d.k-1 {
-		d.splitTypeC(u, v)
+		d.performSplitTypeC(u, v)
 	} else {
-		var comp1, comp2 []graph.Node
-		subTrees := getSubTrees(d.g, u)
-		for _, subTree := range subTrees {
-			if len(comp1) < d.k-1 {
-				comp1 = append(comp1, subTree...)
-			} else {
-				comp2 = append(comp2, subTree...)
-			}
-		}
-		if len(comp1) == d.k-1 {
-			d.cutEdgesToComponent(comp2, u)
-		} else if len(comp2) == d.k-1 {
-			d.cutEdgesToComponent(comp1, u)
-		} else {
-
-		}
+		d.performSplitTypeD(u, v)
 	}
 }
 
-func (d *Decomposer) cutEdgesToComponent(component []graph.Node, node graph.Node) {
-	for _, n := range component {
-		d.g.RemoveEdge(node.ID(), n.ID())
-	}
-}
-
-func (d *Decomposer) splitTypeA(u graph.Node, v graph.Node) {
+func (d *Decomposer) performSplitTypeA(u graph.Node, v graph.Node) {
 	d.g.RemoveEdge(u.ID(), v.ID())
 }
 
-func (d *Decomposer) splitTypeB(u graph.Node, v graph.Node) {
-	sv := d.g.NewNode()
-	edges := d.g.From(v.ID())
-	for edges.Next() {
-		n := edges.Node()
-		if u.ID() != n.ID() {
-			d.g.RemoveEdge(v.ID(), n.ID())
-		}
-		d.g.NewEdge(sv, n)
+func (d *Decomposer) performSplitTypeB(u graph.Node, v graph.Node) {
+	d.cutSubTrees(v, func(subRoot graph.Node) bool {
+		return u.ID() != subRoot.ID()
+	})
+}
+
+func (d *Decomposer) performSplitTypeC(u graph.Node, v graph.Node) {
+	d.performSplitTypeB(v, u)
+}
+
+func (d *Decomposer) performSplitTypeD(u graph.Node, v graph.Node) {
+	comp1, comp2 := d.getSplitPartitions(u)
+	if len(comp2) == d.k-1 {
+		d.cutSubTrees(u, func(subRoot graph.Node) bool {
+			return containsNode(comp1, subRoot)
+		})
+	} else {
+		d.cutSubTrees(u, func(subRoot graph.Node) bool {
+			return containsNode(comp2, subRoot)
+		})
 	}
 }
 
-func (d *Decomposer) splitTypeC(u graph.Node, v graph.Node) {
-	d.splitTypeB(v, u)
+func (d *Decomposer) getSplitPartitions(u graph.Node) ([]graph.Node, []graph.Node) {
+	var comp1, comp2 []graph.Node
+	subTrees := getSubTrees(d.g, u)
+	for _, subTree := range subTrees {
+		if d.calculateSize(comp1) < d.k-1 {
+			comp1 = append(comp1, subTree...)
+		} else {
+			comp2 = append(comp2, subTree...)
+		}
+	}
+	return comp1, comp2
+}
+
+func (d *Decomposer) cutSubTrees(u graph.Node, condition func(subRoot graph.Node) bool) {
+	sv := d.g.NewNode() // insert Steiner's vertex for remaining unconnected components
+	edges := d.g.From(u.ID())
+	for edges.Next() {
+		n := edges.Node()
+		if condition(n) {
+			d.g.RemoveEdge(u.ID(), n.ID())
+			d.g.NewEdge(sv, n)
+		}
+	}
 }
 
 func (d *Decomposer) getSplitParams(component []graph.Node) (graph.Node, graph.Node, int) {
@@ -135,11 +146,12 @@ func (d *Decomposer) getLargestComponent(components [][]graph.Node) []graph.Node
 	return result
 }
 
-// calculates the component size, skipping Steiner's vertices
+// Calculates the component size, skipping Steiner's vertices.
+// As per definition Steiner's vertices don't contribute to the component size.
 func (d *Decomposer) calculateSize(component []graph.Node) int {
 	count := 0
 	for _, n := range component {
-		if int64(d.vertexCount) > n.ID() {
+		if int64(d.originalLen) > n.ID() {
 			count++
 		}
 	}

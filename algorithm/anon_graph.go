@@ -49,15 +49,6 @@ func pickTargetVertex(g graph.Directed, component []graph.Node, u graph.Node, co
 	return targetVertex
 }
 
-func containsNode(component []graph.Node, u graph.Node) bool {
-	for _, n := range component {
-		if n == u {
-			return true
-		}
-	}
-	return false
-}
-
 func pickComponentToExtend(components [][]graph.Node, k int) []graph.Node {
 	for _, c := range components {
 		if len(c) < k {
