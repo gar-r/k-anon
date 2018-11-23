@@ -14,7 +14,11 @@ type Decomposer struct {
 }
 
 func NewDecomposer(g *simple.UndirectedGraph, k int) *Decomposer {
-	return &Decomposer{g: g, k: k, originalLen: g.Nodes().Len()}
+	size := 0
+	if g.Nodes() != nil && g.Nodes().Len() > 0 {
+		size = g.Nodes().Len()
+	}
+	return &Decomposer{g: g, k: k, originalLen: size}
 }
 
 func (d *Decomposer) Decompose() {
