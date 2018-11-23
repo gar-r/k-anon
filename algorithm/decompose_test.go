@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
+	"gonum.org/v1/gonum/graph/topo"
 	"testing"
 )
 
@@ -35,20 +36,13 @@ func TestGetThreshold(t *testing.T) {
 // 2 -- 3 -- 4
 // 5 -- 6
 func TestPickComponent_NothingToPick(t *testing.T) {
-	g := simple.NewUndirectedGraph()
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.SetEdge(g.NewEdge(g.Node(0), g.Node(1)))
-	g.SetEdge(g.NewEdge(g.Node(2), g.Node(3)))
-	g.SetEdge(g.NewEdge(g.Node(3), g.Node(4)))
-	g.SetEdge(g.NewEdge(g.Node(5), g.Node(6)))
+	g := createTestGraph(7)
+	addEdge(g, 0, 1)
+	addEdge(g, 2, 3)
+	addEdge(g, 3, 4)
+	addEdge(g, 5, 6)
 	d := NewDecomposer(g, 2)
-	c := d.pickComponent()
+	c := d.pickComponent(d.getThreshold())
 	if c != nil {
 		t.Errorf("expected nil, got %v", c)
 	}
@@ -58,23 +52,69 @@ func TestPickComponent_NothingToPick(t *testing.T) {
 // 2 -- 3 -- 4 -- 5
 // 6 -- 7
 func TestPickComponent_AboveThreshold(t *testing.T) {
-	g := simple.NewUndirectedGraph()
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.AddNode(g.NewNode())
-	g.SetEdge(g.NewEdge(g.Node(0), g.Node(1)))
-	g.SetEdge(g.NewEdge(g.Node(2), g.Node(3)))
-	g.SetEdge(g.NewEdge(g.Node(3), g.Node(4)))
-	g.SetEdge(g.NewEdge(g.Node(4), g.Node(5)))
-	g.SetEdge(g.NewEdge(g.Node(6), g.Node(7)))
+	g := createTestGraph(8)
+	addEdge(g, 0, 1)
+	addEdge(g, 2, 3)
+	addEdge(g, 3, 4)
+	addEdge(g, 4, 5)
+	addEdge(g, 6, 7)
 	d := NewDecomposer(g, 2)
-	c := d.pickComponent()
+	c := d.pickComponent(d.getThreshold())
 	assertContains(t, c, 2, 3, 4, 5)
+}
+
+// 0 -- 1 -- s -- 2
+func TestPickComponent_SteinersVertexSkipped(t *testing.T) {
+	g := createTestGraph(3)
+	addEdge(g, 0, 1)
+	d := NewDecomposer(g, 2)
+	g.AddNode(g.NewNode()) // this will be a Steiner's vertex
+	addEdge(g, 3, 1)
+	addEdge(g, 3, 2)
+	c := d.pickComponent(d.getThreshold())
+	if c != nil {
+		t.Errorf("expected nil, got %v", c)
+	}
+}
+
+func TestDecomposer_Decompose_TerminatesWhenFinished(t *testing.T) {
+	g := createTestGraph(2)
+	d := NewDecomposer(g, 2)
+	d.Decompose()
+}
+
+//                   ---------- 0 ---------------------------------
+//                   |                      |          |           |
+//         --------- 1 ---------          - 5 -      - 6 -       - 7 -
+//         |         |          |        |     |     |     |    |     |
+//       - 2 -     - 3 -      - 4 -     14    15    16     17  18     19
+//      |     |   |     |    |     |
+//      8     9  10     11  12     13
+func TestDecomposer_Decompose(t *testing.T) {
+	g := createTestGraph(20)
+	addEdge(g, 0, 1)
+	addEdge(g, 1, 2)
+	addEdge(g, 1, 3)
+	addEdge(g, 1, 4)
+	addEdge(g, 2, 8)
+	addEdge(g, 2, 9)
+	addEdge(g, 3, 10)
+	addEdge(g, 3, 11)
+	addEdge(g, 4, 12)
+	addEdge(g, 4, 13)
+	addEdge(g, 0, 5)
+	addEdge(g, 0, 6)
+	addEdge(g, 0, 7)
+	addEdge(g, 5, 14)
+	addEdge(g, 5, 15)
+	addEdge(g, 6, 16)
+	addEdge(g, 6, 17)
+	addEdge(g, 7, 18)
+	addEdge(g, 7, 19)
+	d := NewDecomposer(g, 3)
+	d.Decompose()
+	components := topo.ConnectedComponents(g)
+	t.Errorf("%v", components)
 }
 
 func assertContains(t *testing.T, component []graph.Node, ids ...int64) {
@@ -86,4 +126,16 @@ func assertContains(t *testing.T, component []graph.Node, ids ...int64) {
 		}
 		t.Errorf("component %v does not contain node %v", component, id)
 	}
+}
+
+func createTestGraph(nodeCount int) *simple.UndirectedGraph {
+	g := simple.NewUndirectedGraph()
+	for i := 0; i < nodeCount; i++ {
+		g.AddNode(g.NewNode())
+	}
+	return g
+}
+
+func addEdge(g *simple.UndirectedGraph, u, v int64) {
+	g.SetEdge(g.NewEdge(g.Node(u), g.Node(v)))
 }

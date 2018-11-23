@@ -2,8 +2,6 @@ package algorithm
 
 import (
 	"gonum.org/v1/gonum/graph"
-	"gonum.org/v1/gonum/graph/simple"
-	"gonum.org/v1/gonum/graph/topo"
 	"math/rand"
 	"time"
 )
@@ -21,11 +19,4 @@ func containsNode(component []graph.Node, u graph.Node) bool {
 		}
 	}
 	return false
-}
-
-func getSubTrees(g graph.Undirected, root graph.Node) [][]graph.Node {
-	gCopy := simple.NewUndirectedGraph()
-	graph.Copy(gCopy, g)
-	gCopy.RemoveNode(root.ID())
-	return topo.ConnectedComponents(gCopy)
 }

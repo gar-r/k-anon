@@ -22,8 +22,9 @@ func NewDecomposer(g *simple.UndirectedGraph, k int) *Decomposer {
 }
 
 func (d *Decomposer) Decompose() {
+	threshold := d.getThreshold()
 	for {
-		c := d.pickComponent()
+		c := d.pickComponent(threshold)
 		if c == nil {
 			break
 		}
@@ -31,9 +32,8 @@ func (d *Decomposer) Decompose() {
 	}
 }
 
-func (d *Decomposer) pickComponent() []graph.Node {
+func (d *Decomposer) pickComponent(threshold int) []graph.Node {
 	components := topo.ConnectedComponents(d.g)
-	threshold := d.getThreshold()
 	for _, c := range components {
 		if d.calculateSize(c) > threshold {
 			return c
@@ -52,7 +52,7 @@ func (d *Decomposer) partitionComponent(component []graph.Node) {
 	} else if t == d.k-1 {
 		d.performSplitTypeC(u, v)
 	} else {
-		d.performSplitTypeD(u, v)
+		d.performSplitTypeD(u, v, component)
 	}
 }
 
@@ -70,22 +70,22 @@ func (d *Decomposer) performSplitTypeC(u graph.Node, v graph.Node) {
 	d.performSplitTypeB(v, u)
 }
 
-func (d *Decomposer) performSplitTypeD(u graph.Node, v graph.Node) {
-	comp1, comp2 := d.getSplitPartitions(u)
-	if len(comp2) == d.k-1 {
+func (d *Decomposer) performSplitTypeD(u graph.Node, v graph.Node, component []graph.Node) {
+	p1, p2 := d.getPartitions(u, component)
+	if d.calculateSize(p2) == d.k-1 {
 		d.cutSubTrees(u, func(subRoot graph.Node) bool {
-			return containsNode(comp1, subRoot)
+			return containsNode(p1, subRoot)
 		})
 	} else {
 		d.cutSubTrees(u, func(subRoot graph.Node) bool {
-			return containsNode(comp2, subRoot)
+			return containsNode(p2, subRoot)
 		})
 	}
 }
 
-func (d *Decomposer) getSplitPartitions(u graph.Node) ([]graph.Node, []graph.Node) {
+func (d *Decomposer) getPartitions(u graph.Node, component []graph.Node) ([]graph.Node, []graph.Node) {
 	var comp1, comp2 []graph.Node
-	subTrees := getSubTrees(d.g, u)
+	subTrees := d.getSubTrees(component, u)
 	for _, subTree := range subTrees {
 		if d.calculateSize(comp1) < d.k-1 {
 			comp1 = append(comp1, subTree...)
@@ -110,11 +110,13 @@ func (d *Decomposer) cutSubTrees(u graph.Node, condition func(subRoot graph.Node
 
 func (d *Decomposer) getSplitParams(component []graph.Node) (graph.Node, graph.Node, int) {
 	u := pickRandomVertex(component)
+	s := d.calculateSize(component)
 	for {
-		largest := d.getLargestComponent(getSubTrees(d.g, u))
+		largest := d.getLargestComponent(d.getSubTrees(component, u))
+		t := d.calculateSize(largest)
 		v := d.getNextRootCandidate(largest, u)
-		if len(component)-len(largest) >= d.k-1 {
-			return u, v, len(largest)
+		if s-t >= d.k-1 {
+			return u, v, d.calculateSize(largest)
 		}
 		u = v
 	}
@@ -148,6 +150,20 @@ func (d *Decomposer) getLargestComponent(components [][]graph.Node) []graph.Node
 		}
 	}
 	return result
+}
+
+func (d *Decomposer) getSubTrees(component []graph.Node, root graph.Node) [][]graph.Node {
+	gCopy := simple.NewUndirectedGraph()
+	graph.Copy(gCopy, d.g)
+	nodes := gCopy.Nodes()
+	for nodes.Next() {
+		n := nodes.Node()
+		if !containsNode(component, n) {
+			gCopy.RemoveNode(n.ID())
+		}
+	}
+	gCopy.RemoveNode(root.ID())
+	return topo.ConnectedComponents(gCopy)
 }
 
 // Calculates the component size, skipping Steiner's vertices.
