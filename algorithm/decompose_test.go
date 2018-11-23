@@ -36,7 +36,7 @@ func TestGetThreshold(t *testing.T) {
 // 2 -- 3 -- 4
 // 5 -- 6
 func TestPickComponent_NothingToPick(t *testing.T) {
-	g := createTestGraph(7)
+	g := createNodes(7)
 	addEdge(g, 0, 1)
 	addEdge(g, 2, 3)
 	addEdge(g, 3, 4)
@@ -52,7 +52,7 @@ func TestPickComponent_NothingToPick(t *testing.T) {
 // 2 -- 3 -- 4 -- 5
 // 6 -- 7
 func TestPickComponent_AboveThreshold(t *testing.T) {
-	g := createTestGraph(8)
+	g := createNodes(8)
 	addEdge(g, 0, 1)
 	addEdge(g, 2, 3)
 	addEdge(g, 3, 4)
@@ -65,7 +65,7 @@ func TestPickComponent_AboveThreshold(t *testing.T) {
 
 // 0 -- 1 -- s -- 2
 func TestPickComponent_SteinersVertexSkipped(t *testing.T) {
-	g := createTestGraph(3)
+	g := createNodes(3)
 	addEdge(g, 0, 1)
 	d := NewDecomposer(g, 2)
 	g.AddNode(g.NewNode()) // this will be a Steiner's vertex
@@ -78,9 +78,91 @@ func TestPickComponent_SteinersVertexSkipped(t *testing.T) {
 }
 
 func TestDecomposer_Decompose_TerminatesWhenFinished(t *testing.T) {
-	g := createTestGraph(2)
+	g := createNodes(2)
 	d := NewDecomposer(g, 2)
 	d.Decompose()
+}
+
+func TestDecomposer_Decompose_ComponentSizes(t *testing.T) {
+	g := getTestGraph1()
+	d := NewDecomposer(g, 3)
+	d.Decompose()
+	components := topo.ConnectedComponents(g)
+	for _, c := range components {
+		if len(c) > (2*3 - 1) {
+			t.Errorf("invalid component size: %v", c)
+		}
+	}
+}
+
+//   -- 0 --
+//  |       |
+//  1       3
+//  |
+//  2
+//
+//  u := 0, v := 1, k := 2, s > 2k-1
+//  t >= k && s-t >= k
+func TestPartition_TypeACut(t *testing.T) {
+	g := createNodes(4)
+	addEdge(g, 0, 1)
+	addEdge(g, 0, 3)
+	addEdge(g, 1, 2)
+	d := NewDecomposer(g, 2)
+	u := g.Node(0)
+	v := g.Node(1)
+	d.performCutTypeA(u, v)
+	if g.HasEdgeBetween(0, 1) {
+		t.Errorf("no edge should be present between nodes 0 and 1")
+	}
+}
+
+//            ------- 0 ------
+//           |                |
+//      ---- 1 ----           6
+//     |     |     |          |
+//     2     3     4          7
+//           |
+//           5
+//
+//  u := 0, v := 1, k := 4, s > 2k-1
+//  s-t == k-1
+func TestPartition_TypeBCut(t *testing.T) {
+	g := getTestGraph2()
+	d := NewDecomposer(g, 4)
+	u := g.Node(0)
+	v := g.Node(1)
+	d.performCutTypeB(u, v)
+	assertVertexReplaced(t, g, 1, 8, 2, 3, 4)
+}
+
+//      ---- 1 ----------
+//     |     |     |     |
+//     2     3     4     0
+//           |           |
+//           5           6
+//                       |
+//						 7
+//  u := 1, v := 0, k := 4, s > 2k-1
+//  t == k-1
+func TestPartition_TypeCCut(t *testing.T) {
+	g := getTestGraph2()
+	d := NewDecomposer(g, 4)
+	u := g.Node(1)
+	v := g.Node(0)
+	d.performCutTypeC(u, v)
+	assertVertexReplaced(t, g, 1, 8, 2, 3, 4)
+}
+
+func assertVertexReplaced(t *testing.T, g graph.Undirected, original, new int64, connections ...int64) {
+	for _, conn := range connections {
+		if g.HasEdgeBetween(original, conn) {
+			t.Errorf("unexpected edge between %v and %v", original, conn)
+		}
+		if !g.HasEdgeBetween(new, conn) {
+			t.Errorf("expected edge between %v and %v", new, conn)
+		}
+	}
 }
 
 //                   ---------- 0 ---------------------------------
@@ -90,8 +172,8 @@ func TestDecomposer_Decompose_TerminatesWhenFinished(t *testing.T) {
 //       - 2 -     - 3 -      - 4 -     14    15    16     17  18     19
 //      |     |   |     |    |     |
 //      8     9  10     11  12     13
-func TestDecomposer_Decompose(t *testing.T) {
-	g := createTestGraph(20)
+func getTestGraph1() *simple.UndirectedGraph {
+	g := createNodes(20)
 	addEdge(g, 0, 1)
 	addEdge(g, 1, 2)
 	addEdge(g, 1, 3)
@@ -111,10 +193,27 @@ func TestDecomposer_Decompose(t *testing.T) {
 	addEdge(g, 6, 17)
 	addEdge(g, 7, 18)
 	addEdge(g, 7, 19)
-	d := NewDecomposer(g, 3)
-	d.Decompose()
-	components := topo.ConnectedComponents(g)
-	t.Errorf("%v", components)
+	return g
+}
+
+//            ------- 0 ------
+//           |                |
+//      ---- 1 ----           6
+//     |     |     |          |
+//     2     3     4          7
+//           |
+//           5
+//
+func getTestGraph2() *simple.UndirectedGraph {
+	g := createNodes(8)
+	addEdge(g, 0, 1)
+	addEdge(g, 1, 2)
+	addEdge(g, 1, 3)
+	addEdge(g, 1, 4)
+	addEdge(g, 3, 5)
+	addEdge(g, 0, 6)
+	addEdge(g, 6, 7)
+	return g
 }
 
 func assertContains(t *testing.T, component []graph.Node, ids ...int64) {
@@ -128,7 +227,7 @@ func assertContains(t *testing.T, component []graph.Node, ids ...int64) {
 	}
 }
 
-func createTestGraph(nodeCount int) *simple.UndirectedGraph {
+func createNodes(nodeCount int) *simple.UndirectedGraph {
 	g := simple.NewUndirectedGraph()
 	for i := 0; i < nodeCount; i++ {
 		g.AddNode(g.NewNode())

@@ -46,31 +46,31 @@ func (d *Decomposer) partitionComponent(component []graph.Node) {
 	u, v, t := d.getSplitParams(component)
 	s := d.calculateSize(component)
 	if t >= d.k && s-t >= d.k {
-		d.performSplitTypeA(u, v)
+		d.performCutTypeA(u, v)
 	} else if s-t == d.k-1 {
-		d.performSplitTypeB(u, v)
+		d.performCutTypeB(u, v)
 	} else if t == d.k-1 {
-		d.performSplitTypeC(u, v)
+		d.performCutTypeC(u, v)
 	} else {
-		d.performSplitTypeD(u, v, component)
+		d.performCutTypeD(u, v, component)
 	}
 }
 
-func (d *Decomposer) performSplitTypeA(u graph.Node, v graph.Node) {
+func (d *Decomposer) performCutTypeA(u graph.Node, v graph.Node) {
 	d.g.RemoveEdge(u.ID(), v.ID())
 }
 
-func (d *Decomposer) performSplitTypeB(u graph.Node, v graph.Node) {
+func (d *Decomposer) performCutTypeB(u graph.Node, v graph.Node) {
 	d.cutSubTrees(v, func(subRoot graph.Node) bool {
 		return u.ID() != subRoot.ID()
 	})
 }
 
-func (d *Decomposer) performSplitTypeC(u graph.Node, v graph.Node) {
-	d.performSplitTypeB(v, u)
+func (d *Decomposer) performCutTypeC(u graph.Node, v graph.Node) {
+	d.performCutTypeB(v, u)
 }
 
-func (d *Decomposer) performSplitTypeD(u graph.Node, v graph.Node, component []graph.Node) {
+func (d *Decomposer) performCutTypeD(u graph.Node, v graph.Node, component []graph.Node) {
 	p1, p2 := d.getPartitions(u, component)
 	if d.calculateSize(p2) == d.k-1 {
 		d.cutSubTrees(u, func(subRoot graph.Node) bool {
@@ -97,13 +97,14 @@ func (d *Decomposer) getPartitions(u graph.Node, component []graph.Node) ([]grap
 }
 
 func (d *Decomposer) cutSubTrees(u graph.Node, condition func(subRoot graph.Node) bool) {
-	sv := d.g.NewNode() // insert Steiner's vertex for remaining unconnected components
+	sv := d.g.NewNode()
+	d.g.AddNode(sv) // insert Steiner's vertex for dangling subtrees
 	edges := d.g.From(u.ID())
 	for edges.Next() {
 		n := edges.Node()
 		if condition(n) {
 			d.g.RemoveEdge(u.ID(), n.ID())
-			d.g.NewEdge(sv, n)
+			d.g.SetEdge(d.g.NewEdge(sv, n))
 		}
 	}
 }
