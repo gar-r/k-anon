@@ -71,6 +71,27 @@ func (h *Hierarchy) String() string {
 	return strings.TrimSpace(b.String())
 }
 
+// Equals returns true, if the given two hierarchies are equal.
+func Equals(h1, h2 *Hierarchy) bool {
+	if h1.GetLevelCount() != h2.GetLevelCount() {
+		return false
+	}
+	for i := 0; i < h1.GetLevelCount(); i++ {
+		l1 := h1.GetLevel(i)
+		l2 := h2.GetLevel(i)
+	partition:
+		for _, p1 := range l1 {
+			for _, p2 := range l2 {
+				if p1.Equals(p2) {
+					continue partition
+				}
+			}
+			return false
+		}
+	}
+	return true
+}
+
 func makeOccurrenceMap(level []*Partition) map[interface{}]int {
 	occurrences := make(map[interface{}]int)
 	for _, partition := range level {

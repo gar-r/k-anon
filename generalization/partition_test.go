@@ -2,6 +2,7 @@ package generalization
 
 import (
 	"fmt"
+	"k-anon/testutil"
 	"strings"
 	"testing"
 )
@@ -9,17 +10,13 @@ import (
 func Test_PartitionEquals(t *testing.T) {
 	p1 := NewPartition(1, 2, 3)
 	p2 := NewPartition(3, 2, 1)
-	if !p1.Equals(p2) {
-		t.Errorf("Expected partitions to be equal")
-	}
+	assertPartitionEquals(p1, p2, t)
 }
 
 func Test_PartitionNotEquals(t *testing.T) {
 	p1 := NewPartition(1, 2, 3, 4)
 	p2 := NewPartition(1, 2, 3)
-	if p1.Equals(p2) {
-		t.Errorf("Expected partitions to differ")
-	}
+	assertPartitionNotEquals(p1, p2, t)
 }
 
 func Test_PartitionContains(t *testing.T) {
@@ -36,7 +33,7 @@ func Test_PartitionContains(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			if test.p.Contains(test.item) != test.contains {
-				t.Errorf("Expected partition ")
+				t.Errorf("%v contains %v should be %v", test.p, test.item, test.contains)
 			}
 		})
 	}
@@ -48,9 +45,7 @@ func Test_PartitionCombine(t *testing.T) {
 	p3 := NewPartition(8, 5)
 	expected := NewPartition(1, 2, 3, 4, 5, 7, 8, 9)
 	actual := Combine(p1, p2, p3)
-	if !expected.Equals(actual) {
-		t.Errorf("Combined partition is incorrect: %v", actual.items)
-	}
+	assertPartitionEquals(expected, actual, t)
 }
 
 func Test_PartitionToString(t *testing.T) {
@@ -68,7 +63,7 @@ func Test_PartitionToString(t *testing.T) {
 			actual := test.partition.String()
 			for _, v := range test.values {
 				if !strings.Contains(actual, v) {
-					t.Errorf("Expected %s to contain %s", actual, v)
+					t.Errorf("expected %s to contain %s", actual, v)
 				}
 			}
 		})
@@ -87,12 +82,8 @@ func TestPartition_IntRangeString(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("Test #%d", i), func(t *testing.T) {
 			actual, err := test.partition.IntRangeString()
-			if err != nil {
-				t.Errorf("Unexpected error: %s", err)
-			}
-			if test.expected != actual {
-				t.Errorf("Expected %v, got %v", test.expected, actual)
-			}
+			testutil.AssertNil(err, t)
+			testutil.AssertEquals(test.expected, actual, t)
 		})
 	}
 }
@@ -100,15 +91,23 @@ func TestPartition_IntRangeString(t *testing.T) {
 func Test_IntRangeStringEmptyPartition(t *testing.T) {
 	p := NewPartition()
 	_, err := p.IntRangeString()
-	if err == nil {
-		t.Errorf("Expected error, got none")
-	}
+	testutil.AssertNotNil(err, t)
 }
 
 func Test_IntRangeStringBadData(t *testing.T) {
 	p := NewPartition(1, 2, "x")
 	_, err := p.IntRangeString()
-	if err == nil {
-		t.Errorf("Expected error, got none")
+	testutil.AssertNotNil(err, t)
+}
+
+func assertPartitionEquals(p1, p2 *Partition, t *testing.T) {
+	if !p1.Equals(p2) {
+		t.Errorf("partitions should be equal: %v, %v", p1, p2)
+	}
+}
+
+func assertPartitionNotEquals(p1, p2 *Partition, t *testing.T) {
+	if p1.Equals(p2) {
+		t.Errorf("partitions should be different: %v, %v", p1, p2)
 	}
 }

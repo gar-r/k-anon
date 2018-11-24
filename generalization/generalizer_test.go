@@ -2,6 +2,7 @@ package generalization
 
 import (
 	"fmt"
+	"k-anon/testutil"
 	"testing"
 )
 
@@ -18,52 +19,40 @@ func Test_InvalidHierarchy(t *testing.T) {
 		},
 	}
 	generalizer := NewHierarchyGeneralizer(invalid)
-	if nil != generalizer {
-		t.Errorf("Expected nil, but got %v", generalizer)
-	}
+	testutil.AssertNil(generalizer, t)
 }
 
 func Test_InvalidValueForHierarchy(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
+	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
 	actual := generalizer.Generalize("X", 1)
-	if nil != actual {
-		t.Errorf("Expected nil, got %v", actual)
-	}
+	testutil.AssertNil(actual, t)
 }
 
 func Test_HierarchyGeneralizer_Level0(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
+	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
 	actual := generalizer.Generalize("C", 0)
 	expected := NewPartition("C")
-	if !expected.Equals(actual) {
-		t.Errorf("Expected partition %v, got %v", expected, actual)
-	}
+	assertPartitionEquals(expected, actual, t)
 }
 
 func Test_HierarchyGeneralizer_Level1(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
+	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
 	actual := generalizer.Generalize("C", 1)
 	expected := NewPartition("C+", "C", "C-")
-	if !expected.Equals(actual) {
-		t.Errorf("Expected partition %v, got %v", expected, actual)
-	}
+	assertPartitionEquals(expected, actual, t)
 }
 
 func Test_HierarchyGeneralizer_Level2(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(getExampleHierarchy())
+	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
 	actual := generalizer.Generalize("C", 2)
 	expected := NewPartition("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")
-	if !expected.Equals(actual) {
-		t.Errorf("Expected partition %v, got %v", expected, actual)
-	}
+	assertPartitionEquals(expected, actual, t)
 }
 
 func Test_SuppressorPartitionLength(t *testing.T) {
 	g := &Suppressor{}
 	p := g.Generalize("test", 1)
-	if len(p.items) != 1 {
-		t.Errorf("Expected partition size to be exactly 1, got %d instead", len(p.items))
-	}
+	testutil.AssertEquals(1, len(p.items), t)
 }
 
 func Test_Suppressor(t *testing.T) {
@@ -82,14 +71,10 @@ func Test_Suppressor(t *testing.T) {
 		t.Run(fmt.Sprintf("%v, %d => %v", test.item, test.n, test.expected), func(t *testing.T) {
 			p := g.Generalize(test.item, test.n)
 			if test.expected == nil {
-				if p != nil {
-					t.Errorf("Expected nil, got %v", p)
-				}
+				testutil.AssertNil(p, t)
 			} else {
 				exp := NewPartition(test.expected)
-				if !exp.Equals(p) {
-					t.Errorf("Expected %v, got %v", exp, p)
-				}
+				assertPartitionEquals(exp, p, t)
 			}
 		})
 	}

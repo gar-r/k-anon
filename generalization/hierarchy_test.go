@@ -1,38 +1,33 @@
 package generalization
 
 import (
+	"k-anon/testutil"
 	"strings"
 	"testing"
 )
 
 func Test_Levels(t *testing.T) {
-	h := getExampleHierarchy()
+	h := GetGradeHierarchy1()
 	expected := 3
 	actual := h.GetLevelCount()
-	if expected != actual {
-		t.Errorf("Expected %d levels, but got %d", expected, actual)
-	}
+	testutil.AssertEquals(expected, actual, t)
 }
 
 func Test_GetLevel(t *testing.T) {
-	h := getExampleHierarchy()
+	h := GetGradeHierarchy1()
 	expected := []*Partition{NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
 	actual := h.GetLevel(2)
-	if len(expected) != len(actual) {
-		t.Errorf("Partition sizes do not match")
-	}
+	testutil.AssertEquals(len(expected), len(actual), t)
 	for i := range expected {
 		if !expected[i].Equals(actual[i]) {
-			t.Errorf("Element mismatch at index %d", i)
+			t.Errorf("element mismatch at index %d", i)
 		}
 	}
 }
 
 func Test_Valid(t *testing.T) {
-	h := getExampleHierarchy()
-	if !h.IsValid() {
-		t.Errorf("Example hierarchy should be valid")
-	}
+	h := GetGradeHierarchy1()
+	assertValid(h, t)
 }
 
 func Test_InvalidMultipleValuesOnLevel(t *testing.T) {
@@ -42,9 +37,7 @@ func Test_InvalidMultipleValuesOnLevel(t *testing.T) {
 			NewPartition(5, 6, 3), // <= error: 3 is present in both partitions in the same level
 		},
 	}}
-	if h.IsValid() {
-		t.Errorf("This hierarchy should be invalid")
-	}
+	assertInvalid(h, t)
 }
 
 func Test_InvalidItemsDoNotAddUp(t *testing.T) {
@@ -63,9 +56,7 @@ func Test_InvalidItemsDoNotAddUp(t *testing.T) {
 			NewPartition(1, 2, 3, 4),
 		},
 	}}
-	if h.IsValid() {
-		t.Errorf("This hierarchy should be invalid")
-	}
+	assertInvalid(h, t)
 }
 
 func Test_Find(t *testing.T) {
@@ -82,64 +73,52 @@ func Test_Find(t *testing.T) {
 		{"Missing GetLevel 1", "X", 1, nil},
 		{"Missing GetLevel 2", "X", 2, nil},
 	}
-	h := getExampleHierarchy()
+	h := GetGradeHierarchy1()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			actual := h.Find(test.item, test.level)
 			if test.expected == nil {
-				if actual != nil {
-					t.Errorf("Missing item was found in partition %v", actual)
-				}
+				testutil.AssertNil(actual, t)
 			} else if !test.expected.Equals(actual) {
-				t.Errorf("Item was not located in the correct partition: %v", actual)
+				t.Errorf("item was not located in the correct partition: %v", actual)
 			}
 		})
 	}
 }
 
 func Test_GetLevelUnderIndex(t *testing.T) {
-	h := getExampleHierarchy()
+	h := GetGradeHierarchy1()
 	idx := -1
 	actual := h.GetLevel(idx)
-	if nil != actual {
-		t.Errorf("Expected nil, but got %v", actual)
-	}
+	testutil.AssertNil(actual, t)
 }
 
 func Test_GetLevelOverIndex(t *testing.T) {
-	h := getExampleHierarchy()
+	h := GetGradeHierarchy1()
 	idx := h.GetLevelCount() // max index + 1
 	actual := h.GetLevel(idx)
-	if nil != actual {
-		t.Errorf("Expected nil, but got %v", actual)
-	}
+	testutil.AssertNil(actual, t)
 }
 
 func Test_FindUnderIndex(t *testing.T) {
-	h := getExampleHierarchy()
+	h := GetGradeHierarchy1()
 	idx := -1
 	actual := h.Find("C", idx)
-	if nil != actual {
-		t.Errorf("Expected nil, but got %v", actual)
-	}
+	testutil.AssertNil(actual, t)
 }
 
 func Test_FindOverIndex(t *testing.T) {
-	h := getExampleHierarchy()
+	h := GetGradeHierarchy1()
 	idx := h.GetLevelCount() // max index + 1
 	actual := h.Find("C", idx)
-	if nil != actual {
-		t.Errorf("Expected nil, but got %v", actual)
-	}
+	testutil.AssertNil(actual, t)
 }
 
 func Test_StringEmpty(t *testing.T) {
 	h := &Hierarchy{}
 	expected := ""
 	actual := h.String()
-	if expected != actual {
-		t.Errorf("Expected %s, got %s", expected, actual)
-	}
+	testutil.AssertEquals(expected, actual, t)
 }
 
 func Test_StringSinglePartition(t *testing.T) {
@@ -149,30 +128,31 @@ func Test_StringSinglePartition(t *testing.T) {
 	expected1 := "[1, 2]"
 	expected2 := "[2, 1]"
 	if !strings.Contains(actual, expected1) && !strings.Contains(actual, expected2) {
-		t.Errorf("Expected %s to contain partition %s", actual, p.String())
+		t.Errorf("expected %s to contain partition %s", actual, p.String())
 	}
 }
 
-func getExampleHierarchy() *Hierarchy {
-	return &Hierarchy{Partitions: [][]*Partition{
-		{
-			NewPartition("A+"),
-			NewPartition("A"),
-			NewPartition("A-"),
-			NewPartition("B+"),
-			NewPartition("B"),
-			NewPartition("B-"),
-			NewPartition("C+"),
-			NewPartition("C"),
-			NewPartition("C-"),
-		},
-		{
-			NewPartition("A+", "A", "A-"),
-			NewPartition("B+", "B", "B-"),
-			NewPartition("C+", "C", "C-"),
-		},
-		{
-			NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"),
-		},
-	}}
+func assertValid(h *Hierarchy, t *testing.T) {
+	if !h.IsValid() {
+		t.Errorf("hierarchy should be valid")
+	}
+}
+
+func assertInvalid(h *Hierarchy, t *testing.T) {
+	if h.IsValid() {
+		t.Errorf("hierarchy should be invalid")
+	}
+}
+
+func assertHierarchyEquals(h1 *Hierarchy, h2 *Hierarchy, t *testing.T) {
+	if !Equals(h1, h2) {
+		t.Errorf("expected:\n%s\nactual:\n%s\n", h1, h2)
+	}
+}
+
+func buildIntHierarchy(items ...int) *Hierarchy {
+	builder := &IntegerHierarchyBuilder{
+		Items: items,
+	}
+	return builder.NewIntegerHierarchy()
 }

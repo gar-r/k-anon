@@ -1,6 +1,8 @@
-package testutil
+package algorithm
 
-import "gonum.org/v1/gonum/graph/simple"
+import (
+	"gonum.org/v1/gonum/graph/simple"
+)
 
 //                   ---------- 0 ---------------------------------
 //                   |                      |          |           |
@@ -10,7 +12,7 @@ import "gonum.org/v1/gonum/graph/simple"
 //      |     |   |     |    |     |
 //      8     9  10     11  12     13
 func GetUndirectedTestGraph1() *simple.UndirectedGraph {
-	g := CreateNodes(20)
+	g := CreateNodesUndirected(20)
 	AddEdge(g, 0, 1)
 	AddEdge(g, 1, 2)
 	AddEdge(g, 1, 3)
@@ -42,7 +44,7 @@ func GetUndirectedTestGraph1() *simple.UndirectedGraph {
 //           5
 //
 func GetUndirectedTestGraph2() *simple.UndirectedGraph {
-	g := CreateNodes(8)
+	g := CreateNodesUndirected(8)
 	AddEdge(g, 0, 1)
 	AddEdge(g, 1, 2)
 	AddEdge(g, 1, 3)
@@ -60,7 +62,7 @@ func GetUndirectedTestGraph2() *simple.UndirectedGraph {
 //        2    4      6    8
 //
 func GetUndirectedTestGraph3() *simple.UndirectedGraph {
-	g := CreateNodes(9)
+	g := CreateNodesUndirected(9)
 	AddEdge(g, 0, 1)
 	AddEdge(g, 0, 3)
 	AddEdge(g, 0, 5)
@@ -70,16 +72,4 @@ func GetUndirectedTestGraph3() *simple.UndirectedGraph {
 	AddEdge(g, 5, 6)
 	AddEdge(g, 7, 8)
 	return g
-}
-
-func CreateNodes(nodeCount int) *simple.UndirectedGraph {
-	g := simple.NewUndirectedGraph()
-	for i := 0; i < nodeCount; i++ {
-		g.AddNode(g.NewNode())
-	}
-	return g
-}
-
-func AddEdge(g *simple.UndirectedGraph, u, v int64) {
-	g.SetEdge(g.NewEdge(g.Node(u), g.Node(v)))
 }

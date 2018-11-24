@@ -3,7 +3,6 @@ package algorithm
 import (
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
-	"gonum.org/v1/gonum/graph/topo"
 	"k-anon/model"
 	"math"
 )
@@ -12,7 +11,7 @@ func BuildAnonGraph(table *model.Table, k int) graph.Directed {
 	costGraph := BuildCostGraph(table)
 	g := buildEmptyAnonGraph(table)
 	for {
-		components := getComponents(g)
+		components := UndirectedConnectedComponents(g)
 		c := pickComponentToExtend(components, k)
 		if c == nil {
 			break
@@ -65,16 +64,4 @@ func buildEmptyAnonGraph(t *model.Table) *simple.DirectedGraph {
 		g.AddNode(node)
 	}
 	return g
-}
-
-func getComponents(g *simple.DirectedGraph) [][]graph.Node {
-	var components [][]graph.Node
-	if !isEmpty(g) {
-		components = topo.ConnectedComponents(graph.Undirect{G: g})
-	}
-	return components
-}
-
-func isEmpty(g graph.Directed) bool {
-	return g.Nodes() == nil || g.Nodes().Len() < 1
 }

@@ -13,7 +13,7 @@ func TestData_Generalize(t *testing.T) {
 	actual := d.Generalize(1)
 	expected := "stub"
 	if !actual.Contains(expected) {
-		t.Errorf("Expected generalized partition to contain stub value")
+		t.Errorf("expected generalized partition to contain stub value")
 	}
 }
 
@@ -28,7 +28,7 @@ func TestVector_Generalize(t *testing.T) {
 	expected := generalization.NewPartition("*")
 	for _, item := range v.Items {
 		if !expected.Equals(item.Generalize(1)) {
-			t.Errorf("Expected suppressed partition")
+			t.Errorf("expected suppressed partition")
 		}
 	}
 }
