@@ -4,6 +4,7 @@ import (
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
+	"math"
 	"math/rand"
 	"time"
 )
@@ -15,7 +16,7 @@ func CreateNodesUndirected(nodeCount int) *simple.UndirectedGraph {
 }
 
 func CreateNodesWeightedUndirected(nodeCount int) *simple.WeightedUndirectedGraph {
-	g := simple.NewWeightedUndirectedGraph(0, 0)
+	g := simple.NewWeightedUndirectedGraph(0, math.MaxFloat64)
 	batchAddNodes(nodeCount, g)
 	return g
 }
@@ -53,6 +54,13 @@ func UndirectedConnectedComponents(g graph.Directed) [][]graph.Node {
 		components = topo.ConnectedComponents(graph.Undirect{G: g})
 	}
 	return components
+}
+
+// UndirectGraph converts a directed graph to a simple undirected graph implementation
+func UndirectGraph(g graph.Directed) *simple.UndirectedGraph {
+	undirected := simple.NewUndirectedGraph()
+	graph.Copy(undirected, graph.Undirect{g})
+	return undirected
 }
 
 func isEmpty(g graph.Directed) bool {

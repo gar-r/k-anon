@@ -34,3 +34,23 @@ func TestCalculateCost(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculateCost_WithNonIdentifierAttributes(t *testing.T) {
+	gen := generalization.GetIntGeneralizer1()
+	v1 := &model.Vector{
+		Items: []*model.Data{
+			model.NewIdentifier(5, gen),
+			model.NewIdentifier(1, gen),
+			model.NewNonIdentifier("Test1"),
+		},
+	}
+	v2 := &model.Vector{
+		Items: []*model.Data{
+			model.NewIdentifier(6, gen),
+			model.NewIdentifier(9, gen),
+			model.NewNonIdentifier("Test2"),
+		},
+	}
+	cost := CalculateCost(v1, v2)
+	testutil.AssertEquals(1.5, cost, t)
+}

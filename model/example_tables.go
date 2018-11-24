@@ -42,14 +42,14 @@ func GetStudentTable() *Table {
 	dim5 := generalization.GetGradeGeneralizer1()
 	return &Table{
 		Rows: []*Vector{
-			{Items: []*Data{NewData("Male", dim1), NewData(25, dim2), NewData(0, dim3), NewData(35, dim4), NewData("A", dim5)}},
-			{Items: []*Data{NewData("Female", dim1), NewData(25, dim2), NewData(0, dim3), NewData(45, dim4), NewData("A+", dim5)}},
-			{Items: []*Data{NewData("Male", dim1), NewData(30, dim2), NewData(2, dim3), NewData(30, dim4), NewData("B", dim5)}},
-			{Items: []*Data{NewData("Female", dim1), NewData(30, dim2), NewData(1, dim3), NewData(35, dim4), NewData("B+", dim5)}},
-			{Items: []*Data{NewData("Male", dim1), NewData(28, dim2), NewData(1, dim3), NewData(40, dim4), NewData("A-", dim5)}},
-			{Items: []*Data{NewData("Female", dim1), NewData(28, dim2), NewData(1, dim3), NewData(15, dim4), NewData("B", dim5)}},
-			{Items: []*Data{NewData("Male", dim1), NewData(27, dim2), NewData(0, dim3), NewData(15, dim4), NewData("B-", dim5)}},
-			{Items: []*Data{NewData("Female", dim1), NewData(27, dim2), NewData(2, dim3), NewData(30, dim4), NewData("B", dim5)}},
+			{Items: []*Data{NewIdentifier("Male", dim1), NewIdentifier(25, dim2), NewIdentifier(0, dim3), NewIdentifier(35, dim4), NewIdentifier("A", dim5)}},
+			{Items: []*Data{NewIdentifier("Female", dim1), NewIdentifier(25, dim2), NewIdentifier(0, dim3), NewIdentifier(45, dim4), NewIdentifier("A+", dim5)}},
+			{Items: []*Data{NewIdentifier("Male", dim1), NewIdentifier(30, dim2), NewIdentifier(2, dim3), NewIdentifier(30, dim4), NewIdentifier("B", dim5)}},
+			{Items: []*Data{NewIdentifier("Female", dim1), NewIdentifier(30, dim2), NewIdentifier(1, dim3), NewIdentifier(35, dim4), NewIdentifier("B+", dim5)}},
+			{Items: []*Data{NewIdentifier("Male", dim1), NewIdentifier(28, dim2), NewIdentifier(1, dim3), NewIdentifier(40, dim4), NewIdentifier("A-", dim5)}},
+			{Items: []*Data{NewIdentifier("Female", dim1), NewIdentifier(28, dim2), NewIdentifier(1, dim3), NewIdentifier(15, dim4), NewIdentifier("B", dim5)}},
+			{Items: []*Data{NewIdentifier("Male", dim1), NewIdentifier(27, dim2), NewIdentifier(0, dim3), NewIdentifier(15, dim4), NewIdentifier("B-", dim5)}},
+			{Items: []*Data{NewIdentifier("Female", dim1), NewIdentifier(27, dim2), NewIdentifier(2, dim3), NewIdentifier(30, dim4), NewIdentifier("B", dim5)}},
 		},
 	}
 }
@@ -67,20 +67,20 @@ func GetMixedTable1() *Table {
 		Rows: []*Vector{
 			{
 				Items: []*Data{
-					NewData(9, generalizer1),
-					NewData("A+", generalizer2),
+					NewIdentifier(9, generalizer1),
+					NewIdentifier("A+", generalizer2),
 				},
 			},
 			{
 				Items: []*Data{
-					NewData(8, generalizer1),
-					NewData("A", generalizer2),
+					NewIdentifier(8, generalizer1),
+					NewIdentifier("A", generalizer2),
 				},
 			},
 			{
 				Items: []*Data{
-					NewData(5, generalizer1),
-					NewData("B-", generalizer2),
+					NewIdentifier(5, generalizer1),
+					NewIdentifier("B-", generalizer2),
 				},
 			},
 		},
@@ -102,7 +102,7 @@ func GetEmptyTable() *Table {
 func CreateVector(items []int, g generalization.Generalizer) *Vector {
 	v := &Vector{}
 	for _, item := range items {
-		v.Items = append(v.Items, NewData(item, g))
+		v.Items = append(v.Items, NewIdentifier(item, g))
 	}
 	return v
 }

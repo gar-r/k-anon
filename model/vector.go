@@ -11,11 +11,22 @@ type Data struct {
 	generalizer generalization.Generalizer
 }
 
-func NewData(value interface{}, generalizer generalization.Generalizer) *Data {
+func NewIdentifier(value interface{}, generalizer generalization.Generalizer) *Data {
 	return &Data{
 		Value:       value,
 		generalizer: generalizer,
 	}
+}
+
+func NewNonIdentifier(value interface{}) *Data {
+	return &Data{
+		Value:       value,
+		generalizer: nil,
+	}
+}
+
+func (d *Data) IsIdentifier() bool {
+	return d.generalizer != nil
 }
 
 func (d *Data) Generalize(level int) *generalization.Partition {
