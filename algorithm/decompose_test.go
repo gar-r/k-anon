@@ -79,12 +79,20 @@ func TestDecomposer_Decompose_TerminatesWhenFinished(t *testing.T) {
 
 func TestDecomposer_Decompose_ComponentSizes(t *testing.T) {
 	g := GetUndirectedTestGraph1()
-	d := NewDecomposer(g, 3)
+	k := 3
+	l := g.Nodes().Len()
+	d := NewDecomposer(g, k)
 	d.Decompose()
 	components := topo.ConnectedComponents(g)
 	for _, c := range components {
-		if len(c) > (2*3 - 1) {
-			t.Errorf("invalid component size: %v", c)
+		compLen := 0
+		for _, n := range c {
+			if n.ID() < int64(l) { // original node
+				compLen++
+			}
+		}
+		if compLen < k {
+			t.Errorf("component size < k")
 		}
 	}
 }
