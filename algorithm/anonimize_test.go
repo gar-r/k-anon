@@ -36,7 +36,7 @@ func TestGeneralizeIdentifier(t *testing.T) {
 		model.NewIdentifier(2, gen),
 		model.NewIdentifier(7, gen),
 	}
-	partitions := generalizeIdentifier(data)
+	partitions := generalize(data)
 	expected := generalization.NewPartition(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	for _, p := range partitions {
 		if !expected.Equals(p) {
@@ -51,7 +51,7 @@ func TestGeneralizeNonIdentifier(t *testing.T) {
 		model.NewNonIdentifier("test2"),
 		model.NewNonIdentifier("test3"),
 	}
-	partitions := generalizeNonIdentifier(data)
+	partitions := generalize(data)
 	p1 := generalization.NewPartition("test1")
 	p2 := generalization.NewPartition("test2")
 	p3 := generalization.NewPartition("test3")
