@@ -30,7 +30,7 @@ func TestGetGroups(t *testing.T) {
 }
 
 func TestGeneralizeIdentifier(t *testing.T) {
-	gen := generalization.GetIntGeneralizer1()
+	gen := generalization.GetIntGeneralizer()
 	data := []*model.Data{
 		model.NewIdentifier(1, gen),
 		model.NewIdentifier(2, gen),
@@ -58,6 +58,56 @@ func TestGeneralizeNonIdentifier(t *testing.T) {
 	for _, p := range partitions {
 		if !(p.Equals(p1) || p.Equals(p2) || p.Equals(p3)) {
 			t.Errorf("incorrect partition: %v", p)
+		}
+	}
+}
+
+func TestAnonimize(t *testing.T) {
+	gen1 := generalization.GetIntGeneralizer()
+	gen2 := generalization.GetGradeGeneralizer()
+	groups := []*model.Vector{
+		{
+			Items: []*model.Data{
+				model.NewIdentifier(9, gen1),
+				model.NewIdentifier("A+", gen2),
+				model.NewNonIdentifier("data1"),
+			},
+		},
+		{
+			Items: []*model.Data{
+				model.NewIdentifier(8, gen1),
+				model.NewIdentifier("A", gen2),
+				model.NewNonIdentifier("data2"),
+			},
+		},
+		{
+			Items: []*model.Data{
+				model.NewIdentifier(6, gen1),
+				model.NewIdentifier("A-", gen2),
+				model.NewNonIdentifier("data3"),
+			},
+		},
+	}
+	partitions := anonimize(groups)
+	testutil.AssertEquals(3, len(partitions), t)
+	assertSamePartition([]*generalization.Partition{
+		partitions[0][0],
+		partitions[1][0],
+		partitions[2][0]}, t)
+	assertSamePartition([]*generalization.Partition{
+		partitions[0][1],
+		partitions[1][1],
+		partitions[2][1]}, t)
+	partitions[0][2].Equals(generalization.NewPartition("data1"))
+	partitions[1][2].Equals(generalization.NewPartition("data2"))
+	partitions[2][2].Equals(generalization.NewPartition("data3"))
+}
+
+func assertSamePartition(p []*generalization.Partition, t *testing.T) {
+	first := p[0]
+	for i := 1; i < len(p); i++ {
+		if !first.Equals(p[i]) {
+			t.Errorf("partitions are not equal: %v, %v", first, p[i])
 		}
 	}
 }

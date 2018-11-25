@@ -24,7 +24,7 @@ func TestCalculateCost(t *testing.T) {
 		{items1: []int{1, 1}, items2: []int{1, 1}, expectedCost: 0},
 		{items1: []int{1, 1, 1, 1}, items2: []int{4, 5, 1, 2}, expectedCost: 2.25},
 	}
-	g := generalization.GetIntGeneralizer1()
+	g := generalization.GetIntGeneralizer()
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("Test #%d", i), func(t *testing.T) {
 			v1 := model.CreateVector(test.items1, g)
@@ -36,7 +36,7 @@ func TestCalculateCost(t *testing.T) {
 }
 
 func TestCalculateCost_WithNonIdentifierAttributes(t *testing.T) {
-	gen := generalization.GetIntGeneralizer1()
+	gen := generalization.GetIntGeneralizer()
 	v1 := &model.Vector{
 		Items: []*model.Data{
 			model.NewIdentifier(5, gen),

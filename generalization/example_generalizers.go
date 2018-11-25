@@ -5,7 +5,7 @@ package generalization
 // Level 2: (1, 2) (3, 4) (5, 6) (7, 8, 9)
 // Level 1: (1) (2) (3) (4)	(5) (6) (7) (8, 9)
 // Level 0: (1) (2) (3) (4)	(5) (6) (7) (8) (9)
-func GetIntGeneralizer1() Generalizer {
+func GetIntGeneralizer() Generalizer {
 	builder := IntegerHierarchyBuilder{
 		Items: []int{1, 2, 3, 4, 5, 6, 7, 8, 9},
 	}
@@ -15,7 +15,7 @@ func GetIntGeneralizer1() Generalizer {
 // Level 2: (A+ A A- B+ B B-)
 // Level 1: (A+ A A-) (B+ B B-)
 // Level 0: (A+) (A) (A-) (B+) (B) (B-)
-func GetGradeGeneralizer1() *HierarchyGeneralizer {
+func GetGradeGeneralizer() *HierarchyGeneralizer {
 	generalizer := NewHierarchyGeneralizer(&Hierarchy{
 		Partitions: [][]*Partition{
 			{

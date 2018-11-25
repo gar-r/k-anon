@@ -9,7 +9,7 @@ import "k-anon/generalization"
 // 4 5 1 1
 // 1 3 5 7
 func GetIntTable1() *Table {
-	g := generalization.GetIntGeneralizer1()
+	g := generalization.GetIntGeneralizer()
 	return &Table{
 		Rows: []*Vector{
 			CreateVector([]int{1, 1, 1, 1}, g),
@@ -39,7 +39,7 @@ func GetStudentTable() *Table {
 	dim2 := generalization.NewHierarchyGeneralizer((&generalization.IntegerHierarchyBuilder{Items: []int{25, 27, 28, 30}}).NewIntegerHierarchy())
 	dim3 := generalization.NewHierarchyGeneralizer((&generalization.IntegerHierarchyBuilder{Items: []int{0, 1, 2}}).NewIntegerHierarchy())
 	dim4 := generalization.NewHierarchyGeneralizer((&generalization.IntegerHierarchyBuilder{Items: []int{10, 15, 30, 35, 40, 45}}).NewIntegerHierarchy())
-	dim5 := generalization.GetGradeGeneralizer1()
+	dim5 := generalization.GetGradeGeneralizer()
 	return &Table{
 		Rows: []*Vector{
 			{Items: []*Data{NewIdentifier("Male", dim1), NewIdentifier(25, dim2), NewIdentifier(0, dim3), NewIdentifier(35, dim4), NewIdentifier("A", dim5)}},
@@ -61,8 +61,8 @@ func GetStudentTable() *Table {
 // 8	A
 // 5	B-
 func GetMixedTable1() *Table {
-	generalizer1 := generalization.GetIntGeneralizer1()
-	generalizer2 := generalization.GetGradeGeneralizer1()
+	generalizer1 := generalization.GetIntGeneralizer()
+	generalizer2 := generalization.GetGradeGeneralizer()
 	return &Table{
 		Rows: []*Vector{
 			{

@@ -19,7 +19,14 @@ type Anonimizer struct {
 func (a *Anonimizer) AnonimizeData() {
 	g := a.computeAnonGraph()
 	components := topo.ConnectedComponents(g)
-	a.getGroups(components)
+	groups := a.getGroups(components)
+	var results [][]*generalization.Partition
+	for _, group := range groups {
+		rows := anonimize(group)
+		for _, r := range rows {
+			results = append(results, r)
+		}
+	}
 }
 
 func (a *Anonimizer) computeAnonGraph() graph.Undirected {
@@ -44,14 +51,27 @@ func (a *Anonimizer) getGroups(components [][]graph.Node) [][]*model.Vector {
 	return groups
 }
 
-func anonimize(group []*model.Vector) {
-	for dim := range group[0].Items {
+func anonimize(group []*model.Vector) [][]*generalization.Partition {
+	results := makeRows(len(group), len(group[0].Items))
+	for col := range group[0].Items {
 		var data []*model.Data
 		for _, v := range group {
-			data = append(data, v.Items[dim])
+			data = append(data, v.Items[col])
 		}
-		generalize(data)
+		partitions := generalize(data)
+		for row, p := range partitions {
+			results[row][col] = p
+		}
 	}
+	return results
+}
+
+func makeRows(rows, cols int) [][]*generalization.Partition {
+	anonimizedRows := make([][]*generalization.Partition, rows)
+	for i := range anonimizedRows {
+		anonimizedRows[i] = make([]*generalization.Partition, cols)
+	}
+	return anonimizedRows
 }
 
 func generalize(data []*model.Data) []*generalization.Partition {
