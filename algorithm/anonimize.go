@@ -2,6 +2,7 @@ package algorithm
 
 import (
 	"gonum.org/v1/gonum/graph"
+	"gonum.org/v1/gonum/graph/topo"
 	"k-anon/model"
 )
 
@@ -15,7 +16,9 @@ type Anonimizer struct {
 }
 
 func (a *Anonimizer) AnonimizeData() {
-	a.computeAnonGraph()
+	g := a.computeAnonGraph()
+	components := topo.ConnectedComponents(g)
+	a.getGroups(components)
 }
 
 func (a *Anonimizer) computeAnonGraph() graph.Undirected {
@@ -25,12 +28,17 @@ func (a *Anonimizer) computeAnonGraph() graph.Undirected {
 	return d.g
 }
 
-func (a *Anonimizer) generalize(vectors []*model.Vector) {
-	dims := len(vectors[0].Items)
-	for i := 0; i < dims; i++ {
-		//var dims []*model.Data
-		for j := 0; j < len(vectors); j++ {
-			//append(dims, vectors[j].Items[i])
+func (a *Anonimizer) getGroups(components [][]graph.Node) [][]*model.Vector {
+	var groups [][]*model.Vector
+	for _, component := range components {
+		var rows []*model.Vector
+		for _, n := range component {
+			idx := int(n.ID())
+			if idx < len(a.table.Rows) {
+				rows = append(rows, a.table.Rows[idx])
+			}
 		}
+		groups = append(groups, rows)
 	}
+	return groups
 }
