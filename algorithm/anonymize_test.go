@@ -1,10 +1,12 @@
 package algorithm
 
 import (
+	"fmt"
 	"gonum.org/v1/gonum/graph/topo"
 	"k-anon/generalization"
 	"k-anon/model"
 	"k-anon/testutil"
+	"strings"
 	"testing"
 )
 
@@ -17,6 +19,7 @@ import (
 //    * there are two types of data items: identifier and non-identifier
 //    * each identifier data item should have an associated generalizer: this can be based on a generalization
 //      hierarchy, a custom generalizer, or something as simple as a value suppressor
+//    * pre-built hierarchies can help you define your own without rolling your own custom
 //    * non-identifiers only have a value, and will be ignored during the anonymization process
 //    * it is recommended to assign the same generalizer for all data items in a column of the table
 //         (again, this is not enforced but you will get an error during anonymization if the
@@ -31,6 +34,141 @@ import (
 //         are already implemented, for example int range "[x..y]", and suppressed value "*".
 func ExampleAnonymizer_AnonymizeData() {
 
+	// Step 1:
+
+	// define generalizers
+	gender := &generalization.Suppressor{}
+	age := generalization.NewHierarchyGeneralizer(
+		(&generalization.IntegerHierarchyBuilder{Items: makeRange(0, 100, 1)}).NewIntegerHierarchy())
+	kids := generalization.NewHierarchyGeneralizer(
+		(&generalization.IntegerHierarchyBuilder{Items: []int{0, 1, 2, 3, 4, 5}}).NewIntegerHierarchy())
+	income := generalization.NewHierarchyGeneralizer(
+		(&generalization.IntegerHierarchyBuilder{Items: makeRange(0, 500000, 5000)}).NewIntegerHierarchy())
+	grade := generalization.GetGradeGeneralizer()
+
+	// define input table
+	table := &model.Table{
+		Rows: []*model.Vector{
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Joe"),
+					model.NewIdentifier("Male", gender),
+					model.NewIdentifier(25, age),
+					model.NewIdentifier(0, kids),
+					model.NewIdentifier(10000, income),
+					model.NewIdentifier("B", grade),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Jane"),
+					model.NewIdentifier("Female", gender),
+					model.NewIdentifier(25, age),
+					model.NewIdentifier(0, kids),
+					model.NewIdentifier(10000, income),
+					model.NewIdentifier("A", grade),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Jack"),
+					model.NewIdentifier("Male", gender),
+					model.NewIdentifier(30, age),
+					model.NewIdentifier(2, kids),
+					model.NewIdentifier(30000, income),
+					model.NewIdentifier("B", grade),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Janet"),
+					model.NewIdentifier("Female", gender),
+					model.NewIdentifier(30, age),
+					model.NewIdentifier(1, kids),
+					model.NewIdentifier(35000, income),
+					model.NewIdentifier("B+", grade),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Steve"),
+					model.NewIdentifier("Male", gender),
+					model.NewIdentifier(28, age),
+					model.NewIdentifier(1, kids),
+					model.NewIdentifier(40000, income),
+					model.NewIdentifier("A-", grade),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Sarah"),
+					model.NewIdentifier("Female", gender),
+					model.NewIdentifier(27, age),
+					model.NewIdentifier(1, kids),
+					model.NewIdentifier(15000, income),
+					model.NewIdentifier("C", grade),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Ben"),
+					model.NewIdentifier("Male", gender),
+					model.NewIdentifier(25, age),
+					model.NewIdentifier(0, kids),
+					model.NewIdentifier(15000, income),
+					model.NewIdentifier("C-", grade),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewNonIdentifier("Anne"),
+					model.NewIdentifier("Female", gender),
+					model.NewIdentifier(30, age),
+					model.NewIdentifier(2, kids),
+					model.NewIdentifier(30000, income),
+					model.NewIdentifier("B+", grade),
+				},
+			},
+		},
+	}
+
+	// Step 2&3: create an anonymizer and run the anonymization
+	anon := &Anonymizer{
+		table: table,
+		k:     3,
+	}
+	result := anon.anonymizeData()
+
+	// Step 4: process the data
+	sb := strings.Builder{}
+	for i, row := range result {
+		sb.WriteString(fmt.Sprintf("%d:\t", i))
+		for j, col := range row {
+			switch j {
+			case 0, 5:
+				sb.WriteString(col.String())
+				break
+			case 1, 2, 3, 4:
+				s, err := col.IntRangeString()
+				if err != nil {
+					panic(err.Error())
+				}
+				sb.WriteString(s)
+				break
+			}
+			sb.WriteString("\t")
+		}
+		sb.WriteString("\n")
+	}
+	fmt.Println(sb.String())
+}
+
+func makeRange(from, to, increment int) []int {
+	var r []int
+	for i := from; i < to; i += increment {
+		r = append(r, i)
+	}
+	return r
 }
 
 func TestAnonymizer_AnonymizeData(t *testing.T) {
