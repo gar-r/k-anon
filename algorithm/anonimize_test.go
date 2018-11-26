@@ -8,6 +8,72 @@ import (
 	"testing"
 )
 
+func TestAnonimizer_AnonimizeData(t *testing.T) {
+	gen1 := generalization.GetIntGeneralizer()
+	gen2 := generalization.GetGradeGeneralizer()
+	table := &model.Table{
+		Rows: []*model.Vector{
+			{
+				Items: []*model.Data{
+					model.NewIdentifier(9, gen1),
+					model.NewIdentifier("A+", gen2),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewIdentifier(2, gen1),
+					model.NewIdentifier("B-", gen2),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewIdentifier(6, gen1),
+					model.NewIdentifier("A-", gen2),
+				},
+			},
+			{
+				Items: []*model.Data{
+					model.NewIdentifier(4, gen1),
+					model.NewIdentifier("B+", gen2),
+				},
+			},
+		},
+	}
+	anon := &Anonimizer{
+		table: table,
+		k:     2,
+	}
+	result := anon.AnonimizeData()
+	assertKAnonimity(table, result, 2, t)
+}
+
+func assertKAnonimity(table *model.Table, data [][]*generalization.Partition, k int, t *testing.T) {
+	for i, r1 := range data {
+		count := 0
+		for _, r2 := range data {
+			if inSamePartition(r1, r2, func(col int) bool {
+				return table.Rows[0].Items[col].IsIdentifier()
+			}) {
+				count++
+			}
+		}
+		if count < k {
+			t.Errorf("k-anonimity violated in row %v", i)
+		}
+	}
+}
+
+func inSamePartition(r1, r2 []*generalization.Partition, isIdColumn func(int) bool) bool {
+	for col := 0; col < len(r1); col++ {
+		p1 := r1[col]
+		p2 := r2[col]
+		if isIdColumn(col) && !p1.Equals(p2) {
+			return false
+		}
+	}
+	return true
+}
+
 func TestGetGroups(t *testing.T) {
 	v0 := model.CreateVector([]int{}, nil)
 	v1 := model.CreateVector([]int{}, nil)

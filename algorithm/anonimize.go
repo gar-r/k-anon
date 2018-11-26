@@ -8,7 +8,7 @@ import (
 )
 
 // Anonimizer operates on a given table with parameter 'k'.
-// In a k-anonimized table valus are generalized or suppressed in a way,
+// In a k-anonimized table values are generalized or suppressed in a way,
 // that given any record there are other k-1 records in the table that are identical
 // to it along quasi-identifier attributes
 type Anonimizer struct {
@@ -16,7 +16,7 @@ type Anonimizer struct {
 	k     int
 }
 
-func (a *Anonimizer) AnonimizeData() {
+func (a *Anonimizer) AnonimizeData() [][]*generalization.Partition {
 	g := a.computeAnonGraph()
 	components := topo.ConnectedComponents(g)
 	groups := a.getGroups(components)
@@ -27,6 +27,7 @@ func (a *Anonimizer) AnonimizeData() {
 			results = append(results, r)
 		}
 	}
+	return results
 }
 
 func (a *Anonimizer) computeAnonGraph() graph.Undirected {
