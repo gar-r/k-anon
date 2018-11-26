@@ -7,22 +7,22 @@ import (
 	"k-anon/model"
 )
 
-// Anonimizer operates on a given table with parameter 'k'.
-// In a k-anonimized table values are generalized or suppressed in a way,
+// Anonymizer operates on a given table with parameter 'k'.
+// In a k-anonymized table values are generalized or suppressed in a way,
 // that given any record there are other k-1 records in the table that are identical
 // to it along quasi-identifier attributes
-type Anonimizer struct {
+type Anonymizer struct {
 	table *model.Table
 	k     int
 }
 
-func (a *Anonimizer) AnonimizeData() [][]*generalization.Partition {
+func (a *Anonymizer) anonymizeData() [][]*generalization.Partition {
 	g := a.computeAnonGraph()
 	components := topo.ConnectedComponents(g)
 	groups := a.getGroups(components)
 	var results [][]*generalization.Partition
 	for _, group := range groups {
-		rows := anonimize(group)
+		rows := anonymize(group)
 		for _, r := range rows {
 			results = append(results, r)
 		}
@@ -30,20 +30,20 @@ func (a *Anonimizer) AnonimizeData() [][]*generalization.Partition {
 	return results
 }
 
-func (a *Anonimizer) computeAnonGraph() graph.Undirected {
+func (a *Anonymizer) computeAnonGraph() graph.Undirected {
 	g := BuildAnonGraph(a.table, a.k)
 	d := NewDecomposer(UndirectGraph(g), a.k)
 	d.Decompose()
 	return d.g
 }
 
-func (a *Anonimizer) getGroups(components [][]graph.Node) [][]*model.Vector {
+func (a *Anonymizer) getGroups(components [][]graph.Node) [][]*model.Vector {
 	var groups [][]*model.Vector
 	for _, component := range components {
 		var rows []*model.Vector
 		for _, n := range component {
 			idx := int(n.ID())
-			if idx < len(a.table.Rows) {
+			if idx < len(a.table.Rows) { // skip Steiner's vertices
 				rows = append(rows, a.table.Rows[idx])
 			}
 		}
@@ -52,7 +52,7 @@ func (a *Anonimizer) getGroups(components [][]graph.Node) [][]*model.Vector {
 	return groups
 }
 
-func anonimize(group []*model.Vector) [][]*generalization.Partition {
+func anonymize(group []*model.Vector) [][]*generalization.Partition {
 	results := makeRows(len(group), len(group[0].Items))
 	for col := range group[0].Items {
 		var data []*model.Data
@@ -68,11 +68,11 @@ func anonimize(group []*model.Vector) [][]*generalization.Partition {
 }
 
 func makeRows(rows, cols int) [][]*generalization.Partition {
-	anonimizedRows := make([][]*generalization.Partition, rows)
-	for i := range anonimizedRows {
-		anonimizedRows[i] = make([]*generalization.Partition, cols)
+	anonymizedRows := make([][]*generalization.Partition, rows)
+	for i := range anonymizedRows {
+		anonymizedRows[i] = make([]*generalization.Partition, cols)
 	}
-	return anonimizedRows
+	return anonymizedRows
 }
 
 func generalize(data []*model.Data) []*generalization.Partition {

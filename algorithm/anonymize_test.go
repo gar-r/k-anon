@@ -8,7 +8,32 @@ import (
 	"testing"
 )
 
-func TestAnonimizer_AnonimizeData(t *testing.T) {
+// This is a testable example to demonstrate k-anonymization usage
+// 1) supply a table to anonymize
+//    * the table consists of row-vectors
+//    * each row-vector should have the same 'schema'
+//         (this is not enforced, but you will get an error during anonymization otherwise)
+//    * each vector consists of data items
+//    * there are two types of data items: identifier and non-identifier
+//    * each identifier data item should have an associated generalizer: this can be based on a generalization
+//      hierarchy, a custom generalizer, or something as simple as a value suppressor
+//    * non-identifiers only have a value, and will be ignored during the anonymization process
+//    * it is recommended to assign the same generalizer for all data items in a column of the table
+//         (again, this is not enforced but you will get an error during anonymization if the
+//          respective data items cannot be generalized into the same partition)
+// 2) create an Anonymizer instance, and supply the table and k parameters
+// 3) call the AnonymizeData function on the Anonymizer
+// 4) you will get the results in the form of a 2D slice of partitions
+//       * each partition represents a level of generalization for a given value
+//         in the respective generalization hierarchy
+//       * items in partitions are not ordered (treat them as sets)
+//       * you can create your own "pretty-printer" for partitions if needed. The basic cases
+//         are already implemented, for example int range "[x..y]", and suppressed value "*".
+func ExampleAnonymizer_AnonymizeData() {
+
+}
+
+func TestAnonymizer_AnonymizeData(t *testing.T) {
 	gen1 := generalization.GetIntGeneralizer()
 	gen2 := generalization.GetGradeGeneralizer()
 	table := &model.Table{
@@ -39,15 +64,15 @@ func TestAnonimizer_AnonimizeData(t *testing.T) {
 			},
 		},
 	}
-	anon := &Anonimizer{
+	anon := &Anonymizer{
 		table: table,
 		k:     2,
 	}
-	result := anon.AnonimizeData()
-	assertKAnonimity(table, result, 2, t)
+	result := anon.anonymizeData()
+	assertKAnonymity(table, result, 2, t)
 }
 
-func assertKAnonimity(table *model.Table, data [][]*generalization.Partition, k int, t *testing.T) {
+func assertKAnonymity(table *model.Table, data [][]*generalization.Partition, k int, t *testing.T) {
 	for i, r1 := range data {
 		count := 0
 		for _, r2 := range data {
@@ -81,7 +106,7 @@ func TestGetGroups(t *testing.T) {
 	v3 := model.CreateVector([]int{}, nil)
 	v4 := model.CreateVector([]int{}, nil)
 	table := &model.Table{Rows: []*model.Vector{v0, v1, v2, v3, v4}}
-	a := &Anonimizer{
+	a := &Anonymizer{
 		table: table,
 		k:     2,
 	}
@@ -128,7 +153,7 @@ func TestGeneralizeNonIdentifier(t *testing.T) {
 	}
 }
 
-func TestAnonimize(t *testing.T) {
+func TestAnonymize(t *testing.T) {
 	gen1 := generalization.GetIntGeneralizer()
 	gen2 := generalization.GetGradeGeneralizer()
 	groups := []*model.Vector{
@@ -154,7 +179,7 @@ func TestAnonimize(t *testing.T) {
 			},
 		},
 	}
-	partitions := anonimize(groups)
+	partitions := anonymize(groups)
 	testutil.AssertEquals(3, len(partitions), t)
 	assertSamePartition([]*generalization.Partition{
 		partitions[0][0],
