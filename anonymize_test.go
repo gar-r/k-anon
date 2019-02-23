@@ -1,6 +1,7 @@
-package algorithm
+package k_anon
 
 import (
+	"bitbucket.org/dargzero/k-anon/algorithm"
 	"bitbucket.org/dargzero/k-anon/generalization"
 	"bitbucket.org/dargzero/k-anon/model"
 	"bitbucket.org/dargzero/k-anon/testutil"
@@ -85,9 +86,9 @@ func TestGetGroups(t *testing.T) {
 		table: table,
 		k:     2,
 	}
-	g := CreateNodesUndirected(5)
-	AddEdge(g, 0, 3)
-	AddEdge(g, 1, 2)
+	g := algorithm.CreateNodesUndirected(5)
+	algorithm.AddEdge(g, 0, 3)
+	algorithm.AddEdge(g, 1, 2)
 	groups := a.getGroups(topo.ConnectedComponents(g))
 	testutil.AssertEquals(3, len(groups), t)
 	assertGroup(groups, v0, v3)

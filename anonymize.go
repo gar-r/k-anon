@@ -1,6 +1,7 @@
-package algorithm
+package k_anon
 
 import (
+	"bitbucket.org/dargzero/k-anon/algorithm"
 	"bitbucket.org/dargzero/k-anon/generalization"
 	"bitbucket.org/dargzero/k-anon/model"
 	"gonum.org/v1/gonum/graph"
@@ -31,10 +32,11 @@ func (a *Anonymizer) anonymizeData() [][]*generalization.Partition {
 }
 
 func (a *Anonymizer) computeAnonGraph() graph.Undirected {
-	g := BuildAnonGraph(a.table, a.k)
-	d := NewDecomposer(UndirectGraph(g), a.k)
+	g := algorithm.BuildAnonGraph(a.table, a.k)
+	undirected := algorithm.UndirectGraph(g)
+	d := algorithm.NewDecomposer(undirected, a.k)
 	d.Decompose()
-	return d.g
+	return undirected
 }
 
 func (a *Anonymizer) getGroups(components [][]graph.Node) [][]*model.Vector {

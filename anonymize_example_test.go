@@ -1,4 +1,4 @@
-package algorithm
+package k_anon
 
 import (
 	"bitbucket.org/dargzero/k-anon/generalization"
