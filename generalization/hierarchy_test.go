@@ -1,7 +1,7 @@
 package generalization
 
 import (
-	"k-anon/testutil"
+	"bitbucket.org/dargzero/k-anon/testutil"
 	"strings"
 	"testing"
 )

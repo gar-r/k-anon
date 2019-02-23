@@ -1,9 +1,9 @@
 package algorithm
 
 import (
+	"bitbucket.org/dargzero/k-anon/generalization"
+	"bitbucket.org/dargzero/k-anon/model"
 	"fmt"
-	"k-anon/generalization"
-	"k-anon/model"
 	"strings"
 )
 

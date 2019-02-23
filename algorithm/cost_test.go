@@ -1,10 +1,10 @@
 package algorithm
 
 import (
+	"bitbucket.org/dargzero/k-anon/generalization"
+	"bitbucket.org/dargzero/k-anon/model"
+	"bitbucket.org/dargzero/k-anon/testutil"
 	"fmt"
-	"k-anon/generalization"
-	"k-anon/model"
-	"k-anon/testutil"
 	"testing"
 )
 

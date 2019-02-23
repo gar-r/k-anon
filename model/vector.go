@@ -1,6 +1,6 @@
 package model
 
-import "k-anon/generalization"
+import "bitbucket.org/dargzero/k-anon/generalization"
 
 type Vector struct {
 	Items []*Data

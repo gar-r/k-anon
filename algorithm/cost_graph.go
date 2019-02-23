@@ -1,9 +1,9 @@
 package algorithm
 
 import (
+	"bitbucket.org/dargzero/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
-	"k-anon/model"
 	"math"
 )
 

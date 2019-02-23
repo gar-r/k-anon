@@ -1,7 +1,7 @@
 package model
 
 import (
-	"k-anon/generalization"
+	"bitbucket.org/dargzero/k-anon/generalization"
 	"testing"
 )
 

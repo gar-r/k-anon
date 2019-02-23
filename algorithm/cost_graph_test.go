@@ -1,8 +1,8 @@
 package algorithm
 
 import (
-	"k-anon/model"
-	"k-anon/testutil"
+	"bitbucket.org/dargzero/k-anon/model"
+	"bitbucket.org/dargzero/k-anon/testutil"
 	"testing"
 )
 

@@ -1,6 +1,6 @@
 package algorithm
 
-import "k-anon/model"
+import "bitbucket.org/dargzero/k-anon/model"
 
 func CalculateCost(v1, v2 *model.Vector) float64 {
 	var cost float64

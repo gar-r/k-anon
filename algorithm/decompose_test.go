@@ -1,10 +1,10 @@
 package algorithm
 
 import (
+	"bitbucket.org/dargzero/k-anon/testutil"
 	"fmt"
 	"gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
-	"k-anon/testutil"
 	"testing"
 )
 

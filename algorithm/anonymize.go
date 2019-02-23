@@ -1,10 +1,10 @@
 package algorithm
 
 import (
+	"bitbucket.org/dargzero/k-anon/generalization"
+	"bitbucket.org/dargzero/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/topo"
-	"k-anon/generalization"
-	"k-anon/model"
 )
 
 // Anonymizer operates on a given table with parameter 'k'.

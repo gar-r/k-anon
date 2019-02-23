@@ -1,10 +1,10 @@
 package algorithm
 
 import (
+	"bitbucket.org/dargzero/k-anon/generalization"
+	"bitbucket.org/dargzero/k-anon/model"
+	"bitbucket.org/dargzero/k-anon/testutil"
 	"gonum.org/v1/gonum/graph/topo"
-	"k-anon/generalization"
-	"k-anon/model"
-	"k-anon/testutil"
 	"testing"
 )
 
