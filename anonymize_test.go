@@ -107,7 +107,24 @@ func TestGeneralizeIdentifier(t *testing.T) {
 	expected := generalization.NewPartition(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	for _, p := range partitions {
 		if !expected.Equals(p) {
-			t.Errorf("incorrect partition: %v", p)
+			t.Errorf("expected %v, got %v", expected, p)
+		}
+	}
+}
+
+func TestGeneralizePrefixFields(t *testing.T) {
+	gen := &generalization.PrefixGeneralizer{MaxWords: 5}
+	data := []*model.Data{
+		model.NewIdentifier("test example string 1", gen),
+		model.NewIdentifier("test example string 2", gen),
+		model.NewIdentifier("test example text", gen),
+		model.NewIdentifier("test example text", gen),
+	}
+	partitions := generalize(data)
+	expected := generalization.NewPartition("test example")
+	for _, p := range partitions {
+		if !expected.Equals(p) {
+			t.Errorf("expected %v, got %v", expected, p)
 		}
 	}
 }
@@ -132,11 +149,13 @@ func TestGeneralizeNonIdentifier(t *testing.T) {
 func TestAnonymize(t *testing.T) {
 	gen1 := generalization.GetIntGeneralizer()
 	gen2 := generalization.GetGradeGeneralizer()
+	gen3 := &generalization.PrefixGeneralizer{MaxWords: 5}
 	groups := []*model.Vector{
 		{
 			Items: []*model.Data{
 				model.NewIdentifier(9, gen1),
 				model.NewIdentifier("A+", gen2),
+				model.NewIdentifier("cats are wild", gen3),
 				model.NewNonIdentifier("data1"),
 			},
 		},
@@ -144,6 +163,7 @@ func TestAnonymize(t *testing.T) {
 			Items: []*model.Data{
 				model.NewIdentifier(8, gen1),
 				model.NewIdentifier("A", gen2),
+				model.NewIdentifier("cats are evil", gen3),
 				model.NewNonIdentifier("data2"),
 			},
 		},
@@ -151,6 +171,7 @@ func TestAnonymize(t *testing.T) {
 			Items: []*model.Data{
 				model.NewIdentifier(6, gen1),
 				model.NewIdentifier("A-", gen2),
+				model.NewIdentifier("cats are fluffy", gen3),
 				model.NewNonIdentifier("data3"),
 			},
 		},

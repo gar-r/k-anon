@@ -42,6 +42,7 @@ func ExampleAnonymizer_AnonymizeData() {
 	income := generalization.NewHierarchyGeneralizer(
 		(&generalization.IntegerHierarchyBuilder{Items: makeRange(0, 500000, 5000)}).NewIntegerHierarchy())
 	grade := generalization.GetGradeGeneralizer()
+	motto := &generalization.PrefixGeneralizer{MaxWords: 100}
 
 	// define input table
 	table := &model.Table{
@@ -54,6 +55,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(0, kids),
 					model.NewIdentifier(10000, income),
 					model.NewIdentifier("B", grade),
+					model.NewIdentifier("cats are wonderful little beings", motto),
 				},
 			},
 			{
@@ -64,6 +66,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(0, kids),
 					model.NewIdentifier(10000, income),
 					model.NewIdentifier("A", grade),
+					model.NewIdentifier("cats are my favorite kind of animals", motto),
 				},
 			},
 			{
@@ -74,6 +77,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(2, kids),
 					model.NewIdentifier(30000, income),
 					model.NewIdentifier("B", grade),
+					model.NewIdentifier("cats are very unique", motto),
 				},
 			},
 			{
@@ -84,6 +88,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(1, kids),
 					model.NewIdentifier(35000, income),
 					model.NewIdentifier("A+", grade),
+					model.NewIdentifier("cats are interesting", motto),
 				},
 			},
 			{
@@ -94,6 +99,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(1, kids),
 					model.NewIdentifier(40000, income),
 					model.NewIdentifier("A-", grade),
+					model.NewIdentifier("cats are my only pets", motto),
 				},
 			},
 			{
@@ -104,6 +110,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(1, kids),
 					model.NewIdentifier(15000, income),
 					model.NewIdentifier("B", grade),
+					model.NewIdentifier("cats are my favorite!", motto),
 				},
 			},
 			{
@@ -114,6 +121,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(0, kids),
 					model.NewIdentifier(15000, income),
 					model.NewIdentifier("B-", grade),
+					model.NewIdentifier("cats are interesting, but sometimes also egoistic", motto),
 				},
 			},
 			{
@@ -124,6 +132,7 @@ func ExampleAnonymizer_AnonymizeData() {
 					model.NewIdentifier(2, kids),
 					model.NewIdentifier(30000, income),
 					model.NewIdentifier("B+", grade),
+					model.NewIdentifier("cats are my favorite kind of animals", motto),
 				},
 			},
 		},
@@ -139,17 +148,18 @@ func ExampleAnonymizer_AnonymizeData() {
 	// Step 4: process the data
 	prettyPrintResult(result)
 
+	// Output:
 	// Since the partitioning has a random element, the algorithm might
 	// produce slightly different (but still correct) outputs for the same input.
 	// In this case for example the output might look something like this:
-	//0:	[Jane]	[*]	[25..25]	[0..0]	[0..25000]	[B+, B, B-, A+, A, A-]
-	//1:	[Joe]	[*]	[25..25]	[0..0]	[0..25000]	[A+, A, A-, B+, B, B-]
-	//2:	[Ben]	[*]	[25..25]	[0..0]	[0..25000]	[A-, B+, B, B-, A+, A]
-	//3:	[Janet]	[*]	[28..30]	[1..2]	[30000..40000]	[B, B-, A+, A, A-, B+]
-	//4:	[Jack]	[*]	[28..30]	[1..2]	[30000..40000]	[B-, A+, A, A-, B+, B]
-	//5:	[Steve]	[*]	[28..30]	[1..2]	[30000..40000]	[A+, A, A-, B+, B, B-]
-	//6:	[Sarah]	[Female]	[25..30]	[1..2]	[0..55000]	[B+, B, B-]
-	//7:	[Anne]	[Female]	[25..30]	[1..2]	[0..55000]	[B+, B, B-]
+	// 0:	[Steve]	[Male]		[28..30]	[1..2]	[30000..40000]	[A-, B+, B, B-, A+, A]	[cats are]
+	// 1:	[Jack]	[Male]		[28..30]	[1..2]	[30000..40000]	[B-, A+, A, A-, B+, B]	[cats are]
+	// 2:	[Sarah]	[Female]	[25..27]	[0..2]	[0..25000]		[A+, A, A-, B+, B, B-]	[cats are my]
+	// 3:	[Jane]	[Female]	[25..27]	[0..2]	[0..25000]		[A+, A, A-, B+, B, B-]	[cats are my]
+	// 4:	[Joe]	[Male]		[25..25]	[0..0]	[0..25000]		[B-, B+, B]				[cats are]
+	// 5:	[Ben]	[Male]		[25..25]	[0..0]	[0..25000]		[B+, B, B-]				[cats are]
+	// 6:	[Janet]	[Female]	[30..30]	[1..2]	[30000..40000]	[A+, A, A-, B+, B, B-]	[cats are]
+	// 7:	[Anne]	[Female]	[30..30]	[1..2]	[30000..40000]	[A, A-, B+, B, B-, A+]	[cats are]
 }
 
 func prettyPrintResult(result [][]*generalization.Partition) {
@@ -158,7 +168,7 @@ func prettyPrintResult(result [][]*generalization.Partition) {
 		sb.WriteString(fmt.Sprintf("%d:\t", i))
 		for j, col := range row {
 			switch j {
-			case 0, 1, 5:
+			case 0, 1, 5, 6:
 				sb.WriteString(col.String())
 			case 2, 3, 4:
 				s, err := col.IntRangeString()
