@@ -6,50 +6,49 @@ import (
 	"testing"
 )
 
-func Test_InvalidHierarchy(t *testing.T) {
-	invalid := &Hierarchy{
-		Partitions: [][]*Partition{
-			{
-				NewPartition("A"),
-				NewPartition("B"),
+func TestHierarchyGeneralizer_Generalize(t *testing.T) {
+
+	t.Run("invalid hierarchy", func(t *testing.T) {
+		invalid := &Hierarchy{
+			Partitions: [][]*Partition{
+				{
+					NewPartition("A"),
+					NewPartition("B"),
+				},
+				{
+					NewPartition("C"),
+				},
 			},
-			{
-				NewPartition("C"),
-			},
-		},
-	}
-	generalizer := NewHierarchyGeneralizer(invalid)
-	testutil.AssertNil(generalizer, t)
-}
+		}
+		generalizer := NewHierarchyGeneralizer(invalid)
+		testutil.AssertNil(generalizer, t)
+	})
 
-func Test_InvalidValueForHierarchy(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
-	p := NewPartition("X")
-	actual := generalizer.Generalize(p, 1)
-	testutil.AssertNil(actual, t)
-}
+	t.Run("invalid value in hierarchy", func(t *testing.T) {
+		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
+		p := NewPartition("X")
+		actual := generalizer.Generalize(p, 1)
+		testutil.AssertNil(actual, t)
+	})
 
-func Test_HierarchyGeneralizer_Level0(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
-	p := NewPartition("C")
-	actual := generalizer.Generalize(p, 0)
-	assertPartitionEquals(p, actual, t)
-}
+	t.Run("generalize tests", func(t *testing.T) {
+		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
+		tests := []struct {
+			p, expected *Partition
+			level       int
+		}{
+			{level: 0, p: NewPartition("C"), expected: NewPartition("C")},
+			{level: 1, p: NewPartition("C"), expected: NewPartition("C+", "C", "C-")},
+			{level: 2, p: NewPartition("C"), expected: NewPartition("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")},
+		}
+		for _, test := range tests {
+			t.Run(fmt.Sprintf("level %d", test.level), func(t *testing.T) {
+				actual := generalizer.Generalize(test.p, test.level)
+				assertPartitionEquals(test.expected, actual, t)
+			})
+		}
+	})
 
-func Test_HierarchyGeneralizer_Level1(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
-	p := NewPartition("C")
-	actual := generalizer.Generalize(p, 1)
-	expected := NewPartition("C+", "C", "C-")
-	assertPartitionEquals(expected, actual, t)
-}
-
-func Test_HierarchyGeneralizer_Level2(t *testing.T) {
-	generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
-	p := NewPartition("C")
-	actual := generalizer.Generalize(p, 2)
-	expected := NewPartition("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")
-	assertPartitionEquals(expected, actual, t)
 }
 
 func Test_SuppressorPartitionLength(t *testing.T) {
