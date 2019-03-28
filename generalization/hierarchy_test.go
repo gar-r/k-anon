@@ -7,14 +7,14 @@ import (
 )
 
 func Test_Levels(t *testing.T) {
-	h := GetGradeHierarchy1()
+	h := GetGradeHierarchy()
 	expected := 3
 	actual := h.GetLevelCount()
 	testutil.AssertEquals(expected, actual, t)
 }
 
 func Test_GetLevel(t *testing.T) {
-	h := GetGradeHierarchy1()
+	h := GetGradeHierarchy()
 	expected := []*Partition{NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
 	actual := h.GetLevel(2)
 	testutil.AssertEquals(len(expected), len(actual), t)
@@ -26,7 +26,7 @@ func Test_GetLevel(t *testing.T) {
 }
 
 func Test_Valid(t *testing.T) {
-	h := GetGradeHierarchy1()
+	h := GetGradeHierarchy()
 	assertValid(h, t)
 }
 
@@ -70,7 +70,7 @@ func Test_Find(t *testing.T) {
 		{"find level 2", NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"), 2},
 		{"missing", NewPartition("X"), -1},
 	}
-	h := GetGradeHierarchy1()
+	h := GetGradeHierarchy()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			actual := h.Find(test.p)
@@ -80,14 +80,14 @@ func Test_Find(t *testing.T) {
 }
 
 func Test_GetLevelUnderIndex(t *testing.T) {
-	h := GetGradeHierarchy1()
+	h := GetGradeHierarchy()
 	idx := -1
 	actual := h.GetLevel(idx)
 	testutil.AssertNil(actual, t)
 }
 
 func Test_GetLevelOverIndex(t *testing.T) {
-	h := GetGradeHierarchy1()
+	h := GetGradeHierarchy()
 	idx := h.GetLevelCount() // max index + 1
 	actual := h.GetLevel(idx)
 	testutil.AssertNil(actual, t)

@@ -1,6 +1,6 @@
 package generalization
 
-func GetGradeHierarchy1() *Hierarchy {
+func GetGradeHierarchy() *Hierarchy {
 	return &Hierarchy{Partitions: [][]*Partition{
 		{
 			NewPartition("A+"),

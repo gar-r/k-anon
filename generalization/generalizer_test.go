@@ -25,14 +25,14 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 	})
 
 	t.Run("invalid value in hierarchy", func(t *testing.T) {
-		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
+		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy())
 		p := NewPartition("X")
 		actual := generalizer.Generalize(p, 1)
 		testutil.AssertNil(actual, t)
 	})
 
 	t.Run("generalize tests", func(t *testing.T) {
-		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy1())
+		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy())
 		tests := []struct {
 			p, expected *Partition
 			level       int
@@ -48,7 +48,6 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 			})
 		}
 	})
-
 }
 
 func Test_SuppressorPartitionLength(t *testing.T) {
