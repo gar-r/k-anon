@@ -4,8 +4,7 @@ package generalization
 // Generalization means, that a value from a given domain is replaced with a less specific,
 // but semantically consistent value from the same domain.
 type Generalizer interface {
-	// Generalize takes a value and generalizes it 'n' levels further.
-	// Generalizes a partition n levels and returns the generalized Partition.
+	// Generalizes a partition by n levels and returns the generalized Partition.
 	// The input partition can contain a single or multiple items.
 	// The generalized partition contains all items from the input partition, and other items generalized into the same partition.
 	// This function will return nil if the value cannot be generalized to the given level.
