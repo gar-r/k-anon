@@ -34,7 +34,7 @@ func ExampleAnonymizer_AnonymizeData() {
 	// Step 1:
 
 	// define generalizers
-	gender := &generalization.Suppressor{}
+	suppressor := &generalization.Suppressor{}
 	age := generalization.NewHierarchyGeneralizer(
 		(&generalization.IntegerHierarchyBuilder{Items: makeRange(0, 100, 1)}).NewIntegerHierarchy())
 	kids := generalization.NewHierarchyGeneralizer(
@@ -49,8 +49,9 @@ func ExampleAnonymizer_AnonymizeData() {
 		Rows: []*model.Vector{
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Joe"),
-					model.NewIdentifier("Male", gender),
+					model.NewIdentifier("Joe", suppressor),
+					model.NewNonIdentifier("employee"),
+					model.NewIdentifier("Male", suppressor),
 					model.NewIdentifier(25, age),
 					model.NewIdentifier(0, kids),
 					model.NewIdentifier(10000, income),
@@ -60,8 +61,9 @@ func ExampleAnonymizer_AnonymizeData() {
 			},
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Jane"),
-					model.NewIdentifier("Female", gender),
+					model.NewIdentifier("Jane", suppressor),
+					model.NewNonIdentifier("client"),
+					model.NewIdentifier("Female", suppressor),
 					model.NewIdentifier(25, age),
 					model.NewIdentifier(0, kids),
 					model.NewIdentifier(10000, income),
@@ -71,8 +73,9 @@ func ExampleAnonymizer_AnonymizeData() {
 			},
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Jack"),
-					model.NewIdentifier("Male", gender),
+					model.NewIdentifier("Jack", suppressor),
+					model.NewNonIdentifier("employee"),
+					model.NewIdentifier("Male", suppressor),
 					model.NewIdentifier(30, age),
 					model.NewIdentifier(2, kids),
 					model.NewIdentifier(30000, income),
@@ -82,8 +85,9 @@ func ExampleAnonymizer_AnonymizeData() {
 			},
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Janet"),
-					model.NewIdentifier("Female", gender),
+					model.NewIdentifier("Janet", suppressor),
+					model.NewNonIdentifier("employee"),
+					model.NewIdentifier("Female", suppressor),
 					model.NewIdentifier(30, age),
 					model.NewIdentifier(1, kids),
 					model.NewIdentifier(35000, income),
@@ -93,8 +97,9 @@ func ExampleAnonymizer_AnonymizeData() {
 			},
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Steve"),
-					model.NewIdentifier("Male", gender),
+					model.NewIdentifier("Steve", suppressor),
+					model.NewNonIdentifier("client"),
+					model.NewIdentifier("Male", suppressor),
 					model.NewIdentifier(28, age),
 					model.NewIdentifier(1, kids),
 					model.NewIdentifier(40000, income),
@@ -104,8 +109,9 @@ func ExampleAnonymizer_AnonymizeData() {
 			},
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Sarah"),
-					model.NewIdentifier("Female", gender),
+					model.NewIdentifier("Sarah", suppressor),
+					model.NewNonIdentifier("client"),
+					model.NewIdentifier("Female", suppressor),
 					model.NewIdentifier(27, age),
 					model.NewIdentifier(1, kids),
 					model.NewIdentifier(15000, income),
@@ -115,8 +121,9 @@ func ExampleAnonymizer_AnonymizeData() {
 			},
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Ben"),
-					model.NewIdentifier("Male", gender),
+					model.NewIdentifier("Ben", suppressor),
+					model.NewNonIdentifier("employee"),
+					model.NewIdentifier("Male", suppressor),
 					model.NewIdentifier(25, age),
 					model.NewIdentifier(0, kids),
 					model.NewIdentifier(15000, income),
@@ -126,8 +133,9 @@ func ExampleAnonymizer_AnonymizeData() {
 			},
 			{
 				Items: []*model.Data{
-					model.NewNonIdentifier("Anne"),
-					model.NewIdentifier("Female", gender),
+					model.NewIdentifier("Anne", suppressor),
+					model.NewNonIdentifier("client"),
+					model.NewIdentifier("Female", suppressor),
 					model.NewIdentifier(30, age),
 					model.NewIdentifier(2, kids),
 					model.NewIdentifier(30000, income),
@@ -151,26 +159,26 @@ func ExampleAnonymizer_AnonymizeData() {
 	// Since the partitioning has a random element, the algorithm might
 	// produce slightly different (but still correct) outputs for the same input.
 	// In this case for example the output might look something like this:
-	// 0:	[Steve]	[Male]		[28..30]	[1..2]	[30000..40000]	[A-, B+, B, B-, A+, A]	[cats are]
-	// 1:	[Jack]	[Male]		[28..30]	[1..2]	[30000..40000]	[B-, A+, A, A-, B+, B]	[cats are]
-	// 2:	[Sarah]	[Female]	[25..27]	[0..2]	[0..25000]		[A+, A, A-, B+, B, B-]	[cats are my]
-	// 3:	[Jane]	[Female]	[25..27]	[0..2]	[0..25000]		[A+, A, A-, B+, B, B-]	[cats are my]
-	// 4:	[Joe]	[Male]		[25..25]	[0..0]	[0..25000]		[B-, B+, B]				[cats are]
-	// 5:	[Ben]	[Male]		[25..25]	[0..0]	[0..25000]		[B+, B, B-]				[cats are]
-	// 6:	[Janet]	[Female]	[30..30]	[1..2]	[30000..40000]	[A+, A, A-, B+, B, B-]	[cats are]
-	// 7:	[Anne]	[Female]	[30..30]	[1..2]	[30000..40000]	[A, A-, B+, B, B-, A+]	[cats are]
+	//0:	[*]	[employee]	[Female]	[25..30]	[1..1]	[0..55000]		[A-, B+, B, B-, A+, A]	[cats are]
+	//1:	[*]	[client]	[Female]	[25..30]	[1..1]	[0..55000]		[B+, B, B-, A+, A, A-]	[cats are]
+	//2:	[*]	[client]	[Male]		[28..30]	[1..2]	[30000..40000]	[A, A-, B+, B, B-, A+]	[cats are]
+	//3:	[*]	[employee]	[Male]		[28..30]	[1..2]	[30000..40000]	[A, A-, B+, B, B-, A+]	[cats are]
+	//4:	[*]	[client]	[Female]	[25..30]	[0..2]	[0..55000]		[A+, A, A-, B+, B, B-]	[cats are my favorite kind of animals]
+	//5:	[*]	[client]	[Female]	[25..30]	[0..2]	[0..55000]		[B, B-, A+, A, A-, B+]	[cats are my favorite kind of animals]
+	//6:	[*]	[employee]	[Male]		[25..25]	[0..0]	[0..25000]		[B+, B, B-]				[cats are]
+	//7:	[*]	[employee]	[Male]		[25..25]	[0..0]	[0..25000]		[B+, B, B-]				[cats are]
 }
 
 func prettyPrintResult(result [][]*generalization.Partition) {
 	sb := strings.Builder{}
-	for i, row := range result {
-		sb.WriteString(fmt.Sprintf("%d:\t", i))
-		for j, col := range row {
-			switch j {
-			case 0, 1, 5, 6:
-				sb.WriteString(col.String())
-			case 2, 3, 4:
-				s, err := col.IntRangeString()
+	for row, part := range result {
+		sb.WriteString(fmt.Sprintf("%d:\t", row))
+		for col, val := range part {
+			switch col {
+			case 0, 1, 2, 6, 7:
+				sb.WriteString(val.String())
+			case 3, 4, 5:
+				s, err := val.IntRangeString()
 				if err != nil {
 					panic(err.Error())
 				}
