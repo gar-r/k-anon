@@ -31,10 +31,12 @@ func NewHierarchyGeneralizer(h *Hierarchy) *HierarchyGeneralizer {
 }
 
 func (g *HierarchyGeneralizer) Generalize(p *Partition, n int) *Partition {
-	l := g.hierarchy.GetLevel(n)
-	for _, part := range l {
-		if part.ContainsPartition(p) {
-			return part
+	for l := n; l < g.Levels(); l++ { // continue searching in upper levels of the hierarchy
+		level := g.hierarchy.GetLevel(l)
+		for _, part := range level {
+			if part.ContainsPartition(p) {
+				return part
+			}
 		}
 	}
 	return nil

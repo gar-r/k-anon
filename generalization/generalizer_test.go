@@ -56,6 +56,14 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 		expected := NewPartition("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")
 		assertPartitionEquals(expected, actual, t)
 	})
+
+	t.Run("re-generalize complex partition", func(t *testing.T) {
+		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy())
+		p := NewPartition("C+", "C", "C-")
+		actual := generalizer.Generalize(p, 0)
+		expected := NewPartition("C+", "C", "C-")
+		assertPartitionEquals(expected, actual, t)
+	})
 }
 
 func Test_SuppressorPartitionLength(t *testing.T) {

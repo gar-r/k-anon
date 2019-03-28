@@ -14,6 +14,10 @@ type Table struct {
 	Rows   []*Row
 }
 
+func (t *Table) Add(row ...*Row) {
+	t.Rows = append(t.Rows, row...)
+}
+
 func (t *Table) String() string {
 	sb := &strings.Builder{}
 	t.appendHeader(sb)

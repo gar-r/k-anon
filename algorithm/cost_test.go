@@ -49,6 +49,19 @@ func TestCalculateCost(t *testing.T) {
 		testutil.AssertEquals(1.5, cost, t)
 	})
 
+	t.Run("calculate with prefix attributes", func(t *testing.T) {
+		gen := &generalization.PrefixGeneralizer{MaxWords: 5}
+		schema := &model.Schema{
+			Columns: []*model.Column{
+				{"Col1", gen},
+			},
+		}
+		r1 := model.NewRow("cats are wonderful little beings")
+		r2 := model.NewRow("dogs are my pets")
+		cost := CalculateCost(r1, r2, schema)
+		testutil.AssertEquals(1.0, cost, t)
+	})
+
 }
 
 func getSchema(cols int) *model.Schema {

@@ -34,19 +34,19 @@ func TestPrefixGeneralizer_Generalize(t *testing.T) {
 
 	t.Run("generalize last word", func(t *testing.T) {
 		actual := g.Generalize(NewPartition("this is a test string"), 5)
-		expected := NewPartition("")
+		expected := NewPartition("*")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("empty string input", func(t *testing.T) {
 		actual := g.Generalize(NewPartition(""), 3)
-		expected := NewPartition("")
+		expected := NewPartition("*")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("non string input", func(t *testing.T) {
 		actual := g.Generalize(NewPartition(10), 3)
-		expected := NewPartition("")
+		expected := NewPartition("*")
 		assertPartitionEquals(expected, actual, t)
 	})
 
@@ -55,10 +55,9 @@ func TestPrefixGeneralizer_Generalize(t *testing.T) {
 		expected := NewPartition("cats are wild")
 		assertPartitionEquals(expected, actual, t)
 	})
-
 }
 
 func TestPrefixGeneralizer_Levels(t *testing.T) {
 	g := &PrefixGeneralizer{MaxWords: 10}
-	testutil.AssertEquals(10, g.Levels(), t)
+	testutil.AssertEquals(11, g.Levels(), t)
 }
