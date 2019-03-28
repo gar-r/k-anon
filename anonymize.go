@@ -103,8 +103,7 @@ level:
 func generalizeNonIdentifier(data []*model.Data) []*generalization.Partition {
 	var result []*generalization.Partition
 	for _, d := range data {
-		p := generalization.NewPartition(d.Value)
-		result = append(result, p)
+		result = append(result, d.Value)
 	}
 	return result
 }

@@ -61,27 +61,20 @@ func Test_InvalidItemsDoNotAddUp(t *testing.T) {
 
 func Test_Find(t *testing.T) {
 	tests := []struct {
-		name     string
-		item     interface{}
-		level    int
-		expected *Partition
+		name          string
+		p             *Partition
+		expectedLevel int
 	}{
-		{"Exists GetLevel 0", "C", 0, NewPartition("C")},
-		{"Exists GetLevel 1", "C", 1, NewPartition("C+", "C", "C-")},
-		{"Exists GetLevel 2", "C", 2, NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")},
-		{"Missing GetLevel 0", "X", 0, nil},
-		{"Missing GetLevel 1", "X", 1, nil},
-		{"Missing GetLevel 2", "X", 2, nil},
+		{"find level 0", NewPartition("C"), 0},
+		{"find level 1", NewPartition("C+", "C", "C-"), 1},
+		{"find level 2", NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"), 2},
+		{"missing", NewPartition("X"), -1},
 	}
 	h := GetGradeHierarchy1()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual := h.Find(test.item, test.level)
-			if test.expected == nil {
-				testutil.AssertNil(actual, t)
-			} else if !test.expected.Equals(actual) {
-				t.Errorf("item was not located in the correct partition: %v", actual)
-			}
+			actual := h.Find(test.p)
+			testutil.AssertEquals(test.expectedLevel, actual, t)
 		})
 	}
 }
@@ -97,20 +90,6 @@ func Test_GetLevelOverIndex(t *testing.T) {
 	h := GetGradeHierarchy1()
 	idx := h.GetLevelCount() // max index + 1
 	actual := h.GetLevel(idx)
-	testutil.AssertNil(actual, t)
-}
-
-func Test_FindUnderIndex(t *testing.T) {
-	h := GetGradeHierarchy1()
-	idx := -1
-	actual := h.Find("C", idx)
-	testutil.AssertNil(actual, t)
-}
-
-func Test_FindOverIndex(t *testing.T) {
-	h := GetGradeHierarchy1()
-	idx := h.GetLevelCount() // max index + 1
-	actual := h.Find("C", idx)
 	testutil.AssertNil(actual, t)
 }
 

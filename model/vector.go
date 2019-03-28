@@ -7,20 +7,27 @@ type Vector struct {
 }
 
 type Data struct {
-	Value       interface{}
+	Value       *generalization.Partition
 	generalizer generalization.Generalizer
 }
 
 func NewIdentifier(value interface{}, generalizer generalization.Generalizer) *Data {
 	return &Data{
-		Value:       value,
+		Value:       generalization.NewPartition(value),
+		generalizer: generalizer,
+	}
+}
+
+func NewIdentifierPartition(p *generalization.Partition, generalizer generalization.Generalizer) *Data {
+	return &Data{
+		Value:       p,
 		generalizer: generalizer,
 	}
 }
 
 func NewNonIdentifier(value interface{}) *Data {
 	return &Data{
-		Value:       value,
+		Value:       generalization.NewPartition(value),
 		generalizer: nil,
 	}
 }

@@ -7,7 +7,7 @@ import (
 
 func TestData_Generalize(t *testing.T) {
 	d := &Data{
-		Value:       "dummy",
+		Value:       generalization.NewPartition("dummy"),
 		generalizer: &stubGeneralizer{"stub"},
 	}
 	actual := d.Generalize(1)
@@ -20,9 +20,9 @@ func TestData_Generalize(t *testing.T) {
 func TestVector_Generalize(t *testing.T) {
 	v := &Vector{
 		Items: []*Data{
-			{Value: 1, generalizer: &generalization.Suppressor{}},
-			{Value: 2, generalizer: &generalization.Suppressor{}},
-			{Value: 3, generalizer: &generalization.Suppressor{}},
+			{Value: generalization.NewPartition(1), generalizer: &generalization.Suppressor{}},
+			{Value: generalization.NewPartition(2), generalizer: &generalization.Suppressor{}},
+			{Value: generalization.NewPartition(3), generalizer: &generalization.Suppressor{}},
 		},
 	}
 	expected := generalization.NewPartition("*")
@@ -37,7 +37,7 @@ type stubGeneralizer struct {
 	stubValue interface{}
 }
 
-func (g *stubGeneralizer) Generalize(item interface{}, n int) *generalization.Partition {
+func (g *stubGeneralizer) Generalize(p *generalization.Partition, n int) *generalization.Partition {
 	return generalization.NewPartition(g.stubValue)
 }
 

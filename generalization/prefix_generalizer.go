@@ -18,36 +18,38 @@ type PrefixGeneralizer struct {
 	MaxWords int
 }
 
-func (p *PrefixGeneralizer) Generalize(item interface{}, n int) *Partition {
+func (g *PrefixGeneralizer) Generalize(p *Partition, n int) *Partition {
 	const separator = " "
-	if n > p.MaxWords {
+	if n > g.MaxWords {
 		return nil
 	}
-	s := stringify(item)
-	if n == p.MaxWords || s == "" {
+	s := stringify(p)
+	if n == g.MaxWords || s == "" {
 		return NewPartition("")
 	}
-	words := p.getPaddedWords(s)
-	idx := p.MaxWords - n
+	words := g.getPaddedWords(s)
+	idx := g.MaxWords - n
 	joined := strings.Join(words[:idx], separator)
 	return NewPartition(strings.TrimRight(joined, separator))
 }
 
-func (p *PrefixGeneralizer) Levels() int {
-	return p.MaxWords
+func (g *PrefixGeneralizer) Levels() int {
+	return g.MaxWords
 }
 
-func (p *PrefixGeneralizer) getPaddedWords(s string) []string {
+func (g *PrefixGeneralizer) getPaddedWords(s string) []string {
 	words := strings.Fields(s)
-	padded := make([]string, p.MaxWords)
+	padded := make([]string, g.MaxWords)
 	copy(padded, words)
 	return padded
 }
 
-func stringify(item interface{}) string {
-	s, success := item.(string)
-	if success {
-		return s
+func stringify(p *Partition) string {
+	for item := range p.items {
+		s, success := item.(string)
+		if success {
+			return s
+		}
 	}
 	return ""
 }

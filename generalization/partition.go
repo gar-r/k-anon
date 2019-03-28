@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Partition is a single partition or node in the generalization hierarchy, which contains a set of items.
+// Partition is a single partition or node in a generalization hierarchy, which contains a set of items.
 type Partition struct {
 	items map[interface{}]bool
 }
@@ -21,9 +21,19 @@ func NewPartition(items ...interface{}) *Partition {
 	return p
 }
 
-// Contains returns true if the given item is part of the Partition
+// Contains returns true if the given item is part of the Partition.
 func (p *Partition) Contains(item interface{}) bool {
 	return p.items[item]
+}
+
+// ContainsPartition returns true if the given partition is contained by this partition.
+func (p *Partition) ContainsPartition(other *Partition) bool {
+	for item := range other.items {
+		if !p.Contains(item) {
+			return false
+		}
+	}
+	return true
 }
 
 // Combine merges a number of partitions and creates a new partition containing all elements from the input partitions.

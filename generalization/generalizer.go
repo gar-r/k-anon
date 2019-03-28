@@ -5,9 +5,11 @@ package generalization
 // but semantically consistent value from the same domain.
 type Generalizer interface {
 	// Generalize takes a value and generalizes it 'n' levels further.
-	// It returns a generalized Partition containing the item, and other items generalized into the same partition.
-	// This method will return nil if the value cannot be generalized to the given level.
-	Generalize(item interface{}, n int) *Partition
+	// Generalizes a partition n levels and returns the generalized Partition.
+	// The input partition can contain a single or multiple items.
+	// The generalized partition contains all items from the input partition, and other items generalized into the same partition.
+	// This function will return nil if the value cannot be generalized to the given level.
+	Generalize(p *Partition, n int) *Partition
 
 	// Levels returns the maximum level of generalization
 	Levels() int
@@ -29,8 +31,15 @@ func NewHierarchyGeneralizer(h *Hierarchy) *HierarchyGeneralizer {
 	}
 }
 
-func (g *HierarchyGeneralizer) Generalize(item interface{}, n int) *Partition {
-	return g.hierarchy.Find(item, n)
+func (g *HierarchyGeneralizer) Generalize(p *Partition, n int) *Partition {
+	level := g.hierarchy.Find(p)
+	l := g.hierarchy.GetLevel(level + n)
+	for _, part := range l {
+		if part.ContainsPartition(p) {
+			return part
+		}
+	}
+	return nil
 }
 
 func (g *HierarchyGeneralizer) Levels() int {
@@ -42,12 +51,11 @@ func (g *HierarchyGeneralizer) Levels() int {
 type Suppressor struct {
 }
 
-// Generalize returns a Partition containing either the value itself (n=0), or the '*' token
-// representing the suppressed value (n=1).
+// Generalize returns either the value itself (n=0), or the '*' token representing a suppressed value (n=1).
 // In all other cases it returns nil.
-func (s *Suppressor) Generalize(item interface{}, n int) *Partition {
+func (s *Suppressor) Generalize(p *Partition, n int) *Partition {
 	if n == 0 {
-		return NewPartition(item)
+		return p
 	}
 	if n == 1 {
 		return NewPartition("*")

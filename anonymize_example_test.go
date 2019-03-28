@@ -148,7 +148,6 @@ func ExampleAnonymizer_AnonymizeData() {
 	// Step 4: process the data
 	prettyPrintResult(result)
 
-	// Output:
 	// Since the partitioning has a random element, the algorithm might
 	// produce slightly different (but still correct) outputs for the same input.
 	// In this case for example the output might look something like this:
