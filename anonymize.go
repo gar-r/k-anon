@@ -2,33 +2,27 @@ package k_anon
 
 import (
 	"bitbucket.org/dargzero/k-anon/algorithm"
-	"bitbucket.org/dargzero/k-anon/generalization"
 	"bitbucket.org/dargzero/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/topo"
 )
 
-// Anonymizer operates on a given table with parameter 'k'.
-// In a k-anonymized table values are generalized or suppressed in a way,
-// that given any record there are other k-1 records in the table that are identical
-// to it along quasi-identifier attributes
+// Anonymizer is a graph based data anonymizer which operates on table data.
+// The anonymizer is characterized by its k value. In a k-anonymized table
+// all records are samePartition or suppressed in a way, that given any record
+// there are other k-1 records in the table that are identical
+// to it along quasi-identifier attributes.
 type Anonymizer struct {
-	table *model.Table
 	k     int
+	table *model.Table
 }
 
-func (a *Anonymizer) anonymizeData() [][]*generalization.Partition {
+// Anonymize creates a k-anonymized Table from the input Table.
+func (a *Anonymizer) Anonymize() {
 	g := a.computeAnonGraph()
 	components := topo.ConnectedComponents(g)
-	groups := a.getGroups(components)
-	var results [][]*generalization.Partition
-	for _, group := range groups {
-		rows := anonymize(group)
-		for _, r := range rows {
-			results = append(results, r)
-		}
-	}
-	return results
+	groups := a.getRowGroups(components)
+	a.generalize(groups)
 }
 
 func (a *Anonymizer) computeAnonGraph() graph.Undirected {
@@ -39,71 +33,52 @@ func (a *Anonymizer) computeAnonGraph() graph.Undirected {
 	return undirected
 }
 
-func (a *Anonymizer) getGroups(components [][]graph.Node) [][]*model.Vector {
-	var groups [][]*model.Vector
+func (a *Anonymizer) getRowGroups(components [][]graph.Node) [][]*model.Row {
+	var groups [][]*model.Row
 	for _, component := range components {
-		var rows []*model.Vector
+		var group []*model.Row
 		for _, n := range component {
-			idx := int(n.ID())
-			if idx < len(a.table.Rows) { // skip Steiner's vertices
-				rows = append(rows, a.table.Rows[idx])
+			id := int(n.ID())
+			if id < len(a.table.Rows) { // skip Steiner's vertices
+				group = append(group, a.table.Rows[id])
 			}
 		}
-		groups = append(groups, rows)
+		groups = append(groups, group)
 	}
 	return groups
 }
 
-func anonymize(group []*model.Vector) [][]*generalization.Partition {
-	results := makeRows(len(group), len(group[0].Items))
-	for col := range group[0].Items {
-		var data []*model.Data
-		for _, v := range group {
-			data = append(data, v.Items[col])
-		}
-		partitions := generalize(data)
-		for row, p := range partitions {
-			results[row][col] = p
-		}
+func (a *Anonymizer) generalize(groups [][]*model.Row) {
+	for _, group := range groups {
+		a.generalizeRowGroup(group)
 	}
-	return results
 }
 
-func makeRows(rows, cols int) [][]*generalization.Partition {
-	anonymizedRows := make([][]*generalization.Partition, rows)
-	for i := range anonymizedRows {
-		anonymizedRows[i] = make([]*generalization.Partition, cols)
-	}
-	return anonymizedRows
-}
-
-func generalize(data []*model.Data) []*generalization.Partition {
-	if data[0].IsIdentifier() {
-		return generalizeIdentifier(data)
-	}
-	return generalizeNonIdentifier(data)
-}
-
-func generalizeIdentifier(data []*model.Data) []*generalization.Partition {
-level:
-	for level := 0; level < data[0].Levels(); level++ {
-		var result []*generalization.Partition
-		for _, d := range data {
-			p := d.Generalize(level)
-			if len(result) > 0 && !result[0].Equals(p) {
-				continue level
+func (a *Anonymizer) generalizeRowGroup(rows []*model.Row) {
+	for colIdx := 0; colIdx < len(a.table.Schema.Columns); colIdx++ {
+		colDef := a.table.Schema.Columns[colIdx]
+		if colDef.IsIdentifier() {
+			for level := 0; level < colDef.Generalizer.Levels(); level++ {
+				for _, row := range rows {
+					p := colDef.Generalizer.Generalize(row.Data[colIdx], level)
+					row.Data[colIdx] = p
+				}
+				if samePartition(colIdx, rows) {
+					break
+				}
 			}
-			result = append(result, p)
 		}
-		return result
 	}
-	panic("could not generalize items into same partition")
 }
 
-func generalizeNonIdentifier(data []*model.Data) []*generalization.Partition {
-	var result []*generalization.Partition
-	for _, d := range data {
-		result = append(result, d.Value)
+func samePartition(colIdx int, rows []*model.Row) bool {
+	if len(rows) > 1 {
+		first := rows[0]
+		for _, row := range rows {
+			if !first.Data[colIdx].Equals(row.Data[colIdx]) {
+				return false
+			}
+		}
 	}
-	return result
+	return true
 }

@@ -6,10 +6,7 @@ package generalization
 // Level 1: (1) (2) (3) (4)	(5) (6) (7) (8, 9)
 // Level 0: (1) (2) (3) (4)	(5) (6) (7) (8) (9)
 func GetIntGeneralizer() Generalizer {
-	builder := IntegerHierarchyBuilder{
-		Items: []int{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	}
-	return NewHierarchyGeneralizer(builder.NewIntegerHierarchy())
+	return NewIntGeneralizer(1, 10, 1)
 }
 
 // Level 2: (A+ A A- B+ B B-)

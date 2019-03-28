@@ -31,8 +31,7 @@ func NewHierarchyGeneralizer(h *Hierarchy) *HierarchyGeneralizer {
 }
 
 func (g *HierarchyGeneralizer) Generalize(p *Partition, n int) *Partition {
-	level := g.hierarchy.Find(p)
-	l := g.hierarchy.GetLevel(level + n)
+	l := g.hierarchy.GetLevel(n)
 	for _, part := range l {
 		if part.ContainsPartition(p) {
 			return part

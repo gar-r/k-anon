@@ -59,26 +59,6 @@ func Test_InvalidItemsDoNotAddUp(t *testing.T) {
 	assertInvalid(h, t)
 }
 
-func Test_Find(t *testing.T) {
-	tests := []struct {
-		name          string
-		p             *Partition
-		expectedLevel int
-	}{
-		{"find level 0", NewPartition("C"), 0},
-		{"find level 1", NewPartition("C+", "C", "C-"), 1},
-		{"find level 2", NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"), 2},
-		{"missing", NewPartition("X"), -1},
-	}
-	h := GetGradeHierarchy()
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			actual := h.Find(test.p)
-			testutil.AssertEquals(test.expectedLevel, actual, t)
-		})
-	}
-}
-
 func Test_GetLevelUnderIndex(t *testing.T) {
 	h := GetGradeHierarchy()
 	idx := -1
@@ -101,11 +81,11 @@ func Test_StringEmpty(t *testing.T) {
 }
 
 func Test_StringSinglePartition(t *testing.T) {
-	p := NewPartition(1, 2)
+	p := NewPartition("a", "b")
 	h := &Hierarchy{Partitions: [][]*Partition{{p}}}
 	actual := h.String()
-	expected1 := "[1, 2]"
-	expected2 := "[2, 1]"
+	expected1 := "[a, b]"
+	expected2 := "[b, a]"
 	if !strings.Contains(actual, expected1) && !strings.Contains(actual, expected2) {
 		t.Errorf("expected %s to contain partition %s", actual, p.String())
 	}
@@ -127,11 +107,4 @@ func assertHierarchyEquals(h1 *Hierarchy, h2 *Hierarchy, t *testing.T) {
 	if !Equals(h1, h2) {
 		t.Errorf("expected:\n%s\nactual:\n%s\n", h1, h2)
 	}
-}
-
-func buildIntHierarchy(items ...int) *Hierarchy {
-	builder := &IntegerHierarchyBuilder{
-		Items: items,
-	}
-	return builder.NewIntegerHierarchy()
 }

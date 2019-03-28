@@ -1,9 +1,9 @@
 package generalization
 
 import (
-	"errors"
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 )
 
@@ -62,6 +62,16 @@ func (p *Partition) Equals(other *Partition) bool {
 
 // String returns the string representation of the partition
 func (p *Partition) String() string {
+	if len(p.items) < 1 {
+		return ""
+	}
+	if len(p.items) > 1 && p.isIntSeries() {
+		return p.intRangeString()
+	}
+	return p.itemsListString()
+}
+
+func (p *Partition) itemsListString() string {
 	b := &strings.Builder{}
 	for item := range p.items {
 		b.WriteString(fmt.Sprintf("%v", item))
@@ -73,17 +83,11 @@ func (p *Partition) String() string {
 
 // Treats the partition data as int and prints the string representation of the range
 // If there is an error during number conversion, it will return an error
-func (p *Partition) IntRangeString() (string, error) {
-	if len(p.items) < 1 {
-		return "", errors.New("partition empty")
-	}
+func (p *Partition) intRangeString() string {
 	min := math.MaxInt64
 	max := math.MinInt64
 	for item := range p.items {
-		num, ok := item.(int)
-		if !ok {
-			return "", errors.New("error during int conversion")
-		}
+		num, _ := item.(int)
 		if num < min {
 			min = num
 		}
@@ -91,5 +95,23 @@ func (p *Partition) IntRangeString() (string, error) {
 			max = num
 		}
 	}
-	return fmt.Sprintf("[%d..%d]", min, max), nil
+	return fmt.Sprintf("[%d..%d]", min, max)
+}
+
+func (p *Partition) isIntSeries() bool {
+	var items []int
+	for item := range p.items {
+		val, success := item.(int)
+		if !success {
+			return false
+		}
+		items = append(items, val)
+	}
+	sort.Ints(items)
+	for i := 1; i < len(items); i++ {
+		if items[i]-items[i-1] > 1 {
+			return false
+		}
+	}
+	return true
 }

@@ -1,23 +1,28 @@
 package algorithm
 
-import "bitbucket.org/dargzero/k-anon/model"
+import (
+	"bitbucket.org/dargzero/k-anon/generalization"
+	"bitbucket.org/dargzero/k-anon/model"
+)
 
-func CalculateCost(v1, v2 *model.Vector) float64 {
+func CalculateCost(r1, r2 *model.Row, schema *model.Schema) float64 {
 	var cost float64
-	for i := range v1.Items {
-		d1 := v1.Items[i]
-		d2 := v2.Items[i]
-		if d1.IsIdentifier() && d2.IsIdentifier() {
-			cost += calculateCostFraction(d1, d2)
+	for j, col := range schema.Columns {
+		if col.IsIdentifier() {
+			d1 := r1.Data[j]
+			d2 := r2.Data[j]
+			cost += calculateCostFraction(d1, d2, col.Generalizer)
 		}
 	}
 	return cost
 }
 
-func calculateCostFraction(d1 *model.Data, d2 *model.Data) float64 {
-	maxLevels := d1.Levels()
+func calculateCostFraction(p1, p2 *generalization.Partition, g generalization.Generalizer) float64 {
+	maxLevels := g.Levels()
 	for level := 0; level < maxLevels; level++ {
-		if d1.Generalize(level).Equals(d2.Generalize(level)) {
+		g1 := g.Generalize(p1, level)
+		g2 := g.Generalize(p2, level)
+		if g1.Equals(g2) {
 			return float64(level) / float64(maxLevels-1)
 		}
 	}

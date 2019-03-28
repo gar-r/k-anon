@@ -2,21 +2,25 @@ package generalization
 
 import "sort"
 
-// IntegerHierarchyBuilder can automatically generate a hierarchy from a numeric domain.
-// The builder will construct the Hierarchy from top to bottom, splitting partitions into two based on the median value.
-// The resulting Hierarchy will always be a valid generalization hierarchy.
-type IntegerHierarchyBuilder struct {
-	Items []int
+func NewIntGeneralizer(lower, upper, step int) *HierarchyGeneralizer {
+	r := makeRange(lower, upper, step)
+	return NewIntGeneralizerFromItems(r...)
 }
 
-func (b *IntegerHierarchyBuilder) NewIntegerHierarchy() *Hierarchy {
-	if len(b.Items) < 1 {
+func NewIntGeneralizerFromItems(items ...int) *HierarchyGeneralizer {
+	return &HierarchyGeneralizer{
+		hierarchy: buildHierarchy(items),
+	}
+}
+
+func buildHierarchy(items []int) *Hierarchy {
+	if len(items) < 1 {
 		return &Hierarchy{}
 	}
-	b.deduplicate()
+	integers := deduplicate(items)
 	h := &Hierarchy{
 		Partitions: [][]*Partition{
-			{NewPartition(stripType(b.Items)...)},
+			{NewPartition(stripType(integers)...)},
 		},
 	}
 	for !refined(h) {
@@ -68,15 +72,16 @@ func stripType(slice []int) []interface{} {
 	return result
 }
 
-func (b *IntegerHierarchyBuilder) deduplicate() {
+func deduplicate(items []int) []int {
 	itemMap := make(map[int]bool)
-	for _, item := range b.Items {
+	for _, item := range items {
 		itemMap[item] = true
 	}
-	b.Items = make([]int, 0, len(itemMap))
+	result := make([]int, 0, len(itemMap))
 	for item := range itemMap {
-		b.Items = append(b.Items, item)
+		result = append(result, item)
 	}
+	return result
 }
 
 func split(slice []int) ([]int, []int) {
@@ -100,4 +105,15 @@ func median(slice []int) float64 {
 		return float64(slice[len/2])
 	}
 	return float64(slice[len/2-1]+slice[len/2]) / 2
+}
+
+func makeRange(from, to, step int) []int {
+	var r []int
+	if step < 1 {
+		step = 1
+	}
+	for i := from; i < to; i += step {
+		r = append(r, i)
+	}
+	return r
 }

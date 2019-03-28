@@ -29,7 +29,7 @@ func addCosts(g *simple.WeightedUndirectedGraph, t *model.Table) {
 			if i != j {
 				v1 := t.Rows[i]
 				v2 := t.Rows[j]
-				cost := CalculateCost(v1, v2)
+				cost := CalculateCost(v1, v2, t.Schema)
 				edge := g.NewWeightedEdge(g.Node(int64(i)), g.Node(int64(j)), cost)
 				g.SetWeightedEdge(edge)
 			}

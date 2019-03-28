@@ -1,7 +1,6 @@
 package generalization
 
 import (
-	"bitbucket.org/dargzero/k-anon/testutil"
 	"fmt"
 	"strings"
 	"testing"
@@ -49,6 +48,7 @@ func Test_PartitionCombine(t *testing.T) {
 }
 
 func Test_PartitionToString(t *testing.T) {
+
 	tests := []struct {
 		partition *Partition
 		values    []string
@@ -57,6 +57,7 @@ func Test_PartitionToString(t *testing.T) {
 		{NewPartition("a"), []string{"a"}},
 		{NewPartition("a", "b"), []string{"a", "b"}},
 		{NewPartition("a", "b", "c"), []string{"a", "b", "c"}},
+		{NewPartition("a", 2, "c"), []string{"a", "2", "c"}},
 	}
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("PartitionToString #%d", i), func(t *testing.T) {
@@ -68,36 +69,6 @@ func Test_PartitionToString(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestPartition_IntRangeString(t *testing.T) {
-	tests := []struct {
-		partition *Partition
-		expected  string
-	}{
-		{NewPartition(1), "[1..1]"},
-		{NewPartition(2, 1), "[1..2]"},
-		{NewPartition(2, 1, 10, -5), "[-5..10]"},
-	}
-	for i, test := range tests {
-		t.Run(fmt.Sprintf("Test #%d", i), func(t *testing.T) {
-			actual, err := test.partition.IntRangeString()
-			testutil.AssertNil(err, t)
-			testutil.AssertEquals(test.expected, actual, t)
-		})
-	}
-}
-
-func Test_IntRangeStringEmptyPartition(t *testing.T) {
-	p := NewPartition()
-	_, err := p.IntRangeString()
-	testutil.AssertNotNil(err, t)
-}
-
-func Test_IntRangeStringBadData(t *testing.T) {
-	p := NewPartition(1, 2, "x")
-	_, err := p.IntRangeString()
-	testutil.AssertNotNil(err, t)
 }
 
 func assertPartitionEquals(p1, p2 *Partition, t *testing.T) {
