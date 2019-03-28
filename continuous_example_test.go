@@ -66,6 +66,24 @@ func ExampleAnonymizer_Continuous() {
 
 	// process & print results
 	fmt.Printf("%v", anon.table)
-	// Output:
-	// 1
+
+	// the resulting table will be similar to the below:
+
+	//Name	Status	Gender	Age	Kids	Income	Grade	Motto
+	//[*]	[employee]	[*]			[25]		[0]		[10000]			[A+, A, A-, B+, B, B-]	[cats are]
+	//[*]	[client]	[*]			[25]		[0]		[10000]			[A+, A, A-, B+, B, B-]	[cats are]
+	//[*]	[employee]	[*]			[30]		[1..2]	[25000..40000]	[A+, A, A-, B+, B, B-]	[cats are]
+	//[*]	[employee]	[*]			[30]		[1..2]	[25000..40000]	[A+, A, A-, B+, B, B-]	[cats are]
+	//[*]	[client]	[*]			[22..29]	[0..2]	[10000..40000]	[A, A-, B+, B, B-, A+]	[*]
+	//[*]	[client]	[*]			[22..29]	[0..2]	[10000..40000]	[B, B-, A+, A, A-, B+]	[*]
+	//[*]	[employee]	[*]			[22..29]	[0..2]	[10000..40000]	[A+, A, A-, B+, B, B-]	[*]
+	//[*]	[client]	[*]			[30]		[1..2]	[25000..40000]	[A+, A, A-, B+, B, B-]	[cats are]
+	//[*]	[employee]	[female]	[26..29]	[0..5]	[19375..21249]	[B+, B, B-]				[cats are]
+	//[*]	[client]	[male]		[30..44]	[0..5]	[36250..40000]	[A+, A, A-]				[*]
+	//[*]	[client]	[male]		[30..44]	[0..5]	[36250..40000]	[A, A-, A+]				[*]
+	//[*]	[employee]	[female]	[26..29]	[0..5]	[19375..21249]	[B, B-, B+]				[cats are]
+	//[*]	[client]	[male]		[0..59]		[0..5]	[19375..21249]	[A+, A, A-]				[cats are]
+	//[*]	[client]	[*]			[60..74]	[2]		[36250..40000]	[B+, B, B-]				[dogs are]
+	//[*]	[client]	[*]			[60..74]	[2]		[36250..40000]	[B+, B, B-]				[dogs are]
+	//[*]	[employee]	[male]		[0..59]		[0..5]	[19375..21249]	[A, A-, A+]				[cats are]
 }
