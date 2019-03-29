@@ -1,5 +1,7 @@
 package generalization
 
+import "bitbucket.org/dargzero/k-anon/partition"
+
 // Level 4: (1, 2, 3, 4, 5, 6, 7, 8, 9)
 // Level 3: (1, 2, 3, 4) (5, 6, 7, 8, 9)
 // Level 2: (1, 2) (3, 4) (5, 6) (7, 8, 9)
@@ -14,21 +16,21 @@ func GetIntGeneralizer() Generalizer {
 // Level 0: (A+) (A) (A-) (B+) (B) (B-)
 func GetGradeGeneralizer() *HierarchyGeneralizer {
 	generalizer := NewHierarchyGeneralizer(&Hierarchy{
-		Partitions: [][]*ItemSet{
+		Partitions: [][]*partition.ItemSet{
 			{
-				NewItemSet("A+"),
-				NewItemSet("A"),
-				NewItemSet("A-"),
-				NewItemSet("B+"),
-				NewItemSet("B"),
-				NewItemSet("B-"),
+				partition.NewItemSet("A+"),
+				partition.NewItemSet("A"),
+				partition.NewItemSet("A-"),
+				partition.NewItemSet("B+"),
+				partition.NewItemSet("B"),
+				partition.NewItemSet("B-"),
 			},
 			{
-				NewItemSet("A+", "A", "A-"),
-				NewItemSet("B+", "B", "B-"),
+				partition.NewItemSet("A+", "A", "A-"),
+				partition.NewItemSet("B+", "B", "B-"),
 			},
 			{
-				NewItemSet("A+", "A", "A-", "B+", "B", "B-"),
+				partition.NewItemSet("A+", "A", "A-", "B+", "B", "B-"),
 			},
 		},
 	})

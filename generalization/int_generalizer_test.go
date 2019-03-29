@@ -1,6 +1,7 @@
 package generalization
 
 import (
+	"bitbucket.org/dargzero/k-anon/partition"
 	"testing"
 )
 
@@ -17,8 +18,8 @@ func TestNewIntGeneralizer(t *testing.T) {
 		g := NewIntGeneralizer(0, 1, 1)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*ItemSet{
-				{NewItemSet(0)},
+			Partitions: [][]*partition.ItemSet{
+				{partition.NewItemSet(0)},
 			},
 		}
 		assertHierarchyEquals(expected, actual, t)
@@ -28,19 +29,19 @@ func TestNewIntGeneralizer(t *testing.T) {
 		g := NewIntGeneralizer(-10, 10, 5)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*ItemSet{
+			Partitions: [][]*partition.ItemSet{
 				{
-					NewItemSet(-10),
-					NewItemSet(-5),
-					NewItemSet(0),
-					NewItemSet(5),
+					partition.NewItemSet(-10),
+					partition.NewItemSet(-5),
+					partition.NewItemSet(0),
+					partition.NewItemSet(5),
 				},
 				{
-					NewItemSet(-10, -5),
-					NewItemSet(0, 5),
+					partition.NewItemSet(-10, -5),
+					partition.NewItemSet(0, 5),
 				},
 				{
-					NewItemSet(-10, -5, 0, 5),
+					partition.NewItemSet(-10, -5, 0, 5),
 				},
 			},
 		}
@@ -69,8 +70,8 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*ItemSet{
-				{NewItemSet(1)},
+			Partitions: [][]*partition.ItemSet{
+				{partition.NewItemSet(1)},
 			},
 		}
 		assertHierarchyEquals(expected, actual, t)
@@ -80,8 +81,8 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1, 1, 1)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*ItemSet{
-				{NewItemSet(1)},
+			Partitions: [][]*partition.ItemSet{
+				{partition.NewItemSet(1)},
 			},
 		}
 		assertHierarchyEquals(expected, actual, t)
@@ -91,19 +92,19 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1, 2, 3, 4)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*ItemSet{
+			Partitions: [][]*partition.ItemSet{
 				{
-					NewItemSet(1),
-					NewItemSet(2),
-					NewItemSet(3),
-					NewItemSet(4),
+					partition.NewItemSet(1),
+					partition.NewItemSet(2),
+					partition.NewItemSet(3),
+					partition.NewItemSet(4),
 				},
 				{
-					NewItemSet(1, 2),
-					NewItemSet(3, 4),
+					partition.NewItemSet(1, 2),
+					partition.NewItemSet(3, 4),
 				},
 				{
-					NewItemSet(1, 2, 3, 4),
+					partition.NewItemSet(1, 2, 3, 4),
 				},
 			},
 		}
@@ -114,18 +115,18 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1, 2, 3)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*ItemSet{
+			Partitions: [][]*partition.ItemSet{
 				{
-					NewItemSet(1),
-					NewItemSet(1),
-					NewItemSet(1),
+					partition.NewItemSet(1),
+					partition.NewItemSet(1),
+					partition.NewItemSet(1),
 				},
 				{
-					NewItemSet(1),
-					NewItemSet(2, 3),
+					partition.NewItemSet(1),
+					partition.NewItemSet(2, 3),
 				},
 				{
-					NewItemSet(1, 2, 3),
+					partition.NewItemSet(1, 2, 3),
 				},
 			},
 		}

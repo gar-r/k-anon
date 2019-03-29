@@ -1,5 +1,7 @@
 package generalization
 
+import "bitbucket.org/dargzero/k-anon/partition"
+
 // Generalizer represents a value generalization procedure.
 // Generalization means, that a value from a given domain is replaced with a less specific,
 // but semantically consistent value from the same domain.
@@ -8,7 +10,7 @@ type Generalizer interface {
 	// The input partition can contain a single or multiple items.
 	// The generalized partition contains all items from the input partition, and other items generalized into the same partition.
 	// This function will return nil if the value cannot be generalized to the given level.
-	Generalize(p Partition, n int) Partition
+	Generalize(p partition.Partition, n int) partition.Partition
 
 	// Levels returns the maximum level of generalization
 	Levels() int
@@ -30,7 +32,7 @@ func NewHierarchyGeneralizer(h *Hierarchy) *HierarchyGeneralizer {
 	}
 }
 
-func (g *HierarchyGeneralizer) Generalize(p Partition, n int) Partition {
+func (g *HierarchyGeneralizer) Generalize(p partition.Partition, n int) partition.Partition {
 	for l := n; l < g.Levels(); l++ { // continue searching in upper levels of the hierarchy
 		level := g.hierarchy.GetLevel(l)
 		for _, part := range level {
@@ -53,12 +55,12 @@ type Suppressor struct {
 
 // Generalize returns either the value itself (n=0), or the '*' token representing a suppressed value (n=1).
 // In all other cases it returns nil.
-func (s *Suppressor) Generalize(p Partition, n int) Partition {
+func (s *Suppressor) Generalize(p partition.Partition, n int) partition.Partition {
 	if n == 0 {
 		return p
 	}
 	if n == 1 {
-		return NewItemSet("*")
+		return partition.NewItemSet("*")
 	}
 	return nil
 }

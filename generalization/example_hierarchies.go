@@ -1,25 +1,27 @@
 package generalization
 
+import "bitbucket.org/dargzero/k-anon/partition"
+
 func GetGradeHierarchy() *Hierarchy {
-	return &Hierarchy{Partitions: [][]*ItemSet{
+	return &Hierarchy{Partitions: [][]*partition.ItemSet{
 		{
-			NewItemSet("A+"),
-			NewItemSet("A"),
-			NewItemSet("A-"),
-			NewItemSet("B+"),
-			NewItemSet("B"),
-			NewItemSet("B-"),
-			NewItemSet("C+"),
-			NewItemSet("C"),
-			NewItemSet("C-"),
+			partition.NewItemSet("A+"),
+			partition.NewItemSet("A"),
+			partition.NewItemSet("A-"),
+			partition.NewItemSet("B+"),
+			partition.NewItemSet("B"),
+			partition.NewItemSet("B-"),
+			partition.NewItemSet("C+"),
+			partition.NewItemSet("C"),
+			partition.NewItemSet("C-"),
 		},
 		{
-			NewItemSet("A+", "A", "A-"),
-			NewItemSet("B+", "B", "B-"),
-			NewItemSet("C+", "C", "C-"),
+			partition.NewItemSet("A+", "A", "A-"),
+			partition.NewItemSet("B+", "B", "B-"),
+			partition.NewItemSet("C+", "C", "C-"),
 		},
 		{
-			NewItemSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"),
+			partition.NewItemSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"),
 		},
 	}}
 }

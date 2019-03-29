@@ -1,4 +1,4 @@
-package generalization
+package partition
 
 import (
 	"fmt"
@@ -11,13 +11,17 @@ func TestItemSet_Equals(t *testing.T) {
 	t.Run("item sets are equal", func(t *testing.T) {
 		p1 := NewItemSet(1, 2, 3)
 		p2 := NewItemSet(3, 2, 1)
-		assertPartitionEquals(p1, p2, t)
+		if !p1.Equals(p2) {
+			t.Errorf("partitions are not equal: %v, %v", p1, p2)
+		}
 	})
 
 	t.Run("item sets are different", func(t *testing.T) {
 		p1 := NewItemSet(1, 2, 3, 4)
 		p2 := NewItemSet(1, 2, 3)
-		assertPartitionNotEquals(p1, p2, t)
+		if p1.Equals(p2) {
+			t.Errorf("partitions should not be equal: %v, %v", p1, p2)
+		}
 	})
 
 }
@@ -63,17 +67,5 @@ func TestItemSet_String(t *testing.T) {
 				}
 			}
 		})
-	}
-}
-
-func assertPartitionEquals(p1, p2 Partition, t *testing.T) {
-	if !p1.Equals(p2) {
-		t.Errorf("partitions should be equal: %v, %v", p1, p2)
-	}
-}
-
-func assertPartitionNotEquals(p1, p2 Partition, t *testing.T) {
-	if p1.Equals(p2) {
-		t.Errorf("partitions should be different: %v, %v", p1, p2)
 	}
 }

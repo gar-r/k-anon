@@ -1,6 +1,7 @@
 package generalization
 
 import (
+	"bitbucket.org/dargzero/k-anon/partition"
 	"strings"
 )
 
@@ -18,23 +19,23 @@ type PrefixGeneralizer struct {
 	MaxWords int
 }
 
-func (g *PrefixGeneralizer) Generalize(p Partition, n int) Partition {
+func (g *PrefixGeneralizer) Generalize(p partition.Partition, n int) partition.Partition {
 	const separator = " "
 	if n > g.Levels() {
 		return nil
 	}
-	itemSet, success := p.(*ItemSet)
+	itemSet, success := p.(*partition.ItemSet)
 	if !success {
-		return NewItemSet("")
+		return partition.NewItemSet("")
 	}
 	s := stringify(itemSet)
 	if n == g.MaxWords || s == "" {
-		return NewItemSet("*")
+		return partition.NewItemSet("*")
 	}
 	words := g.getPaddedWords(s)
 	idx := g.MaxWords - n
 	joined := strings.Join(words[:idx], separator)
-	return NewItemSet(strings.TrimRight(joined, separator))
+	return partition.NewItemSet(strings.TrimRight(joined, separator))
 }
 
 func (g *PrefixGeneralizer) Levels() int {
@@ -48,8 +49,8 @@ func (g *PrefixGeneralizer) getPaddedWords(s string) []string {
 	return padded
 }
 
-func stringify(p *ItemSet) string {
-	for item := range p.items {
+func stringify(p *partition.ItemSet) string {
+	for item := range p.Items {
 		s, success := item.(string)
 		if success {
 			return s

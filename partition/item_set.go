@@ -1,45 +1,33 @@
-package generalization
+package partition
 
 import (
 	"fmt"
 	"math"
-	"sort"
 	"strings"
 )
 
-// Partition is a single partition or node in a generalization hierarchy
-type Partition interface {
-	Contains(item interface{}) bool
-	ContainsPartition(other Partition) bool
-	Equals(other Partition) bool
-	String() string
-}
-
 type ItemSet struct {
-	items map[interface{}]bool
+	Items map[interface{}]bool
 }
 
-// NewItemSet creates a new ItemSet from the given slice of items
 func NewItemSet(items ...interface{}) *ItemSet {
-	p := &ItemSet{items: make(map[interface{}]bool)}
+	p := &ItemSet{Items: make(map[interface{}]bool)}
 	for _, item := range items {
-		p.items[item] = true
+		p.Items[item] = true
 	}
 	return p
 }
 
-// Contains returns true if the given item is part of the ItemSet
 func (p *ItemSet) Contains(item interface{}) bool {
-	return p.items[item]
+	return p.Items[item]
 }
 
-// ContainsPartition returns true if the given partition is contained by this partition
 func (p *ItemSet) ContainsPartition(other Partition) bool {
 	p2, success := other.(*ItemSet)
 	if !success {
 		return false
 	}
-	for item := range p2.items {
+	for item := range p2.Items {
 		if !p.Contains(item) {
 			return false
 		}
@@ -47,16 +35,15 @@ func (p *ItemSet) ContainsPartition(other Partition) bool {
 	return true
 }
 
-// Equals compares the ItemSet to another one and returns true if the elements match.
 func (p *ItemSet) Equals(other Partition) bool {
 	if other == nil {
 		return false
 	}
 	p2, success := other.(*ItemSet)
-	if !success || len(p2.items) != len(p.items) {
+	if !success || len(p2.Items) != len(p.Items) {
 		return false
 	}
-	for i := range p.items {
+	for i := range p.Items {
 		if !p2.Contains(i) {
 			return false
 		}
@@ -64,12 +51,11 @@ func (p *ItemSet) Equals(other Partition) bool {
 	return true
 }
 
-// String returns the string representation of the partition
 func (p *ItemSet) String() string {
-	if len(p.items) < 1 {
+	if len(p.Items) < 1 {
 		return ""
 	}
-	if len(p.items) > 1 && p.isIntSeries() {
+	if len(p.Items) > 1 && p.isIntSeries() {
 		return p.intRangeString()
 	}
 	return p.itemsListString()
@@ -77,7 +63,7 @@ func (p *ItemSet) String() string {
 
 func (p *ItemSet) itemsListString() string {
 	b := &strings.Builder{}
-	for item := range p.items {
+	for item := range p.Items {
 		b.WriteString(fmt.Sprintf("%v", item))
 		b.WriteString(", ")
 	}
@@ -90,7 +76,7 @@ func (p *ItemSet) itemsListString() string {
 func (p *ItemSet) intRangeString() string {
 	min := math.MaxInt64
 	max := math.MinInt64
-	for item := range p.items {
+	for item := range p.Items {
 		num, _ := item.(int)
 		if num < min {
 			min = num
@@ -100,22 +86,4 @@ func (p *ItemSet) intRangeString() string {
 		}
 	}
 	return fmt.Sprintf("[%d..%d]", min, max)
-}
-
-func (p *ItemSet) isIntSeries() bool {
-	var items []int
-	for item := range p.items {
-		val, success := item.(int)
-		if !success {
-			return false
-		}
-		items = append(items, val)
-	}
-	sort.Ints(items)
-	for i := 1; i < len(items); i++ {
-		if items[i]-items[i-1] > 1 {
-			return false
-		}
-	}
-	return true
 }

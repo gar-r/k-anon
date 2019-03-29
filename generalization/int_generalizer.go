@@ -1,6 +1,9 @@
 package generalization
 
-import "sort"
+import (
+	"bitbucket.org/dargzero/k-anon/partition"
+	"sort"
+)
 
 func NewIntGeneralizer(lower, upper, step int) *HierarchyGeneralizer {
 	r := makeRange(lower, upper, step)
@@ -19,8 +22,8 @@ func buildHierarchy(items []int) *Hierarchy {
 	}
 	integers := deduplicate(items)
 	h := &Hierarchy{
-		Partitions: [][]*ItemSet{
-			{NewItemSet(stripType(integers)...)},
+		Partitions: [][]*partition.ItemSet{
+			{partition.NewItemSet(stripType(integers)...)},
 		},
 	}
 	for !refined(h) {
@@ -31,33 +34,33 @@ func buildHierarchy(items []int) *Hierarchy {
 
 func refine(h *Hierarchy) {
 	level := h.GetLevel(0)
-	var newPartitions []*ItemSet
+	var newPartitions []*partition.ItemSet
 	for _, p := range level {
-		if len(p.items) > 1 {
+		if len(p.Items) > 1 {
 			values := intValues(p)
 			p1, p2 := split(values)
-			newPartitions = append(newPartitions, NewItemSet(stripType(p1)...))
-			newPartitions = append(newPartitions, NewItemSet(stripType(p2)...))
+			newPartitions = append(newPartitions, partition.NewItemSet(stripType(p1)...))
+			newPartitions = append(newPartitions, partition.NewItemSet(stripType(p2)...))
 		} else {
 			newPartitions = append(newPartitions, p)
 		}
 	}
-	h.Partitions = append([][]*ItemSet{newPartitions}, h.Partitions...)
+	h.Partitions = append([][]*partition.ItemSet{newPartitions}, h.Partitions...)
 }
 
 func refined(h *Hierarchy) bool {
 	level := h.GetLevel(0)
 	for _, p := range level {
-		if len(p.items) != 1 {
+		if len(p.Items) != 1 {
 			return false
 		}
 	}
 	return true
 }
 
-func intValues(p *ItemSet) []int {
+func intValues(p *partition.ItemSet) []int {
 	var values []int
-	for item := range p.items {
+	for item := range p.Items {
 		i := item.(int)
 		values = append(values, i)
 	}

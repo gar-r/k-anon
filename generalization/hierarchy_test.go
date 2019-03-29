@@ -1,6 +1,7 @@
 package generalization
 
 import (
+	"bitbucket.org/dargzero/k-anon/partition"
 	"bitbucket.org/dargzero/k-anon/testutil"
 	"strings"
 	"testing"
@@ -15,7 +16,7 @@ func Test_Levels(t *testing.T) {
 
 func Test_GetLevel(t *testing.T) {
 	h := GetGradeHierarchy()
-	expected := []*ItemSet{NewItemSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
+	expected := []*partition.ItemSet{partition.NewItemSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
 	actual := h.GetLevel(2)
 	testutil.AssertEquals(len(expected), len(actual), t)
 	for i := range expected {
@@ -31,29 +32,29 @@ func Test_Valid(t *testing.T) {
 }
 
 func Test_InvalidMultipleValuesOnLevel(t *testing.T) {
-	h := &Hierarchy{Partitions: [][]*ItemSet{
+	h := &Hierarchy{Partitions: [][]*partition.ItemSet{
 		{
-			NewItemSet(1, 2, 3),
-			NewItemSet(5, 6, 3), // <= error: 3 is present in both partitions in the same level
+			partition.NewItemSet(1, 2, 3),
+			partition.NewItemSet(5, 6, 3), // <= error: 3 is present in both partitions in the same level
 		},
 	}}
 	assertInvalid(h, t)
 }
 
 func Test_InvalidItemsDoNotAddUp(t *testing.T) {
-	h := &Hierarchy{Partitions: [][]*ItemSet{
+	h := &Hierarchy{Partitions: [][]*partition.ItemSet{
 		{
-			NewItemSet(1),
-			NewItemSet(2),
-			NewItemSet(3),
-			NewItemSet(4),
+			partition.NewItemSet(1),
+			partition.NewItemSet(2),
+			partition.NewItemSet(3),
+			partition.NewItemSet(4),
 		},
 		{
-			NewItemSet(1, 2),
-			NewItemSet(3, 5), // <= error: 5 is not part of the hierarchy
+			partition.NewItemSet(1, 2),
+			partition.NewItemSet(3, 5), // <= error: 5 is not part of the hierarchy
 		},
 		{
-			NewItemSet(1, 2, 3, 4),
+			partition.NewItemSet(1, 2, 3, 4),
 		},
 	}}
 	assertInvalid(h, t)
@@ -81,8 +82,8 @@ func Test_StringEmpty(t *testing.T) {
 }
 
 func Test_StringSinglePartition(t *testing.T) {
-	p := NewItemSet("a", "b")
-	h := &Hierarchy{Partitions: [][]*ItemSet{{p}}}
+	p := partition.NewItemSet("a", "b")
+	h := &Hierarchy{Partitions: [][]*partition.ItemSet{{p}}}
 	actual := h.String()
 	expected1 := "[a, b]"
 	expected2 := "[b, a]"

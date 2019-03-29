@@ -1,6 +1,7 @@
 package generalization
 
 import (
+	"bitbucket.org/dargzero/k-anon/partition"
 	"strings"
 )
 
@@ -10,12 +11,12 @@ import (
 // On the highest level of the Hierarchy all elements are grouped into a single partition.
 // A given element can only appear once per generalization level across all partitions.
 type Hierarchy struct {
-	Partitions [][]*ItemSet
+	Partitions [][]*partition.ItemSet
 }
 
 // Find locates a single ItemSet in the hierarchy, and returns the level it is in.
 // If the partition is not found, it returns -1.
-func (h *Hierarchy) Find(p *ItemSet) int {
+func (h *Hierarchy) Find(p *partition.ItemSet) int {
 	for level, partitions := range h.Partitions {
 		for _, partition := range partitions {
 			if partition.Equals(p) {
@@ -31,7 +32,7 @@ func (h *Hierarchy) GetLevelCount() int {
 	return len(h.Partitions)
 }
 
-func (h *Hierarchy) GetLevel(level int) []*ItemSet {
+func (h *Hierarchy) GetLevel(level int) []*partition.ItemSet {
 	if 0 <= level && level < h.GetLevelCount() {
 		return h.Partitions[level]
 	}
@@ -45,7 +46,7 @@ func (h *Hierarchy) IsValid() bool {
 	last := h.Partitions[len(h.Partitions)-1][0]
 	for _, level := range h.Partitions {
 		occurrences := makeOccurrenceMap(level)
-		if len(occurrences) != len(last.items) {
+		if len(occurrences) != len(last.Items) {
 			return false
 		}
 		for item, value := range occurrences {
@@ -61,11 +62,11 @@ func (h *Hierarchy) IsValid() bool {
 func (h *Hierarchy) String() string {
 	b := strings.Builder{}
 	for _, level := range h.Partitions {
-		b.WriteString("[")
+		b.WriteString("{ ")
 		for _, partition := range level {
 			b.WriteString(partition.String())
 		}
-		b.WriteString("]\n")
+		b.WriteString(" }\n")
 	}
 	return strings.TrimSpace(b.String())
 }
@@ -91,10 +92,10 @@ func Equals(h1, h2 *Hierarchy) bool {
 	return true
 }
 
-func makeOccurrenceMap(level []*ItemSet) map[interface{}]int {
+func makeOccurrenceMap(level []*partition.ItemSet) map[interface{}]int {
 	occurrences := make(map[interface{}]int)
 	for _, partition := range level {
-		for item := range partition.items {
+		for item := range partition.Items {
 			occurrences[item] += 1
 		}
 	}

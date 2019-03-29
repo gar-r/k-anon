@@ -2,6 +2,7 @@ package model
 
 import (
 	"bitbucket.org/dargzero/k-anon/generalization"
+	"bitbucket.org/dargzero/k-anon/partition"
 	"fmt"
 	"strings"
 )
@@ -58,13 +59,13 @@ func (c *Column) IsIdentifier() bool {
 
 // Row represents a row of data in a table.
 type Row struct {
-	Data []generalization.Partition
+	Data []partition.Partition
 }
 
 func NewRow(items ...interface{}) *Row {
-	var data []generalization.Partition
+	var data []partition.Partition
 	for _, item := range items {
-		data = append(data, generalization.NewItemSet(item))
+		data = append(data, partition.NewItemSet(item))
 	}
 	return &Row{Data: data}
 }
