@@ -35,9 +35,6 @@ func (p *ItemSet) ContainsPartition(other Partition) bool {
 }
 
 func (p *ItemSet) Equals(other Partition) bool {
-	if other == nil {
-		return false
-	}
 	p2, success := other.(*ItemSet)
 	if !success || len(p2.Items) != len(p.Items) {
 		return false

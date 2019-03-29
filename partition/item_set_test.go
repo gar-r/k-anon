@@ -8,8 +8,9 @@ import (
 
 func TestItemSet_Equals(t *testing.T) {
 
+	p1 := NewItemSet(1, 2, 3)
+
 	t.Run("item sets are equal", func(t *testing.T) {
-		p1 := NewItemSet(1, 2, 3)
 		p2 := NewItemSet(3, 2, 1)
 		if !p1.Equals(p2) {
 			t.Errorf("partitions are not equal: %v, %v", p1, p2)
@@ -17,10 +18,15 @@ func TestItemSet_Equals(t *testing.T) {
 	})
 
 	t.Run("item sets are different", func(t *testing.T) {
-		p1 := NewItemSet(1, 2, 3, 4)
-		p2 := NewItemSet(1, 2, 3)
+		p2 := NewItemSet(1, 2, 3, 4)
 		if p1.Equals(p2) {
 			t.Errorf("partitions should not be equal: %v, %v", p1, p2)
+		}
+	})
+
+	t.Run("nil input", func(t *testing.T) {
+		if p1.Equals(nil) {
+			t.Errorf("partition should not be equal to nil")
 		}
 	})
 
@@ -44,6 +50,33 @@ func TestItemSet_Contains(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestItemSet_ContainsPartition(t *testing.T) {
+
+	p1 := NewItemSet(1, 2, 3, 4, 5, 6)
+
+	t.Run("non compatible type", func(t *testing.T) {
+		p2 := NewIntRange(0, 5)
+		if p1.ContainsPartition(p2) {
+			t.Errorf("%v should not contain %v", p1, p2)
+		}
+	})
+
+	t.Run("does not contain all items", func(t *testing.T) {
+		p2 := NewItemSet(2, 3, 8)
+		if p1.ContainsPartition(p2) {
+			t.Errorf("%v should not contain %v", p1, p2)
+		}
+	})
+
+	t.Run("contains all items", func(t *testing.T) {
+		p2 := NewItemSet(2, 3, 5, 6)
+		if !p1.ContainsPartition(p2) {
+			t.Errorf("%v should contain %v", p1, p2)
+		}
+	})
+
 }
 
 func TestItemSet_String(t *testing.T) {
