@@ -2,7 +2,6 @@ package partition
 
 import (
 	"fmt"
-	"math"
 	"strings"
 )
 
@@ -52,16 +51,6 @@ func (p *ItemSet) Equals(other Partition) bool {
 }
 
 func (p *ItemSet) String() string {
-	if len(p.Items) < 1 {
-		return ""
-	}
-	if len(p.Items) > 1 && p.isIntSeries() {
-		return p.intRangeString()
-	}
-	return p.itemsListString()
-}
-
-func (p *ItemSet) itemsListString() string {
 	b := &strings.Builder{}
 	for item := range p.Items {
 		b.WriteString(fmt.Sprintf("%v", item))
@@ -69,21 +58,4 @@ func (p *ItemSet) itemsListString() string {
 	}
 	s := strings.Trim(strings.TrimSpace(b.String()), ",")
 	return fmt.Sprintf("[%s]", s)
-}
-
-// Treats the partition data as int and prints the string representation of the range
-// If there is an error during number conversion, it will return an error
-func (p *ItemSet) intRangeString() string {
-	min := math.MaxInt64
-	max := math.MinInt64
-	for item := range p.Items {
-		num, _ := item.(int)
-		if num < min {
-			min = num
-		}
-		if num > max {
-			max = num
-		}
-	}
-	return fmt.Sprintf("[%d..%d]", min, max)
 }

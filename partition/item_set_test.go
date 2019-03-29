@@ -47,7 +47,6 @@ func TestItemSet_Contains(t *testing.T) {
 }
 
 func TestItemSet_String(t *testing.T) {
-
 	tests := []struct {
 		partition *ItemSet
 		values    []string
