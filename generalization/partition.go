@@ -7,28 +7,39 @@ import (
 	"strings"
 )
 
-// Partition is a single partition or node in a generalization hierarchy, which contains a set of items.
-type Partition struct {
+// Partition is a single partition or node in a generalization hierarchy
+type Partition interface {
+	Contains(item interface{}) bool
+	ContainsPartition(other Partition) bool
+	Equals(other Partition) bool
+	String() string
+}
+
+type ItemSet struct {
 	items map[interface{}]bool
 }
 
-// NewPartition creates a new Partition from the given slice of items.
-func NewPartition(items ...interface{}) *Partition {
-	p := &Partition{items: make(map[interface{}]bool)}
+// NewItemSet creates a new ItemSet from the given slice of items
+func NewItemSet(items ...interface{}) *ItemSet {
+	p := &ItemSet{items: make(map[interface{}]bool)}
 	for _, item := range items {
 		p.items[item] = true
 	}
 	return p
 }
 
-// Contains returns true if the given item is part of the Partition.
-func (p *Partition) Contains(item interface{}) bool {
+// Contains returns true if the given item is part of the ItemSet
+func (p *ItemSet) Contains(item interface{}) bool {
 	return p.items[item]
 }
 
-// ContainsPartition returns true if the given partition is contained by this partition.
-func (p *Partition) ContainsPartition(other *Partition) bool {
-	for item := range other.items {
+// ContainsPartition returns true if the given partition is contained by this partition
+func (p *ItemSet) ContainsPartition(other Partition) bool {
+	p2, success := other.(*ItemSet)
+	if !success {
+		return false
+	}
+	for item := range p2.items {
 		if !p.Contains(item) {
 			return false
 		}
@@ -36,24 +47,17 @@ func (p *Partition) ContainsPartition(other *Partition) bool {
 	return true
 }
 
-// Combine merges a number of partitions and creates a new partition containing all elements from the input partitions.
-func Combine(partitions ...*Partition) *Partition {
-	p := NewPartition()
-	for _, partition := range partitions {
-		for item := range partition.items {
-			p.items[item] = true
-		}
+// Equals compares the ItemSet to another one and returns true if the elements match.
+func (p *ItemSet) Equals(other Partition) bool {
+	if other == nil {
+		return false
 	}
-	return p
-}
-
-// Equals compares the Partition to another one and returns true if the elements match.
-func (p *Partition) Equals(other *Partition) bool {
-	if other == nil || len(p.items) != len(other.items) {
+	p2, success := other.(*ItemSet)
+	if !success || len(p2.items) != len(p.items) {
 		return false
 	}
 	for i := range p.items {
-		if !other.Contains(i) {
+		if !p2.Contains(i) {
 			return false
 		}
 	}
@@ -61,7 +65,7 @@ func (p *Partition) Equals(other *Partition) bool {
 }
 
 // String returns the string representation of the partition
-func (p *Partition) String() string {
+func (p *ItemSet) String() string {
 	if len(p.items) < 1 {
 		return ""
 	}
@@ -71,7 +75,7 @@ func (p *Partition) String() string {
 	return p.itemsListString()
 }
 
-func (p *Partition) itemsListString() string {
+func (p *ItemSet) itemsListString() string {
 	b := &strings.Builder{}
 	for item := range p.items {
 		b.WriteString(fmt.Sprintf("%v", item))
@@ -83,7 +87,7 @@ func (p *Partition) itemsListString() string {
 
 // Treats the partition data as int and prints the string representation of the range
 // If there is an error during number conversion, it will return an error
-func (p *Partition) intRangeString() string {
+func (p *ItemSet) intRangeString() string {
 	min := math.MaxInt64
 	max := math.MinInt64
 	for item := range p.items {
@@ -98,7 +102,7 @@ func (p *Partition) intRangeString() string {
 	return fmt.Sprintf("[%d..%d]", min, max)
 }
 
-func (p *Partition) isIntSeries() bool {
+func (p *ItemSet) isIntSeries() bool {
 	var items []int
 	for item := range p.items {
 		val, success := item.(int)

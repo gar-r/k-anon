@@ -10,49 +10,49 @@ func TestPrefixGeneralizer_Generalize(t *testing.T) {
 	g := &PrefixGeneralizer{MaxWords: 5}
 
 	t.Run("level 0", func(t *testing.T) {
-		actual := g.Generalize(NewPartition("this is a test string"), 0)
-		expected := NewPartition("this is a test string")
+		actual := g.Generalize(NewItemSet("this is a test string"), 0)
+		expected := NewItemSet("this is a test string")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("generalize one level", func(t *testing.T) {
-		actual := g.Generalize(NewPartition("this is a test string"), 1)
-		expected := NewPartition("this is a test")
+		actual := g.Generalize(NewItemSet("this is a test string"), 1)
+		expected := NewItemSet("this is a test")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("generalize multiple levels", func(t *testing.T) {
-		actual := g.Generalize(NewPartition("this is a test string"), 3)
-		expected := NewPartition("this is")
+		actual := g.Generalize(NewItemSet("this is a test string"), 3)
+		expected := NewItemSet("this is")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("exceeds max words", func(t *testing.T) {
-		actual := g.Generalize(NewPartition("this is a test string"), 20)
+		actual := g.Generalize(NewItemSet("this is a test string"), 20)
 		testutil.AssertNil(actual, t)
 	})
 
 	t.Run("generalize last word", func(t *testing.T) {
-		actual := g.Generalize(NewPartition("this is a test string"), 5)
-		expected := NewPartition("*")
+		actual := g.Generalize(NewItemSet("this is a test string"), 5)
+		expected := NewItemSet("*")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("empty string input", func(t *testing.T) {
-		actual := g.Generalize(NewPartition(""), 3)
-		expected := NewPartition("*")
+		actual := g.Generalize(NewItemSet(""), 3)
+		expected := NewItemSet("*")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("non string input", func(t *testing.T) {
-		actual := g.Generalize(NewPartition(10), 3)
-		expected := NewPartition("*")
+		actual := g.Generalize(NewItemSet(10), 3)
+		expected := NewItemSet("*")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("multiple items in partition", func(t *testing.T) {
-		actual := g.Generalize(NewPartition(10, "cats are wild"), 0)
-		expected := NewPartition("cats are wild")
+		actual := g.Generalize(NewItemSet(10, "cats are wild"), 0)
+		expected := NewItemSet("cats are wild")
 		assertPartitionEquals(expected, actual, t)
 	})
 }

@@ -15,7 +15,7 @@ func Test_Levels(t *testing.T) {
 
 func Test_GetLevel(t *testing.T) {
 	h := GetGradeHierarchy()
-	expected := []*Partition{NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
+	expected := []*ItemSet{NewItemSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-")}
 	actual := h.GetLevel(2)
 	testutil.AssertEquals(len(expected), len(actual), t)
 	for i := range expected {
@@ -31,29 +31,29 @@ func Test_Valid(t *testing.T) {
 }
 
 func Test_InvalidMultipleValuesOnLevel(t *testing.T) {
-	h := &Hierarchy{Partitions: [][]*Partition{
+	h := &Hierarchy{Partitions: [][]*ItemSet{
 		{
-			NewPartition(1, 2, 3),
-			NewPartition(5, 6, 3), // <= error: 3 is present in both partitions in the same level
+			NewItemSet(1, 2, 3),
+			NewItemSet(5, 6, 3), // <= error: 3 is present in both partitions in the same level
 		},
 	}}
 	assertInvalid(h, t)
 }
 
 func Test_InvalidItemsDoNotAddUp(t *testing.T) {
-	h := &Hierarchy{Partitions: [][]*Partition{
+	h := &Hierarchy{Partitions: [][]*ItemSet{
 		{
-			NewPartition(1),
-			NewPartition(2),
-			NewPartition(3),
-			NewPartition(4),
+			NewItemSet(1),
+			NewItemSet(2),
+			NewItemSet(3),
+			NewItemSet(4),
 		},
 		{
-			NewPartition(1, 2),
-			NewPartition(3, 5), // <= error: 5 is not part of the hierarchy
+			NewItemSet(1, 2),
+			NewItemSet(3, 5), // <= error: 5 is not part of the hierarchy
 		},
 		{
-			NewPartition(1, 2, 3, 4),
+			NewItemSet(1, 2, 3, 4),
 		},
 	}}
 	assertInvalid(h, t)
@@ -81,8 +81,8 @@ func Test_StringEmpty(t *testing.T) {
 }
 
 func Test_StringSinglePartition(t *testing.T) {
-	p := NewPartition("a", "b")
-	h := &Hierarchy{Partitions: [][]*Partition{{p}}}
+	p := NewItemSet("a", "b")
+	h := &Hierarchy{Partitions: [][]*ItemSet{{p}}}
 	actual := h.String()
 	expected1 := "[a, b]"
 	expected2 := "[b, a]"

@@ -17,7 +17,7 @@ func CalculateCost(r1, r2 *model.Row, schema *model.Schema) float64 {
 	return cost
 }
 
-func calculateCostFraction(p1, p2 *generalization.Partition, g generalization.Generalizer) float64 {
+func calculateCostFraction(p1, p2 generalization.Partition, g generalization.Generalizer) float64 {
 	maxLevels := g.Levels()
 	for level := 0; level < maxLevels; level++ {
 		g1 := g.Generalize(p1, level)

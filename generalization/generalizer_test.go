@@ -10,13 +10,13 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 
 	t.Run("invalid hierarchy", func(t *testing.T) {
 		invalid := &Hierarchy{
-			Partitions: [][]*Partition{
+			Partitions: [][]*ItemSet{
 				{
-					NewPartition("A"),
-					NewPartition("B"),
+					NewItemSet("A"),
+					NewItemSet("B"),
 				},
 				{
-					NewPartition("C"),
+					NewItemSet("C"),
 				},
 			},
 		}
@@ -26,7 +26,7 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 
 	t.Run("invalid value in hierarchy", func(t *testing.T) {
 		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy())
-		p := NewPartition("X")
+		p := NewItemSet("X")
 		actual := generalizer.Generalize(p, 1)
 		testutil.AssertNil(actual, t)
 	})
@@ -34,12 +34,12 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 	t.Run("generalize tests", func(t *testing.T) {
 		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy())
 		tests := []struct {
-			p, expected *Partition
+			p, expected *ItemSet
 			level       int
 		}{
-			{level: 0, p: NewPartition("C"), expected: NewPartition("C")},
-			{level: 1, p: NewPartition("C"), expected: NewPartition("C+", "C", "C-")},
-			{level: 2, p: NewPartition("C"), expected: NewPartition("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")},
+			{level: 0, p: NewItemSet("C"), expected: NewItemSet("C")},
+			{level: 1, p: NewItemSet("C"), expected: NewItemSet("C+", "C", "C-")},
+			{level: 2, p: NewItemSet("C"), expected: NewItemSet("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")},
 		}
 		for _, test := range tests {
 			t.Run(fmt.Sprintf("level %d", test.level), func(t *testing.T) {
@@ -51,26 +51,19 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 
 	t.Run("generalize complex partition", func(t *testing.T) {
 		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy())
-		p := NewPartition("C+", "C", "C-")
+		p := NewItemSet("C+", "C", "C-")
 		actual := generalizer.Generalize(p, 2)
-		expected := NewPartition("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")
+		expected := NewItemSet("A+", "A", "A-", "B", "B+", "B-", "C+", "C", "C-")
 		assertPartitionEquals(expected, actual, t)
 	})
 
 	t.Run("re-generalize complex partition", func(t *testing.T) {
 		generalizer := NewHierarchyGeneralizer(GetGradeHierarchy())
-		p := NewPartition("C+", "C", "C-")
+		p := NewItemSet("C+", "C", "C-")
 		actual := generalizer.Generalize(p, 0)
-		expected := NewPartition("C+", "C", "C-")
+		expected := NewItemSet("C+", "C", "C-")
 		assertPartitionEquals(expected, actual, t)
 	})
-}
-
-func Test_SuppressorPartitionLength(t *testing.T) {
-	g := &Suppressor{}
-	p := NewPartition("test")
-	actual := g.Generalize(p, 1)
-	testutil.AssertEquals(1, len(actual.items), t)
 }
 
 func Test_Suppressor(t *testing.T) {
@@ -87,12 +80,12 @@ func Test_Suppressor(t *testing.T) {
 	g := &Suppressor{}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v, %d => %v", test.item, test.n, test.expected), func(t *testing.T) {
-			p := NewPartition(test.item)
+			p := NewItemSet(test.item)
 			actual := g.Generalize(p, test.n)
 			if test.expected == nil {
 				testutil.AssertNil(actual, t)
 			} else {
-				exp := NewPartition(test.expected)
+				exp := NewItemSet(test.expected)
 				assertPartitionEquals(exp, actual, t)
 			}
 		})

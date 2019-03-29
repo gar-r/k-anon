@@ -1,25 +1,25 @@
 package generalization
 
 func GetGradeHierarchy() *Hierarchy {
-	return &Hierarchy{Partitions: [][]*Partition{
+	return &Hierarchy{Partitions: [][]*ItemSet{
 		{
-			NewPartition("A+"),
-			NewPartition("A"),
-			NewPartition("A-"),
-			NewPartition("B+"),
-			NewPartition("B"),
-			NewPartition("B-"),
-			NewPartition("C+"),
-			NewPartition("C"),
-			NewPartition("C-"),
+			NewItemSet("A+"),
+			NewItemSet("A"),
+			NewItemSet("A-"),
+			NewItemSet("B+"),
+			NewItemSet("B"),
+			NewItemSet("B-"),
+			NewItemSet("C+"),
+			NewItemSet("C"),
+			NewItemSet("C-"),
 		},
 		{
-			NewPartition("A+", "A", "A-"),
-			NewPartition("B+", "B", "B-"),
-			NewPartition("C+", "C", "C-"),
+			NewItemSet("A+", "A", "A-"),
+			NewItemSet("B+", "B", "B-"),
+			NewItemSet("C+", "C", "C-"),
 		},
 		{
-			NewPartition("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"),
+			NewItemSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"),
 		},
 	}}
 }

@@ -58,13 +58,13 @@ func (c *Column) IsIdentifier() bool {
 
 // Row represents a row of data in a table.
 type Row struct {
-	Data []*generalization.Partition
+	Data []generalization.Partition
 }
 
 func NewRow(items ...interface{}) *Row {
-	var data []*generalization.Partition
+	var data []generalization.Partition
 	for _, item := range items {
-		data = append(data, generalization.NewPartition(item))
+		data = append(data, generalization.NewItemSet(item))
 	}
 	return &Row{Data: data}
 }

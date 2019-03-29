@@ -17,8 +17,8 @@ func TestNewIntGeneralizer(t *testing.T) {
 		g := NewIntGeneralizer(0, 1, 1)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*Partition{
-				{NewPartition(0)},
+			Partitions: [][]*ItemSet{
+				{NewItemSet(0)},
 			},
 		}
 		assertHierarchyEquals(expected, actual, t)
@@ -28,19 +28,19 @@ func TestNewIntGeneralizer(t *testing.T) {
 		g := NewIntGeneralizer(-10, 10, 5)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*Partition{
+			Partitions: [][]*ItemSet{
 				{
-					NewPartition(-10),
-					NewPartition(-5),
-					NewPartition(0),
-					NewPartition(5),
+					NewItemSet(-10),
+					NewItemSet(-5),
+					NewItemSet(0),
+					NewItemSet(5),
 				},
 				{
-					NewPartition(-10, -5),
-					NewPartition(0, 5),
+					NewItemSet(-10, -5),
+					NewItemSet(0, 5),
 				},
 				{
-					NewPartition(-10, -5, 0, 5),
+					NewItemSet(-10, -5, 0, 5),
 				},
 			},
 		}
@@ -69,8 +69,8 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*Partition{
-				{NewPartition(1)},
+			Partitions: [][]*ItemSet{
+				{NewItemSet(1)},
 			},
 		}
 		assertHierarchyEquals(expected, actual, t)
@@ -80,8 +80,8 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1, 1, 1)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*Partition{
-				{NewPartition(1)},
+			Partitions: [][]*ItemSet{
+				{NewItemSet(1)},
 			},
 		}
 		assertHierarchyEquals(expected, actual, t)
@@ -91,19 +91,19 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1, 2, 3, 4)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*Partition{
+			Partitions: [][]*ItemSet{
 				{
-					NewPartition(1),
-					NewPartition(2),
-					NewPartition(3),
-					NewPartition(4),
+					NewItemSet(1),
+					NewItemSet(2),
+					NewItemSet(3),
+					NewItemSet(4),
 				},
 				{
-					NewPartition(1, 2),
-					NewPartition(3, 4),
+					NewItemSet(1, 2),
+					NewItemSet(3, 4),
 				},
 				{
-					NewPartition(1, 2, 3, 4),
+					NewItemSet(1, 2, 3, 4),
 				},
 			},
 		}
@@ -114,18 +114,18 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 		g := NewIntGeneralizerFromItems(1, 2, 3)
 		actual := g.hierarchy
 		expected := &Hierarchy{
-			Partitions: [][]*Partition{
+			Partitions: [][]*ItemSet{
 				{
-					NewPartition(1),
-					NewPartition(1),
-					NewPartition(1),
+					NewItemSet(1),
+					NewItemSet(1),
+					NewItemSet(1),
 				},
 				{
-					NewPartition(1),
-					NewPartition(2, 3),
+					NewItemSet(1),
+					NewItemSet(2, 3),
 				},
 				{
-					NewPartition(1, 2, 3),
+					NewItemSet(1, 2, 3),
 				},
 			},
 		}
@@ -137,10 +137,10 @@ func TestNewIntGeneralizerFromItems(t *testing.T) {
 //func Test_IntegerHierarchyBuilderPartitionCutAtMedian(t *testing.T) {
 //	actual := buildIntHierarchy(1, 2, 3)
 //	expected := &Hierarchy{
-//		Partitions: [][]*Partition{
-//			{NewPartition(1), NewPartition(2), NewPartition(3)},
-//			{NewPartition(1), NewPartition(2, 3)},
-//			{NewPartition(1, 2, 3)},
+//		Partitions: [][]*ItemSet{
+//			{NewItemSet(1), NewItemSet(2), NewItemSet(3)},
+//			{NewItemSet(1), NewItemSet(2, 3)},
+//			{NewItemSet(1, 2, 3)},
 //		},
 //	}
 //	assertHierarchyEquals(expected, actual, t)

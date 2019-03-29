@@ -14,21 +14,21 @@ func GetIntGeneralizer() Generalizer {
 // Level 0: (A+) (A) (A-) (B+) (B) (B-)
 func GetGradeGeneralizer() *HierarchyGeneralizer {
 	generalizer := NewHierarchyGeneralizer(&Hierarchy{
-		Partitions: [][]*Partition{
+		Partitions: [][]*ItemSet{
 			{
-				NewPartition("A+"),
-				NewPartition("A"),
-				NewPartition("A-"),
-				NewPartition("B+"),
-				NewPartition("B"),
-				NewPartition("B-"),
+				NewItemSet("A+"),
+				NewItemSet("A"),
+				NewItemSet("A-"),
+				NewItemSet("B+"),
+				NewItemSet("B"),
+				NewItemSet("B-"),
 			},
 			{
-				NewPartition("A+", "A", "A-"),
-				NewPartition("B+", "B", "B-"),
+				NewItemSet("A+", "A", "A-"),
+				NewItemSet("B+", "B", "B-"),
 			},
 			{
-				NewPartition("A+", "A", "A-", "B+", "B", "B-"),
+				NewItemSet("A+", "A", "A-", "B+", "B", "B-"),
 			},
 		},
 	})

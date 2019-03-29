@@ -10,12 +10,12 @@ import (
 // On the highest level of the Hierarchy all elements are grouped into a single partition.
 // A given element can only appear once per generalization level across all partitions.
 type Hierarchy struct {
-	Partitions [][]*Partition
+	Partitions [][]*ItemSet
 }
 
-// Find locates a single Partition in the hierarchy, and returns the level it is in.
+// Find locates a single ItemSet in the hierarchy, and returns the level it is in.
 // If the partition is not found, it returns -1.
-func (h *Hierarchy) Find(p *Partition) int {
+func (h *Hierarchy) Find(p *ItemSet) int {
 	for level, partitions := range h.Partitions {
 		for _, partition := range partitions {
 			if partition.Equals(p) {
@@ -31,7 +31,7 @@ func (h *Hierarchy) GetLevelCount() int {
 	return len(h.Partitions)
 }
 
-func (h *Hierarchy) GetLevel(level int) []*Partition {
+func (h *Hierarchy) GetLevel(level int) []*ItemSet {
 	if 0 <= level && level < h.GetLevelCount() {
 		return h.Partitions[level]
 	}
@@ -91,7 +91,7 @@ func Equals(h1, h2 *Hierarchy) bool {
 	return true
 }
 
-func makeOccurrenceMap(level []*Partition) map[interface{}]int {
+func makeOccurrenceMap(level []*ItemSet) map[interface{}]int {
 	occurrences := make(map[interface{}]int)
 	for _, partition := range level {
 		for item := range partition.items {

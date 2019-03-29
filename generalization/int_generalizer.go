@@ -19,8 +19,8 @@ func buildHierarchy(items []int) *Hierarchy {
 	}
 	integers := deduplicate(items)
 	h := &Hierarchy{
-		Partitions: [][]*Partition{
-			{NewPartition(stripType(integers)...)},
+		Partitions: [][]*ItemSet{
+			{NewItemSet(stripType(integers)...)},
 		},
 	}
 	for !refined(h) {
@@ -31,18 +31,18 @@ func buildHierarchy(items []int) *Hierarchy {
 
 func refine(h *Hierarchy) {
 	level := h.GetLevel(0)
-	var newPartitions []*Partition
+	var newPartitions []*ItemSet
 	for _, p := range level {
 		if len(p.items) > 1 {
 			values := intValues(p)
 			p1, p2 := split(values)
-			newPartitions = append(newPartitions, NewPartition(stripType(p1)...))
-			newPartitions = append(newPartitions, NewPartition(stripType(p2)...))
+			newPartitions = append(newPartitions, NewItemSet(stripType(p1)...))
+			newPartitions = append(newPartitions, NewItemSet(stripType(p2)...))
 		} else {
 			newPartitions = append(newPartitions, p)
 		}
 	}
-	h.Partitions = append([][]*Partition{newPartitions}, h.Partitions...)
+	h.Partitions = append([][]*ItemSet{newPartitions}, h.Partitions...)
 }
 
 func refined(h *Hierarchy) bool {
@@ -55,7 +55,7 @@ func refined(h *Hierarchy) bool {
 	return true
 }
 
-func intValues(p *Partition) []int {
+func intValues(p *ItemSet) []int {
 	var values []int
 	for item := range p.items {
 		i := item.(int)
