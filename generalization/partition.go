@@ -12,6 +12,10 @@ type Partition struct {
 	items map[interface{}]bool
 }
 
+type Equatable interface {
+	Equals(other interface{}) bool
+}
+
 // NewPartition creates a new Partition from the given slice of items.
 func NewPartition(items ...interface{}) *Partition {
 	p := &Partition{items: make(map[interface{}]bool)}
@@ -22,8 +26,17 @@ func NewPartition(items ...interface{}) *Partition {
 }
 
 // Contains returns true if the given item is part of the Partition.
-func (p *Partition) Contains(item interface{}) bool {
-	return p.items[item]
+func (p *Partition) Contains(other interface{}) bool {
+	eq1, s1 := other.(Equatable)
+	if s1 {
+		for item := range p.items {
+			eq2, s2 := item.(Equatable)
+			if s2 && eq1.Equals(eq2) {
+				return true
+			}
+		}
+	}
+	return p.items[other]
 }
 
 // ContainsPartition returns true if the given partition is contained by this partition.

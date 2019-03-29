@@ -7,35 +7,57 @@ import (
 )
 
 func Test_PartitionEquals(t *testing.T) {
-	p1 := NewPartition(1, 2, 3)
-	p2 := NewPartition(3, 2, 1)
-	assertPartitionEquals(p1, p2, t)
-}
 
-func Test_PartitionNotEquals(t *testing.T) {
-	p1 := NewPartition(1, 2, 3, 4)
-	p2 := NewPartition(1, 2, 3)
-	assertPartitionNotEquals(p1, p2, t)
+	t.Run("basic partition", func(t *testing.T) {
+		p1 := NewPartition(1, 2, 3)
+		p2 := NewPartition(3, 2, 1)
+		assertPartitionEquals(p1, p2, t)
+	})
+
+	t.Run("equatable partition", func(t *testing.T) {
+		r1 := &TestEquatable{}
+		r2 := &TestEquatable{}
+		p1 := NewPartition(r1, r2)
+		p2 := NewPartition(r2, r1)
+		assertPartitionEquals(p1, p2, t)
+	})
+
+	t.Run("not equals", func(t *testing.T) {
+		p1 := NewPartition(1, 2, 3, 4)
+		p2 := NewPartition(1, 2, 3)
+		assertPartitionNotEquals(p1, p2, t)
+	})
 }
 
 func Test_PartitionContains(t *testing.T) {
-	tests := []struct {
-		name     string
-		p        *Partition
-		item     interface{}
-		contains bool
-	}{
-		{name: "[1, 2, 3], 3 => true", p: NewPartition(1, 2, 3), item: 3, contains: true},
-		{name: "[1, 2, 3], 5 => false", p: NewPartition(1, 2, 3), item: 5, contains: false},
-		{name: "['A+', 'B-'], A+ => true", p: NewPartition("A+", "B-"), item: "A+", contains: true},
-	}
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			if test.p.Contains(test.item) != test.contains {
-				t.Errorf("%v contains %v should be %v", test.p, test.item, test.contains)
-			}
-		})
-	}
+
+	t.Run("basic items", func(t *testing.T) {
+		tests := []struct {
+			name     string
+			p        *Partition
+			item     interface{}
+			contains bool
+		}{
+			{name: "[1, 2, 3], 3 => true", p: NewPartition(1, 2, 3), item: 3, contains: true},
+			{name: "[1, 2, 3], 5 => false", p: NewPartition(1, 2, 3), item: 5, contains: false},
+			{name: "['A+', 'B-'], A+ => true", p: NewPartition("A+", "B-"), item: "A+", contains: true},
+		}
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				if test.p.Contains(test.item) != test.contains {
+					t.Errorf("%v contains %v should be %v", test.p, test.item, test.contains)
+				}
+			})
+		}
+	})
+
+	t.Run("equatable items", func(t *testing.T) {
+		p := NewPartition(1, 2, TestEquatable{}, 3)
+		if !p.Contains(TestEquatable{}) {
+			t.Errorf("should be true")
+		}
+	})
+
 }
 
 func Test_PartitionCombine(t *testing.T) {
@@ -81,4 +103,11 @@ func assertPartitionNotEquals(p1, p2 *Partition, t *testing.T) {
 	if p1.Equals(p2) {
 		t.Errorf("partitions should be different: %v, %v", p1, p2)
 	}
+}
+
+type TestEquatable struct {
+}
+
+func (*TestEquatable) Equals(other interface{}) bool {
+	return true
 }
