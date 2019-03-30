@@ -37,7 +37,7 @@ func TestBuildEmptyCostGraph_Count(t *testing.T) {
 	g := buildEmptyCostGraph(table)
 	nodeCount := g.Nodes().Len()
 	edgeCount := g.Edges().Len()
-	if nodeCount != len(table.Rows) {
+	if nodeCount != len(table.GetRows()) {
 		t.Errorf("incorrect node count")
 	}
 	testutil.AssertEquals(0, edgeCount, t)
@@ -46,7 +46,7 @@ func TestBuildEmptyCostGraph_Count(t *testing.T) {
 func TestBuildEmptyCostGraph_NodeNames(t *testing.T) {
 	table := model.GetEmptyTable()
 	g := buildEmptyCostGraph(table)
-	for i := range table.Rows {
+	for i := range table.GetRows() {
 		node := g.Node(int64(i))
 		testutil.AssertNotNil(node, t)
 	}

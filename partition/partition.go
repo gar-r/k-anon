@@ -20,7 +20,7 @@ type Partition interface {
 	String() string
 }
 
-func (p *ItemSet) isIntSeries() bool {
+func (p *Set) isIntSeries() bool {
 	var items []int
 	for item := range p.Items {
 		val, success := item.(int)

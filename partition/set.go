@@ -2,27 +2,28 @@ package partition
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
-type ItemSet struct {
+type Set struct {
 	Items map[interface{}]bool
 }
 
-func NewItemSet(items ...interface{}) *ItemSet {
-	p := &ItemSet{Items: make(map[interface{}]bool)}
+func NewSet(items ...interface{}) *Set {
+	p := &Set{Items: make(map[interface{}]bool)}
 	for _, item := range items {
 		p.Items[item] = true
 	}
 	return p
 }
 
-func (p *ItemSet) Contains(item interface{}) bool {
+func (p *Set) Contains(item interface{}) bool {
 	return p.Items[item]
 }
 
-func (p *ItemSet) ContainsPartition(other Partition) bool {
-	p2, success := other.(*ItemSet)
+func (p *Set) ContainsPartition(other Partition) bool {
+	p2, success := other.(*Set)
 	if !success {
 		return false
 	}
@@ -34,8 +35,8 @@ func (p *ItemSet) ContainsPartition(other Partition) bool {
 	return true
 }
 
-func (p *ItemSet) Equals(other Partition) bool {
-	p2, success := other.(*ItemSet)
+func (p *Set) Equals(other Partition) bool {
+	p2, success := other.(*Set)
 	if !success || len(p2.Items) != len(p.Items) {
 		return false
 	}
@@ -47,10 +48,15 @@ func (p *ItemSet) Equals(other Partition) bool {
 	return true
 }
 
-func (p *ItemSet) String() string {
+func (p *Set) String() string {
 	b := &strings.Builder{}
+	var items []string
 	for item := range p.Items {
-		b.WriteString(fmt.Sprintf("%v", item))
+		items = append(items, fmt.Sprintf("%v", item))
+	}
+	sort.Strings(items)
+	for _, s := range items {
+		b.WriteString(s)
 		b.WriteString(", ")
 	}
 	s := strings.Trim(strings.TrimSpace(b.String()), ",")

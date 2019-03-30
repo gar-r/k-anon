@@ -31,10 +31,10 @@ func TestAnonymizer_Anonymize(t *testing.T) {
 }
 
 func assertKAnonymity(table *model.Table, k int, t *testing.T) {
-	for i, r1 := range table.Rows {
+	for i, r1 := range table.GetRows() {
 		count := 0
-		for _, r2 := range table.Rows {
-			if inSamePartition(r1, r2, table.Schema) {
+		for _, r2 := range table.GetRows() {
+			if inSamePartition(r1, r2, table.GetSchema()) {
 				count++
 			}
 		}

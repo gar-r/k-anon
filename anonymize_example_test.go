@@ -22,30 +22,26 @@ import (
 func ExampleAnonymizer_AnonymizeData() {
 
 	// define the schema & table
-	table := &model.Table{
-		Schema: &model.Schema{
-			Columns: []*model.Column{
-				{"Name", &generalization.Suppressor{}},
-				{"Status", nil},
-				{"Gender", &generalization.Suppressor{}},
-				{"Age", generalization.NewIntGeneralizer(0, 120, 1)},
-				{"Kids", generalization.NewIntGeneralizerFromItems(0, 1, 2, 3, 4, 5)},
-				{"Income", generalization.NewIntGeneralizer(10000, 40001, 1)},
-				{"Grade", generalization.GetGradeGeneralizer()},
-				{"Motto", &generalization.PrefixGeneralizer{MaxWords: 100}},
-			},
+	table := model.NewTable(&model.Schema{
+		Columns: []*model.Column{
+			{"Name", &generalization.Suppressor{}},
+			{"Status", nil},
+			{"Gender", &generalization.Suppressor{}},
+			{"Age", generalization.NewIntRangeGeneralizer(0, 150)},
+			{"Kids", generalization.NewIntRangeGeneralizer(0, 2)},
+			{"Income", generalization.NewIntRangeGeneralizer(10000, 50000)},
+			{"Grade", generalization.ExampleGradeGeneralizer()},
+			{"Motto", &generalization.PrefixGeneralizer{MaxWords: 100}},
 		},
-		Rows: []*model.Row{
-			model.NewRow("Joe", "employee", "male", 25, 0, 10000, "B", "cats are wonderful little beings"),
-			model.NewRow("Jane", "client", "female", 25, 0, 10000, "A", "cats are my favorite kind of animals "),
-			model.NewRow("Jack", "employee", "male", 30, 2, 30000, "B", "cats are very unique"),
-			model.NewRow("Janet", "employee", "female", 30, 1, 35000, "A+", "cats are interesting"),
-			model.NewRow("Steve", "client", "male", 28, 1, 40000, "A-", "cats are my only pets"),
-			model.NewRow("Sarah", "client", "female", 27, 1, 15000, "B", "cats are my favorite!"),
-			model.NewRow("Ben", "employee", "male", 25, 0, 15000, "B-", "cats are interesting, but sometimes also egoistic"),
-			model.NewRow("Anne", "client", "female", 30, 2, 30000, "B+", "cats are my favorite kind of animals"),
-		},
-	}
+	})
+	table.AddRow("Joe", "employee", "male", 25, 0, 16700, "A", "cats are wonderful little beings")
+	table.AddRow("Jane", "client", "female", 25, 0, 15250, "A+", "cats are my favorite kind of animals ")
+	table.AddRow("Jack", "employee", "male", 30, 2, 31400, "B+", "cats are very unique")
+	table.AddRow("Janet", "employee", "female", 30, 1, 38900, "A+", "cats are interesting")
+	table.AddRow("Steve", "client", "male", 28, 2, 44350, "B", "cats are my only pets")
+	table.AddRow("Sarah", "client", "female", 28, 1, 15580, "A+", "cats are my favorite!")
+	table.AddRow("Ben", "employee", "male", 25, 2, 40250, "B-", "cats are interesting, but sometimes also egoistic")
+	table.AddRow("Anne", "client", "female", 30, 2, 35700, "A", "cats are my favorite kind of animals")
 
 	// create an anonymizer and run the anonymization
 	anon := &Anonymizer{
@@ -57,15 +53,15 @@ func ExampleAnonymizer_AnonymizeData() {
 	// access & print the data
 	fmt.Printf("%v", anon.table)
 
-	// the above will produce a similar output:
+	// the above will produce a similar table:
 
-	// Name	Status	Gender	Age			Kids	Income			Grade					Motto
-	//[*]	[employee]	[*]	[25]		[0]		[10000]			[B+, B, B-, A+, A, A-]	[cats are]
-	//[*]	[client]	[*]	[25]		[0]		[10000]			[A+, A, A-, B+, B, B-]	[cats are]
-	//[*]	[employee]	[*]	[30]		[1..2]	[25000..40000]	[A-, B+, B, B-, A+, A]	[cats are]
-	//[*]	[employee]	[*]	[30]		[1..2]	[25000..40000]	[A-, B+, B, B-, A+, A]	[cats are]
-	//[*]	[client]	[*]	[22..29]	[0..2]	[10000..40000]	[A+, A, A-, B+, B, B-]	[cats are]
-	//[*]	[client]	[*]	[22..29]	[0..2]	[10000..40000]	[B, B-, A+, A, A-, B+]	[cats are]
-	//[*]	[employee]	[*]	[22..29]	[0..2]	[10000..40000]	[A+, A, A-, B+, B, B-]	[cats are]
-	//[*]	[client]	[*]	[30]		[1..2]	[25000..40000]	[B-, A+, A, A-, B+, B]	[cats are]
+	// Name	Status		Gender	Age			Kids	Income			Grade			Motto
+	// *	employee	*		[18..36]	[0..2]	[10000..50000]	[A, A+, A-]		cats are
+	// *	client		*		[18..36]	[0..2]	[10000..50000]	[A, A+, A-]		cats are
+	// *	employee	male	[18..36]	[2]		[30000..50000]	[B, B+, B-]		cats are
+	// *	employee	female	[27..31]	[1]		[10000..50000]	[A+]			cats are
+	// *	client		male	[18..36]	[2]		[30000..50000]	[B, B+, B-]		cats are
+	// *	client		female	[27..31]	[1]		[10000..50000]	[A+]			cats are
+	// *	employee	male	[18..36]	[2]		[30000..50000]	[B, B+, B-]		cats are
+	// * 	client		*		[18..36]	[0..2]	[10000..50000]	[A, A+, A-]		cats are
 }

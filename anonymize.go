@@ -39,8 +39,8 @@ func (a *Anonymizer) getRowGroups(components [][]graph.Node) [][]*model.Row {
 		var group []*model.Row
 		for _, n := range component {
 			id := int(n.ID())
-			if id < len(a.table.Rows) { // skip Steiner's vertices
-				group = append(group, a.table.Rows[id])
+			if id < len(a.table.GetRows()) { // skip Steiner's vertices
+				group = append(group, a.table.GetRows()[id])
 			}
 		}
 		groups = append(groups, group)
@@ -55,8 +55,8 @@ func (a *Anonymizer) generalize(groups [][]*model.Row) {
 }
 
 func (a *Anonymizer) generalizeRowGroup(rows []*model.Row) {
-	for colIdx := 0; colIdx < len(a.table.Schema.Columns); colIdx++ {
-		colDef := a.table.Schema.Columns[colIdx]
+	for colIdx := 0; colIdx < len(a.table.GetSchema().Columns); colIdx++ {
+		colDef := a.table.GetSchema().Columns[colIdx]
 		if colDef.IsIdentifier() {
 			for level := 0; level < colDef.Generalizer.Levels(); level++ {
 				for _, row := range rows {

@@ -8,17 +8,17 @@ import (
 
 func TestItemSet_Equals(t *testing.T) {
 
-	p1 := NewItemSet(1, 2, 3)
+	p1 := NewSet(1, 2, 3)
 
 	t.Run("item sets are equal", func(t *testing.T) {
-		p2 := NewItemSet(3, 2, 1)
+		p2 := NewSet(3, 2, 1)
 		if !p1.Equals(p2) {
 			t.Errorf("partitions are not equal: %v, %v", p1, p2)
 		}
 	})
 
 	t.Run("item sets are different", func(t *testing.T) {
-		p2 := NewItemSet(1, 2, 3, 4)
+		p2 := NewSet(1, 2, 3, 4)
 		if p1.Equals(p2) {
 			t.Errorf("partitions should not be equal: %v, %v", p1, p2)
 		}
@@ -35,13 +35,13 @@ func TestItemSet_Equals(t *testing.T) {
 func TestItemSet_Contains(t *testing.T) {
 	tests := []struct {
 		name     string
-		p        *ItemSet
+		p        *Set
 		item     interface{}
 		contains bool
 	}{
-		{name: "[1, 2, 3], 3 => true", p: NewItemSet(1, 2, 3), item: 3, contains: true},
-		{name: "[1, 2, 3], 5 => false", p: NewItemSet(1, 2, 3), item: 5, contains: false},
-		{name: "['A+', 'B-'], A+ => true", p: NewItemSet("A+", "B-"), item: "A+", contains: true},
+		{name: "[1, 2, 3], 3 => true", p: NewSet(1, 2, 3), item: 3, contains: true},
+		{name: "[1, 2, 3], 5 => false", p: NewSet(1, 2, 3), item: 5, contains: false},
+		{name: "['A+', 'B-'], A+ => true", p: NewSet("A+", "B-"), item: "A+", contains: true},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestItemSet_Contains(t *testing.T) {
 
 func TestItemSet_ContainsPartition(t *testing.T) {
 
-	p1 := NewItemSet(1, 2, 3, 4, 5, 6)
+	p1 := NewSet(1, 2, 3, 4, 5, 6)
 
 	t.Run("non compatible type", func(t *testing.T) {
 		p2 := NewIntRange(0, 5)
@@ -64,14 +64,14 @@ func TestItemSet_ContainsPartition(t *testing.T) {
 	})
 
 	t.Run("does not contain all items", func(t *testing.T) {
-		p2 := NewItemSet(2, 3, 8)
+		p2 := NewSet(2, 3, 8)
 		if p1.ContainsPartition(p2) {
 			t.Errorf("%v should not contain %v", p1, p2)
 		}
 	})
 
 	t.Run("contains all items", func(t *testing.T) {
-		p2 := NewItemSet(2, 3, 5, 6)
+		p2 := NewSet(2, 3, 5, 6)
 		if !p1.ContainsPartition(p2) {
 			t.Errorf("%v should contain %v", p1, p2)
 		}
@@ -81,14 +81,14 @@ func TestItemSet_ContainsPartition(t *testing.T) {
 
 func TestItemSet_String(t *testing.T) {
 	tests := []struct {
-		partition *ItemSet
+		partition *Set
 		values    []string
 	}{
-		{NewItemSet(), []string{}},
-		{NewItemSet("a"), []string{"a"}},
-		{NewItemSet("a", "b"), []string{"a", "b"}},
-		{NewItemSet("a", "b", "c"), []string{"a", "b", "c"}},
-		{NewItemSet("a", 2, "c"), []string{"a", "2", "c"}},
+		{NewSet(), []string{}},
+		{NewSet("a"), []string{"a"}},
+		{NewSet("a", "b"), []string{"a", "b"}},
+		{NewSet("a", "b", "c"), []string{"a", "b", "c"}},
+		{NewSet("a", 2, "c"), []string{"a", "2", "c"}},
 	}
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("PartitionToString #%d", i), func(t *testing.T) {

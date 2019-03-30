@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/dargzero/k-anon/generalization"
 	"bitbucket.org/dargzero/k-anon/model"
 	"bitbucket.org/dargzero/k-anon/partition"
+	"fmt"
 )
 
 func CalculateCost(r1, r2 *model.Row, schema *model.Schema) float64 {
@@ -23,9 +24,9 @@ func calculateCostFraction(p1, p2 partition.Partition, g generalization.Generali
 	for level := 0; level < maxLevels; level++ {
 		g1 := g.Generalize(p1, level)
 		g2 := g.Generalize(p2, level)
-		if g1.Equals(g2) {
+		if g1 != nil && g1.Equals(g2) {
 			return float64(level) / float64(maxLevels-1)
 		}
 	}
-	panic("data cannot be generalized into same partition")
+	panic(fmt.Sprintf("data cannot be generalized into same partition: %v, %v", p1, p2))
 }

@@ -24,22 +24,26 @@ func (g *PrefixGeneralizer) Generalize(p partition.Partition, n int) partition.P
 	if n > g.Levels() {
 		return nil
 	}
-	itemSet, success := p.(*partition.ItemSet)
+	item, success := p.(*partition.Item)
 	if !success {
-		return partition.NewItemSet("")
+		return g.InitItem("")
 	}
-	s := stringify(itemSet)
+	s := stringify(item)
 	if n == g.MaxWords || s == "" {
-		return partition.NewItemSet("*")
+		return g.InitItem("*")
 	}
 	words := g.getPaddedWords(s)
 	idx := g.MaxWords - n
 	joined := strings.Join(words[:idx], separator)
-	return partition.NewItemSet(strings.TrimRight(joined, separator))
+	return g.InitItem(strings.TrimRight(joined, separator))
 }
 
 func (g *PrefixGeneralizer) Levels() int {
 	return g.MaxWords + 1
+}
+
+func (g *PrefixGeneralizer) InitItem(item interface{}) partition.Partition {
+	return partition.NewItem(item)
 }
 
 func (g *PrefixGeneralizer) getPaddedWords(s string) []string {
@@ -49,12 +53,10 @@ func (g *PrefixGeneralizer) getPaddedWords(s string) []string {
 	return padded
 }
 
-func stringify(p *partition.ItemSet) string {
-	for item := range p.Items {
-		s, success := item.(string)
-		if success {
-			return s
-		}
+func stringify(p *partition.Item) string {
+	s, success := p.GetItem().(string)
+	if success {
+		return s
 	}
 	return ""
 }

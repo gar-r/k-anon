@@ -69,8 +69,8 @@ func isNil(object interface{}) bool {
 }
 
 // AssertEquals ensures, that the two given values are equal
-func AssertEquals(v1 interface{}, v2 interface{}, t *testing.T) {
-	if v1 != v2 {
-		t.Errorf("expected values to be equal: %v, %v", v1, v2)
+func AssertEquals(expected interface{}, actual interface{}, t *testing.T) {
+	if expected != actual {
+		t.Errorf("expected %v, got %v", expected, actual)
 	}
 }

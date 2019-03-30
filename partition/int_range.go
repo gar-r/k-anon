@@ -3,13 +3,15 @@ package partition
 import "fmt"
 
 // IntRange represents an interval of integers with bounds.
-// For the interval the lower bound is always inclusive, while teh upper bound is exclusive.
 type IntRange struct {
-	lower, upper int
+	min, max int
 }
 
-func NewIntRange(lower, upper int) *IntRange {
-	return &IntRange{lower, upper}
+func NewIntRange(min, max int) *IntRange {
+	if min > max {
+		return &IntRange{min, min}
+	}
+	return &IntRange{min, max}
 }
 
 func (r *IntRange) Contains(item interface{}) bool {
@@ -17,7 +19,7 @@ func (r *IntRange) Contains(item interface{}) bool {
 	if !success {
 		return false
 	}
-	return r.lower <= i && i < r.upper
+	return r.min <= i && i <= r.max
 }
 
 func (r *IntRange) ContainsPartition(other Partition) bool {
@@ -25,24 +27,11 @@ func (r *IntRange) ContainsPartition(other Partition) bool {
 	if success {
 		return r.containsIntRange(r2)
 	}
-	itemSet, success := other.(*ItemSet)
+	itemSet, success := other.(*Set)
 	if success {
 		return r.containsItemSet(itemSet)
 	}
 	return false
-}
-
-func (r *IntRange) containsIntRange(other *IntRange) bool {
-	return r.lower <= other.lower && other.upper < r.upper
-}
-
-func (r *IntRange) containsItemSet(other *ItemSet) bool {
-	for item := range other.Items {
-		if !r.Contains(item) {
-			return false
-		}
-	}
-	return true
 }
 
 func (r *IntRange) Equals(other Partition) bool {
@@ -50,9 +39,44 @@ func (r *IntRange) Equals(other Partition) bool {
 	if !success {
 		return false
 	}
-	return r.lower == r2.lower && r.upper == r2.upper
+	return r.min == r2.min && r.max == r2.max
 }
 
 func (r *IntRange) String() string {
-	return fmt.Sprintf("[%d..%d)", r.lower, r.upper)
+	if r.min == r.max {
+		return fmt.Sprintf("[%d]", r.min)
+	}
+	return fmt.Sprintf("[%d..%d]", r.min, r.max)
+}
+
+// CanSplit returns true if the range can be split further
+func (r *IntRange) CanSplit() bool {
+	return r.max > r.min
+}
+
+// Split creates two new IntRanges from the original one by splitting it at the median
+func (r *IntRange) Split() (r1, r2 *IntRange) {
+	l := r.max - r.min
+	if l < 2 {
+		r1 = NewIntRange(r.min, r.min)
+		r2 = NewIntRange(r.max, r.max)
+	} else {
+		cut := (l + 1) / 2
+		r1 = NewIntRange(r.min, r.min+cut-1)
+		r2 = NewIntRange(r.min+cut, r.max)
+	}
+	return
+}
+
+func (r *IntRange) containsIntRange(other *IntRange) bool {
+	return r.min <= other.min && other.max <= r.max
+}
+
+func (r *IntRange) containsItemSet(other *Set) bool {
+	for item := range other.Items {
+		if !r.Contains(item) {
+			return false
+		}
+	}
+	return true
 }

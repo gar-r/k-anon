@@ -59,7 +59,7 @@ func pickComponentToExtend(components [][]graph.Node, k int) []graph.Node {
 
 func buildEmptyAnonGraph(t *model.Table) *simple.DirectedGraph {
 	g := simple.NewDirectedGraph()
-	for i := range t.Rows {
+	for i := range t.GetRows() {
 		node := simple.Node(i)
 		g.AddNode(node)
 	}
