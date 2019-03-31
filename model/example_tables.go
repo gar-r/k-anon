@@ -8,10 +8,10 @@ func GetIntTable1() *Table {
 	g := generalization.ExampleIntGeneralizer()
 	t := NewTable(&Schema{
 		Columns: []*Column{
-			{"Col1", g},
-			{"Col2", g},
-			{"Col3", g},
-			{"Col4", g},
+			NewColumn("Col1", g),
+			NewColumn("Col2", g),
+			NewColumn("Col3", g),
+			NewColumn("Col4", g),
 		},
 	})
 	t.AddRow(1, 1, 1, 1)
@@ -28,11 +28,11 @@ func GetStudentTable() *Table {
 	dim5 := generalization.ExampleGradeGeneralizer()
 	t := NewTable(&Schema{
 		Columns: []*Column{
-			{Name: "Gender", Generalizer: &generalization.Suppressor{}},
-			{Name: "Col 2", Generalizer: dim2},
-			{Name: "Col 3", Generalizer: dim3},
-			{Name: "Col 4", Generalizer: dim4},
-			{Name: "Col 5", Generalizer: dim5},
+			NewColumn("Gender", &generalization.Suppressor{}),
+			NewColumn("Col2", dim2),
+			NewColumn("Col3", dim3),
+			NewColumn("Col4", dim4),
+			NewColumn("Col5", dim5),
 		},
 	})
 	t.AddRow("Male", 25, 0, 3.487, "A")
@@ -49,8 +49,8 @@ func GetStudentTable() *Table {
 func GetMixedTable1() *Table {
 	t := NewTable(&Schema{
 		Columns: []*Column{
-			{"Score", generalization.ExampleIntGeneralizer()},
-			{"Grade", generalization.ExampleGradeGeneralizer()},
+			NewColumn("Score", generalization.ExampleIntGeneralizer()),
+			NewColumn("Grade", generalization.ExampleGradeGeneralizer()),
 		},
 	})
 	t.AddRow(9, "A+")
@@ -62,8 +62,8 @@ func GetMixedTable1() *Table {
 func GetMixedTable2() *Table {
 	t := NewTable(&Schema{
 		Columns: []*Column{
-			{"Score", generalization.ExampleIntGeneralizer()},
-			{"Grade", generalization.ExampleGradeGeneralizer()},
+			NewColumn("Score", generalization.ExampleIntGeneralizer()),
+			NewColumn("Grade", generalization.ExampleGradeGeneralizer()),
 		},
 	})
 	t.AddRow(9, "A+")
@@ -76,10 +76,10 @@ func GetMixedTable2() *Table {
 func GetMixedTable3() *Table {
 	t := NewTable(&Schema{
 		Columns: []*Column{
-			{"Score", generalization.ExampleIntGeneralizer()},
-			{"Grade", generalization.ExampleGradeGeneralizer()},
-			{"Motto", &generalization.PrefixGeneralizer{MaxWords: 5}},
-			{"Remark", nil},
+			NewColumn("Score", generalization.ExampleIntGeneralizer()),
+			NewColumn("Grade", generalization.ExampleGradeGeneralizer()),
+			NewColumn("Motto", &generalization.PrefixGeneralizer{MaxWords: 5}),
+			NewColumn("Remark", nil),
 		},
 	})
 	t.AddRow(9, "A+", "cats are wild", "data1")

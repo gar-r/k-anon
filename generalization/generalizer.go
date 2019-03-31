@@ -2,7 +2,7 @@ package generalization
 
 import "bitbucket.org/dargzero/k-anon/partition"
 
-// Generalizer represents a value generalization procedure.
+// g represents a value generalization procedure.
 // Generalization means, that a value from a given domain is replaced with a less specific,
 // but semantically consistent value from the same domain.
 type Generalizer interface {

@@ -27,8 +27,8 @@ func (t *Table) AddRow(items ...interface{}) {
 		}
 		col := t.schema.Columns[i]
 		var p partition.Partition
-		if col.Generalizer != nil {
-			p = t.schema.Columns[i].Generalizer.InitItem(item)
+		if col.g != nil {
+			p = t.schema.Columns[i].g.InitItem(item)
 		} else {
 			p = partition.NewItem(item)
 		}
@@ -62,7 +62,7 @@ func (t *Table) String() string {
 func (t *Table) appendHeader(sb *strings.Builder) {
 	sb.WriteString("\n")
 	for _, col := range t.schema.Columns {
-		sb.WriteString(fmt.Sprintf("%s\t", col.Name))
+		sb.WriteString(fmt.Sprintf("%s\t", col.name))
 	}
 	sb.WriteString("\n")
 }
@@ -74,13 +74,42 @@ type Schema struct {
 
 // Column represents a column definition in a table schema.
 // If the generalizer is set to nil, the column will be treated as non-identifier.
+// Weight is a positive floating point number, which adjusts the cost of a column
+// when picked for generalization (default is 1.0).
 type Column struct {
-	Name        string
-	Generalizer generalization.Generalizer
+	name   string
+	g      generalization.Generalizer
+	weight float64
+}
+
+func NewColumn(name string, g generalization.Generalizer) *Column {
+	return NewWeightedColumn(name, g, 1.0)
+}
+
+func NewWeightedColumn(name string, g generalization.Generalizer, w float64) *Column {
+	var adjustedWeight float64
+	if w < 0 || w == 0 {
+		adjustedWeight = 1.0
+	} else {
+		adjustedWeight = w
+	}
+	return &Column{name, g, adjustedWeight}
+}
+
+func (c *Column) GetName() string {
+	return c.name
+}
+
+func (c *Column) GetGeneralizer() generalization.Generalizer {
+	return c.g
+}
+
+func (c *Column) GetWeight() float64 {
+	return c.weight
 }
 
 func (c *Column) IsIdentifier() bool {
-	return c.Generalizer != nil
+	return c.g != nil
 }
 
 // Row represents a row of data in a table.

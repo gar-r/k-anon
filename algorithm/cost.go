@@ -13,7 +13,7 @@ func CalculateCost(r1, r2 *model.Row, schema *model.Schema) float64 {
 		if col.IsIdentifier() {
 			d1 := r1.Data[j]
 			d2 := r2.Data[j]
-			cost += calculateCostFraction(d1, d2, col.Generalizer)
+			cost += calculateCostFraction(d1, d2, col.GetGeneralizer()) * col.GetWeight()
 		}
 	}
 	return cost

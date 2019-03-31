@@ -11,7 +11,7 @@ import (
 // 1) Define a table
 //    a) define the schema (friendly name and generalizer for each column)
 //          * use a 'nil' generalizer for non-identifier (skipped) columns
-//          * see the Generalizer interface to implement a custom generalizer
+//          * see the g interface to implement a custom generalizer
 //    b) define the rows, conforming to the above schema:
 //          * number of columns should match
 //          * data type should be compatible with the assigned generalizer for the column
@@ -24,16 +24,16 @@ func ExampleAnonymizer_AnonymizeData() {
 	// define the schema & table
 	table := model.NewTable(&model.Schema{
 		Columns: []*model.Column{
-			{"Name", &generalization.Suppressor{}},
-			{"Status", nil},
-			{"Gender", &generalization.Suppressor{}},
-			{"Age", generalization.NewIntRangeGeneralizer(0, 150)},
-			{"Kids", generalization.NewIntRangeGeneralizer(0, 2)},
-			{"Income", generalization.NewIntRangeGeneralizer(10000, 50000)},
-			{"A-Index", generalization.NewFloatRangeGeneralizer(0.0, 1.0)},
-			{"Z-Index", generalization.NewFloatRangeGeneralizer(-0.5, 0.5)},
-			{"Grade", generalization.ExampleGradeGeneralizer()},
-			{"Motto", &generalization.PrefixGeneralizer{MaxWords: 100}},
+			model.NewColumn("Name", &generalization.Suppressor{}),
+			model.NewColumn("Status", nil),
+			model.NewColumn("Gender", &generalization.Suppressor{}),
+			model.NewColumn("Age", generalization.NewIntRangeGeneralizer(0, 150)),
+			model.NewColumn("Kids", generalization.NewIntRangeGeneralizer(0, 2)),
+			model.NewColumn("Income", generalization.NewIntRangeGeneralizer(10000, 50000)),
+			model.NewColumn("A-Index", generalization.NewFloatRangeGeneralizer(0.0, 1.0)),
+			model.NewColumn("Z-Index", generalization.NewFloatRangeGeneralizer(-0.5, 0.5)),
+			model.NewWeightedColumn("Grade", generalization.ExampleGradeGeneralizer(), 1.2),
+			model.NewWeightedColumn("Motto", &generalization.PrefixGeneralizer{MaxWords: 100}, 0.1),
 		},
 	})
 	table.AddRow("Joe", "employee", "male", 25, 0, 16700, 0.2, -0.35, "A", "cats are wonderful little beings")
@@ -57,14 +57,14 @@ func ExampleAnonymizer_AnonymizeData() {
 
 	// the above will produce a similar table:
 
-	//	Name	Status	Gender		Age			Kids	Income		A-Index					Z-Index					Grade		Motto
-	//	*		employee	*		[25]		[0]	[15000..17499]	(0.187500..0.250000)	(-0.375000..-0.250000)	[A, A+, A-]	cats are
-	//	*		client		*		[25]		[0]	[15000..17499]	(0.187500..0.250000)	(-0.375000..-0.250000)	[A, A+, A-]	cats are
-	//	*		employee	*		[30]		[2]	[30000..39999]	(0.600000)				(-0.500000..0.000000)	[A, A+, A-]	cats are
-	//	*		employee	female	[27..31]	[1]	[10000..50000]	(0.500000..1.000000)	(-0.312500..-0.250000)	[A, A+, A-]	cats are
-	//	*		client		male	[18..36]	[2]	[40000..44999]	(0.900000)				(-0.375000..-0.250000)	[A, A+, A-]	cats are
-	//	*		client		female	[27..31]	[1]	[10000..50000]	(0.500000..1.000000)	(-0.312500..-0.250000)	[A, A+, A-]	cats are
-	//	*		employee	male	[18..36]	[2]	[40000..44999]	(0.900000)				(-0.375000..-0.250000)	[A, A+, A-]	cats are
-	//	*		client		*		[30]		[2]	[30000..39999]	(0.600000)				(-0.500000..0.000000)	[A, A+, A-]	cats are
+	//	Name	Status		Gender	Age			Kids	Income			A-Index					Z-Index					Grade		Motto
+	//	*		employee	*		[18..36]	[0..2]	[10000..50000]	(0.000000..1.000000)	(-0.375000..-0.250000)	[A]			cats are
+	//	*		client		female	[18..36]	[0..2]	[15000..15624]	(0.000000..1.000000)	(-0.312500..-0.250000)	[A-]		cats are my
+	//	*		employee	*		[30]		[2]		[30000..39999]	(0.600000)				(-0.500000..0.000000)	[A, A+, A-]	cats are
+	//	*		employee	*		[18..36]	[0..2]	[10000..50000]	(0.000000..1.000000)	(-0.375000..-0.250000)	[A]			cats are
+	//	*		client		male	[18..36]	[2]		[40000..44999]	(0.900000)				(-0.375000..-0.250000)	[A, A+, A-]	cats are
+	//	*		client		female	[18..36]	[0..2]	[15000..15624]	(0.000000..1.000000)	(-0.312500..-0.250000)	[A-]		cats are my
+	//	*		employee	male	[18..36]	[2]		[40000..44999]	(0.900000)				(-0.375000..-0.250000)	[A, A+, A-]	cats are
+	//	*		client		*		[30]		[2]		[30000..39999]	(0.600000)				(-0.500000..0.000000)	[A, A+, A-]	cats are
 
 }

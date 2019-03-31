@@ -43,9 +43,9 @@ func TestCalculateCost(t *testing.T) {
 		gen := generalization.ExampleIntGeneralizer()
 		schema := &model.Schema{
 			Columns: []*model.Column{
-				{"Col1", gen},
-				{"Col2", gen},
-				{"Col3", nil},
+				model.NewColumn("Col1", gen),
+				model.NewColumn("Col2", gen),
+				model.NewColumn("Col3", nil),
 			},
 		}
 		table := model.NewTable(schema)
@@ -61,7 +61,7 @@ func TestCalculateCost(t *testing.T) {
 		gen := &generalization.PrefixGeneralizer{MaxWords: 5}
 		schema := &model.Schema{
 			Columns: []*model.Column{
-				{"Col1", gen},
+				model.NewColumn("Col1", gen),
 			},
 		}
 		table := model.NewTable(schema)
@@ -96,10 +96,7 @@ func getSchema(cols int) *model.Schema {
 	g := generalization.ExampleIntGeneralizer()
 	schema := &model.Schema{}
 	for i := 1; i <= cols; i++ {
-		schema.Columns = append(schema.Columns, &model.Column{
-			Name:        fmt.Sprintf("Col%d", i),
-			Generalizer: g,
-		})
+		schema.Columns = append(schema.Columns, model.NewColumn(fmt.Sprintf("Col%d", i), g))
 	}
 	return schema
 }

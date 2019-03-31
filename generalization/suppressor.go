@@ -2,7 +2,7 @@ package generalization
 
 import "bitbucket.org/dargzero/k-anon/partition"
 
-// Suppressor is a special kind of Generalizer, which only has a single generalization level, suppress.
+// Suppressor is a special kind of g, which only has a single generalization level, suppress.
 // Suppressing a value will simply replace it with the '*' token.
 type Suppressor struct {
 }

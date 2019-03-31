@@ -58,9 +58,9 @@ func (a *Anonymizer) generalizeRowGroup(rows []*model.Row) {
 	for colIdx := 0; colIdx < len(a.table.GetSchema().Columns); colIdx++ {
 		colDef := a.table.GetSchema().Columns[colIdx]
 		if colDef.IsIdentifier() {
-			for level := 0; level < colDef.Generalizer.Levels(); level++ {
+			for level := 0; level < colDef.GetGeneralizer().Levels(); level++ {
 				for _, row := range rows {
-					p := colDef.Generalizer.Generalize(row.Data[colIdx], level)
+					p := colDef.GetGeneralizer().Generalize(row.Data[colIdx], level)
 					row.Data[colIdx] = p
 				}
 				if samePartition(colIdx, rows) {
