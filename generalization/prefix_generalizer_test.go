@@ -62,6 +62,14 @@ func TestPrefixGeneralizer_Generalize(t *testing.T) {
 			t.Errorf("partitions are not equal: %v, %v", expected, actual)
 		}
 	})
+
+	t.Run("non item partition", func(t *testing.T) {
+		actual := g.Generalize(partition.NewSet(), 3)
+		expected := partition.NewItem("")
+		if !expected.Equals(actual) {
+			t.Errorf("partitions are not equal: %v, %v", expected, actual)
+		}
+	})
 }
 
 func TestPrefixGeneralizer_Levels(t *testing.T) {

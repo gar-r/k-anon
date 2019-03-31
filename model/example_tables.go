@@ -24,7 +24,7 @@ func GetIntTable1() *Table {
 func GetStudentTable() *Table {
 	dim2 := generalization.NewIntRangeGeneralizer(25, 35)
 	dim3 := generalization.NewIntRangeGeneralizer(0, 3)
-	dim4 := generalization.NewIntRangeGeneralizer(10, 50)
+	dim4 := generalization.NewFloatRangeGeneralizer(0.0, 5.0)
 	dim5 := generalization.ExampleGradeGeneralizer()
 	t := NewTable(&Schema{
 		Columns: []*Column{
@@ -35,14 +35,14 @@ func GetStudentTable() *Table {
 			{Name: "Col 5", Generalizer: dim5},
 		},
 	})
-	t.AddRow("Male", 25, 0, 35, "A")
-	t.AddRow("Female", 25, 0, 45, "A+")
-	t.AddRow("Male", 30, 2, 30, "B")
-	t.AddRow("Female", 30, 1, 35, "B+")
-	t.AddRow("Male", 28, 1, 40, "A-")
-	t.AddRow("Female", 28, 1, 15, "B")
-	t.AddRow("Male", 27, 0, 15, "B-")
-	t.AddRow("Female", 27, 2, 30, "B")
+	t.AddRow("Male", 25, 0, 3.487, "A")
+	t.AddRow("Female", 25, 0, 4.234, "A+")
+	t.AddRow("Male", 30, 2, 2.89, "B")
+	t.AddRow("Female", 30, 1, 3.34, "B+")
+	t.AddRow("Male", 28, 1, 3.98, "A-")
+	t.AddRow("Female", 28, 1, 2.534, "B")
+	t.AddRow("Male", 27, 0, 2.06, "B-")
+	t.AddRow("Female", 27, 2, 2.45, "B")
 	return t
 }
 

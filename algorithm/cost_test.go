@@ -73,6 +73,23 @@ func TestCalculateCost(t *testing.T) {
 		testutil.AssertEquals(1.0, cost, t)
 	})
 
+	t.Run("cannot generalize into same partition", func(t *testing.T) {
+
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("expected panic, got none")
+			}
+		}()
+
+		schema := getSchema(1)
+		table := model.NewTable(schema)
+		table.AddRow(5)
+		table.AddRow(100)
+		r1 := table.GetRows()[0]
+		r2 := table.GetRows()[1]
+		CalculateCost(r1, r2, schema)
+	})
+
 }
 
 func getSchema(cols int) *model.Schema {

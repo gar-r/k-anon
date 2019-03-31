@@ -5,7 +5,7 @@ import (
 )
 
 func GetGradeHierarchy() Hierarchy {
-	h, err := Build(partition.NewSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"),
+	h, _ := Build(partition.NewSet("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"),
 		N(partition.NewSet("A+", "A", "A-"),
 			N(partition.NewSet("A+")),
 			N(partition.NewSet("A")),
@@ -18,8 +18,5 @@ func GetGradeHierarchy() Hierarchy {
 			N(partition.NewSet("C+")),
 			N(partition.NewSet("C")),
 			N(partition.NewSet("C-"))))
-	if err != nil {
-		panic(err)
-	}
 	return h
 }
