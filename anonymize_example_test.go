@@ -30,18 +30,20 @@ func ExampleAnonymizer_AnonymizeData() {
 			{"Age", generalization.NewIntRangeGeneralizer(0, 150)},
 			{"Kids", generalization.NewIntRangeGeneralizer(0, 2)},
 			{"Income", generalization.NewIntRangeGeneralizer(10000, 50000)},
+			{"A-Index", generalization.NewFloatRangeGeneralizer(0.0, 1.0)},
+			{"Z-Index", generalization.NewFloatRangeGeneralizer(-0.5, 0.5)},
 			{"Grade", generalization.ExampleGradeGeneralizer()},
 			{"Motto", &generalization.PrefixGeneralizer{MaxWords: 100}},
 		},
 	})
-	table.AddRow("Joe", "employee", "male", 25, 0, 16700, "A", "cats are wonderful little beings")
-	table.AddRow("Jane", "client", "female", 25, 0, 15250, "A+", "cats are my favorite kind of animals ")
-	table.AddRow("Jack", "employee", "male", 30, 2, 31400, "B+", "cats are very unique")
-	table.AddRow("Janet", "employee", "female", 30, 1, 38900, "A+", "cats are interesting")
-	table.AddRow("Steve", "client", "male", 28, 2, 44350, "B", "cats are my only pets")
-	table.AddRow("Sarah", "client", "female", 28, 1, 15580, "A+", "cats are my favorite!")
-	table.AddRow("Ben", "employee", "male", 25, 2, 40250, "B-", "cats are interesting, but sometimes also egoistic")
-	table.AddRow("Anne", "client", "female", 30, 2, 35700, "A", "cats are my favorite kind of animals")
+	table.AddRow("Joe", "employee", "male", 25, 0, 16700, 0.2, -0.35, "A", "cats are wonderful little beings")
+	table.AddRow("Jane", "client", "female", 25, 0, 15250, 0.25, -0.3, "A-", "cats are my favorite kind of animals ")
+	table.AddRow("Jack", "employee", "male", 30, 2, 31400, 0.6, -0.3, "A-", "cats are very unique")
+	table.AddRow("Janet", "employee", "female", 30, 1, 38900, 0.9, -0.3, "A", "cats are interesting")
+	table.AddRow("Steve", "client", "male", 28, 2, 44350, 0.9, -0.35, "A", "cats are my only pets")
+	table.AddRow("Sarah", "client", "female", 28, 1, 15580, 0.56, -0.25, "A-", "cats are my favorite!")
+	table.AddRow("Ben", "employee", "male", 25, 2, 40250, 0.9, -0.25, "A+", "cats are interesting, but sometimes also egoistic")
+	table.AddRow("Anne", "client", "female", 30, 2, 35700, 0.6, -0.20, "A+", "cats are my favorite kind of animals")
 
 	// create an anonymizer and run the anonymization
 	anon := &Anonymizer{
@@ -55,13 +57,14 @@ func ExampleAnonymizer_AnonymizeData() {
 
 	// the above will produce a similar table:
 
-	// Name	Status		Gender	Age			Kids	Income			Grade			Motto
-	// *	employee	*		[18..36]	[0..2]	[10000..50000]	[A, A+, A-]		cats are
-	// *	client		*		[18..36]	[0..2]	[10000..50000]	[A, A+, A-]		cats are
-	// *	employee	male	[18..36]	[2]		[30000..50000]	[B, B+, B-]		cats are
-	// *	employee	female	[27..31]	[1]		[10000..50000]	[A+]			cats are
-	// *	client		male	[18..36]	[2]		[30000..50000]	[B, B+, B-]		cats are
-	// *	client		female	[27..31]	[1]		[10000..50000]	[A+]			cats are
-	// *	employee	male	[18..36]	[2]		[30000..50000]	[B, B+, B-]		cats are
-	// * 	client		*		[18..36]	[0..2]	[10000..50000]	[A, A+, A-]		cats are
+	//	Name	Status	Gender		Age			Kids	Income		A-Index					Z-Index					Grade		Motto
+	//	*		employee	*		[25]		[0]	[15000..17499]	(0.187500..0.250000)	(-0.375000..-0.250000)	[A, A+, A-]	cats are
+	//	*		client		*		[25]		[0]	[15000..17499]	(0.187500..0.250000)	(-0.375000..-0.250000)	[A, A+, A-]	cats are
+	//	*		employee	*		[30]		[2]	[30000..39999]	(0.600000)				(-0.500000..0.000000)	[A, A+, A-]	cats are
+	//	*		employee	female	[27..31]	[1]	[10000..50000]	(0.500000..1.000000)	(-0.312500..-0.250000)	[A, A+, A-]	cats are
+	//	*		client		male	[18..36]	[2]	[40000..44999]	(0.900000)				(-0.375000..-0.250000)	[A, A+, A-]	cats are
+	//	*		client		female	[27..31]	[1]	[10000..50000]	(0.500000..1.000000)	(-0.312500..-0.250000)	[A, A+, A-]	cats are
+	//	*		employee	male	[18..36]	[2]	[40000..44999]	(0.900000)				(-0.375000..-0.250000)	[A, A+, A-]	cats are
+	//	*		client		*		[30]		[2]	[30000..39999]	(0.600000)				(-0.500000..0.000000)	[A, A+, A-]	cats are
+
 }
