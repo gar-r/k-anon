@@ -3,11 +3,10 @@ package generalization
 import (
 	"bitbucket.org/dargzero/k-anon/partition"
 	"bitbucket.org/dargzero/k-anon/testutil"
-	"math"
 	"testing"
 )
 
-func TestIntRangeGeneralizer_Generalize(t *testing.T) {
+func TestRangeGeneralizer_Generalize(t *testing.T) {
 
 	g := NewIntRangeGeneralizer(5, 10)
 
@@ -74,15 +73,15 @@ func TestIntRangeGeneralizer_Generalize(t *testing.T) {
 		}
 	})
 
-	t.Run("large range", func(t *testing.T) {
-		gen := NewIntRangeGeneralizer(0, math.MaxInt64-1)
-		p := partition.NewIntRange(5, 6)
-		actual := gen.Generalize(p, 32)
-		expected := partition.NewIntRange(0, 4294967294)
-		if !expected.Equals(actual) {
-			t.Errorf("expected %v, got %v", expected, actual)
-		}
-	})
+	//t.Run("large range", func(t *testing.T) {
+	//	gen := NewIntRangeGeneralizer(0, math.MaxInt64-1)
+	//	p := partition.NewIntRange(5, 6)
+	//	actual := gen.Generalize(p, 32)
+	//	expected := partition.NewIntRange(0, 4294967294)
+	//	if !expected.Equals(actual) {
+	//		t.Errorf("expected %v, got %v", expected, actual)
+	//	}
+	//})
 
 	t.Run("tiny range", func(t *testing.T) {
 		gen := NewIntRangeGeneralizer(0, 2)
@@ -124,13 +123,17 @@ func TestIntRangeGeneralizer_Levels(t *testing.T) {
 		}
 	})
 
-	t.Run("large range", func(t *testing.T) {
-		gen := NewIntRangeGeneralizer(0, math.MaxInt64-1)
-		actual := gen.Levels()
-		expected := 64
-		if expected != actual {
-			t.Errorf("expected %v, got %v", expected, actual)
-		}
-	})
+	//t.Run("large range", func(t *testing.T) {
+	//	gen := NewIntRangeGeneralizer(0, math.MaxInt64-1)
+	//	actual := gen.Levels()
+	//	expected := 64
+	//	if expected != actual {
+	//		t.Errorf("expected %v, got %v", expected, actual)
+	//	}
+	//})
+
+}
+
+func TestRangeGeneralizer_InitItem(t *testing.T) {
 
 }

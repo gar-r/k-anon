@@ -1,9 +1,5 @@
 package partition
 
-import (
-	"sort"
-)
-
 // Partition is a single partition or node in a generalization hierarchy
 type Partition interface {
 
@@ -20,20 +16,25 @@ type Partition interface {
 	String() string
 }
 
-func (p *Set) isIntSeries() bool {
-	var items []int
-	for item := range p.Items {
-		val, success := item.(int)
-		if !success {
-			return false
-		}
-		items = append(items, val)
+type Range interface {
+	Partition
+
+	Min() float64
+	Max() float64
+	CanSplit() bool
+	Split() (Range, Range)
+	MaxSplit() int
+}
+
+func countSplit(r Range, n int) int {
+	if !r.CanSplit() {
+		return n
 	}
-	sort.Ints(items)
-	for i := 1; i < len(items); i++ {
-		if items[i]-items[i-1] > 1 {
-			return false
-		}
+	r1, r2 := r.Split()
+	n1 := countSplit(r1, n+1)
+	n2 := countSplit(r2, n+1)
+	if n1 > n2 {
+		return n1
 	}
-	return true
+	return n2
 }

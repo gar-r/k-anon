@@ -5,13 +5,22 @@ import "fmt"
 // IntRange represents an interval of integers with bounds.
 type IntRange struct {
 	min, max int
+	maxSplit int
 }
 
 func NewIntRange(min, max int) *IntRange {
 	if min > max {
-		return &IntRange{min, min}
+		return &IntRange{min: min, max: min}
 	}
-	return &IntRange{min, max}
+	return &IntRange{min: min, max: max}
+}
+
+func (r *IntRange) Min() float64 {
+	return float64(r.min)
+}
+
+func (r *IntRange) Max() float64 {
+	return float64(r.max)
 }
 
 func (r *IntRange) Contains(item interface{}) bool {
@@ -27,9 +36,9 @@ func (r *IntRange) ContainsPartition(other Partition) bool {
 	if success {
 		return r.containsIntRange(r2)
 	}
-	itemSet, success := other.(*Set)
+	set, success := other.(*Set)
 	if success {
-		return r.containsItemSet(itemSet)
+		return r.containsSet(set)
 	}
 	return false
 }
@@ -55,7 +64,7 @@ func (r *IntRange) CanSplit() bool {
 }
 
 // Split creates two new IntRanges from the original one by splitting it at the median
-func (r *IntRange) Split() (r1, r2 *IntRange) {
+func (r *IntRange) Split() (r1, r2 Range) {
 	l := r.max - r.min
 	if l < 2 {
 		r1 = NewIntRange(r.min, r.min)
@@ -68,11 +77,18 @@ func (r *IntRange) Split() (r1, r2 *IntRange) {
 	return
 }
 
+func (r *IntRange) MaxSplit() int {
+	if r.maxSplit == 0 {
+		r.maxSplit = countSplit(r, 1)
+	}
+	return r.maxSplit
+}
+
 func (r *IntRange) containsIntRange(other *IntRange) bool {
 	return r.min <= other.min && other.max <= r.max
 }
 
-func (r *IntRange) containsItemSet(other *Set) bool {
+func (r *IntRange) containsSet(other *Set) bool {
 	for item := range other.Items {
 		if !r.Contains(item) {
 			return false
