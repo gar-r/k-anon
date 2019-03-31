@@ -77,7 +77,7 @@ func (r *FloatRange) Split() (r1, r2 Range) {
 }
 
 func (r *FloatRange) MaxSplit() int {
-	return countSplit(r) + 1
+	return countSplit(r)
 }
 
 func (r *FloatRange) InitItem(item interface{}) Range {

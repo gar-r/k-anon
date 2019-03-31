@@ -39,7 +39,7 @@ func (g *RangeGeneralizer) Generalize(p partition.Partition, n int) partition.Pa
 }
 
 func (g *RangeGeneralizer) Levels() int {
-	return g.r.MaxSplit()
+	return g.r.MaxSplit() + 1
 }
 
 func (g *RangeGeneralizer) InitItem(item interface{}) partition.Partition {

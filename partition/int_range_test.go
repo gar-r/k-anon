@@ -116,6 +116,13 @@ func TestIntRange_ContainsPartition(t *testing.T) {
 		}
 	})
 
+	t.Run("invalid type", func(t *testing.T) {
+		p := NewItem("test")
+		if r.ContainsPartition(p) {
+			t.Errorf("%v should not contain %v", r, p)
+		}
+	})
+
 }
 
 func TestIntRange_Equals(t *testing.T) {
@@ -260,4 +267,61 @@ func TestIntRange_CanSplit(t *testing.T) {
 		}
 	})
 
+}
+
+func TestIntRange_Min(t *testing.T) {
+	r := NewIntRange(0, 10)
+	if r.Min() != 0 {
+		t.Errorf("expected 0, got %v", r.Min())
+	}
+}
+
+func TestIntRange_Max(t *testing.T) {
+	r := NewIntRange(0, 10)
+	if r.Max() != 10 {
+		t.Errorf("expected 0, got %v", r.Max())
+	}
+}
+
+func TestIntRange_InitItem(t *testing.T) {
+
+	r := NewIntRange(0, 10)
+
+	t.Run("init int item", func(t *testing.T) {
+		actual := r.InitItem(5)
+		expected := NewIntRange(5, 5)
+		if !expected.Equals(actual) {
+			t.Errorf("expected %v, got %v", expected, actual)
+		}
+	})
+
+	t.Run("non-int item", func(t *testing.T) {
+		actual := r.InitItem("test")
+		expected := NewIntRange(0, 0)
+		if !expected.Equals(actual) {
+			t.Errorf("expected %v, got %v", expected, actual)
+		}
+	})
+
+}
+
+func TestIntRange_MaxSplit(t *testing.T) {
+	tests := []struct {
+		min, max int
+		maxSplit int
+	}{
+		{0, 0, 0},
+		{0, 1, 1},
+		{5, 10, 3},
+		{0, 10, 4},
+	}
+	for _, test := range tests {
+		t.Run("range max split", func(t *testing.T) {
+			r := NewIntRange(test.min, test.max)
+			actual := r.MaxSplit()
+			if test.maxSplit != actual {
+				t.Errorf("expected %v, got %v", test.maxSplit, actual)
+			}
+		})
+	}
 }

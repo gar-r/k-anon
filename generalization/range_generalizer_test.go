@@ -206,10 +206,10 @@ func TestRangeGeneralizer_Generalize(t *testing.T) {
 
 func TestRangeGeneralizer_Levels(t *testing.T) {
 
-	t.Run("returns max split count on range", func(t *testing.T) {
-		expected := 10
-		g := &RangeGeneralizer{r: TestRange{maxSplit: expected}}
+	t.Run("returns max split + 1", func(t *testing.T) {
+		g := &RangeGeneralizer{r: TestRange{maxSplit: 10}}
 		actual := g.Levels()
+		expected := 10 + 1
 		if expected != actual {
 			t.Errorf("expected %v, got %v", expected, actual)
 		}

@@ -80,8 +80,7 @@ func (r *IntRange) Split() (r1, r2 Range) {
 }
 
 func (r *IntRange) MaxSplit() int {
-	return int(math.Ceil(
-		math.Log2(float64(r.max-r.min+1))) + 1)
+	return int(math.Ceil(math.Log2(float64(r.max - r.min + 1))))
 }
 
 func (r *IntRange) InitItem(item interface{}) Range {
