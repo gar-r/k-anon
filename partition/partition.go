@@ -19,6 +19,7 @@ type Partition interface {
 type Range interface {
 	Partition
 
+	InitItem(item interface{}) Range
 	Min() float64
 	Max() float64
 	CanSplit() bool
@@ -26,15 +27,10 @@ type Range interface {
 	MaxSplit() int
 }
 
-func countSplit(r Range, n int) int {
+func countSplit(r Range) int {
 	if !r.CanSplit() {
-		return n
+		return 0
 	}
-	r1, r2 := r.Split()
-	n1 := countSplit(r1, n+1)
-	n2 := countSplit(r2, n+1)
-	if n1 > n2 {
-		return n1
-	}
-	return n2
+	_, r2 := r.Split()
+	return countSplit(r2) + 1
 }

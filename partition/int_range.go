@@ -1,11 +1,13 @@
 package partition
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 // IntRange represents an interval of integers with bounds.
 type IntRange struct {
 	min, max int
-	maxSplit int
 }
 
 func NewIntRange(min, max int) *IntRange {
@@ -78,10 +80,13 @@ func (r *IntRange) Split() (r1, r2 Range) {
 }
 
 func (r *IntRange) MaxSplit() int {
-	if r.maxSplit == 0 {
-		r.maxSplit = countSplit(r, 1)
-	}
-	return r.maxSplit
+	return int(math.Ceil(
+		math.Log2(float64(r.max-r.min+1))) + 1)
+}
+
+func (r *IntRange) InitItem(item interface{}) Range {
+	val, _ := item.(int)
+	return NewIntRange(val, val)
 }
 
 func (r *IntRange) containsIntRange(other *IntRange) bool {

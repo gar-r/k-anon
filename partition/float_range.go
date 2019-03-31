@@ -5,11 +5,10 @@ import (
 	"gonum.org/v1/gonum/floats"
 )
 
-const delta = 0.0000001
+const delta = 0.000000001
 
 type FloatRange struct {
 	min, max float64
-	maxSplit int
 }
 
 func NewFloatRange(min, max float64) *FloatRange {
@@ -78,10 +77,12 @@ func (r *FloatRange) Split() (r1, r2 Range) {
 }
 
 func (r *FloatRange) MaxSplit() int {
-	if r.maxSplit == 0 {
-		r.maxSplit = countSplit(r, 1)
-	}
-	return r.maxSplit
+	return countSplit(r) + 1
+}
+
+func (r *FloatRange) InitItem(item interface{}) Range {
+	val, _ := item.(float64)
+	return NewFloatRange(val, val)
 }
 
 func (r *FloatRange) containsFloatRange(other *FloatRange) bool {

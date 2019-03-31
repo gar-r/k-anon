@@ -43,12 +43,7 @@ func (g *RangeGeneralizer) Levels() int {
 }
 
 func (g *RangeGeneralizer) InitItem(item interface{}) partition.Partition {
-	intVal, success := item.(int)
-	if success {
-		return partition.NewIntRange(intVal, intVal)
-	}
-	floatVal, _ := item.(float64)
-	return partition.NewFloatRange(floatVal, floatVal)
+	return g.r.InitItem(item)
 }
 
 func (g *RangeGeneralizer) trace(p partition.Partition, r partition.Range, path *[]partition.Range) {

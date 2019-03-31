@@ -33,3 +33,7 @@ func TestFloatRange_Split(t *testing.T) {
 	})
 
 }
+
+func TestFloat(t *testing.T) {
+
+}
