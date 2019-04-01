@@ -295,7 +295,23 @@ func TestIntRange_InitItem(t *testing.T) {
 		}
 	})
 
-	t.Run("non-int item", func(t *testing.T) {
+	t.Run("init uint item", func(t *testing.T) {
+		actual := r.InitItem(uint(5))
+		expected := NewIntRange(5, 5)
+		if !expected.Equals(actual) {
+			t.Errorf("expected %v, got %v", expected, actual)
+		}
+	})
+
+	t.Run("init float item", func(t *testing.T) {
+		actual := r.InitItem(float64(5))
+		expected := NewIntRange(5, 5)
+		if !expected.Equals(actual) {
+			t.Errorf("expected %v, got %v", expected, actual)
+		}
+	})
+
+	t.Run("unknown item", func(t *testing.T) {
 		actual := r.InitItem("test")
 		expected := NewIntRange(0, 0)
 		if !expected.Equals(actual) {

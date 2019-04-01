@@ -81,8 +81,16 @@ func (r *FloatRange) MaxSplit() int {
 }
 
 func (r *FloatRange) InitItem(item interface{}) Range {
-	val, _ := item.(float64)
-	return NewFloatRange(val, val)
+	floatVal, ok := item.(float64)
+	if ok {
+		return NewFloatRange(floatVal, floatVal)
+	}
+	intVal, ok := item.(int)
+	if ok {
+		return NewFloatRange(float64(intVal), float64(intVal))
+	}
+	uintVal, _ := item.(uint)
+	return NewFloatRange(float64(uintVal), float64(uintVal))
 }
 
 func (r *FloatRange) containsFloatRange(other *FloatRange) bool {

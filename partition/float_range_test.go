@@ -182,3 +182,60 @@ func TestFloatRange_String(t *testing.T) {
 	})
 
 }
+
+func TestFloatRange_CanSplit(t *testing.T) {
+
+	t.Run("can split", func(t *testing.T) {
+		r := NewFloatRange(0.1, 0.8)
+		if !r.CanSplit() {
+			t.Errorf("expected true")
+		}
+	})
+
+	t.Run("can not split", func(t *testing.T) {
+		r := NewFloatRange(0.1, 0.1)
+		if r.CanSplit() {
+			t.Errorf("expected false")
+		}
+	})
+
+}
+
+func TestFloatRange_MaxSplit(t *testing.T) {
+	r := NewFloatRange(0.0, 1.0)
+	actual := r.MaxSplit()
+	expected := 30
+	if expected != actual {
+		t.Errorf("expected %v, got %v", expected, actual)
+	}
+}
+
+func TestFloatRange_InitItem(t *testing.T) {
+
+	r := NewFloatRange(0.0, 1.0)
+
+	t.Run("init float item", func(t *testing.T) {
+		actual := r.InitItem(3.4)
+		expected := NewFloatRange(3.4, 3.4)
+		if !expected.Equals(actual) {
+			t.Errorf("expected %v, got %v", expected, actual)
+		}
+	})
+
+	t.Run("init int item", func(t *testing.T) {
+		actual := r.InitItem(3)
+		expected := NewFloatRange(3.0, 3.0)
+		if !expected.Equals(actual) {
+			t.Errorf("expected %v, got %v", expected, actual)
+		}
+	})
+
+	t.Run("init uint item", func(t *testing.T) {
+		actual := r.InitItem(uint(3))
+		expected := NewFloatRange(3.0, 3.0)
+		if !expected.Equals(actual) {
+			t.Errorf("expected %v, got %v", expected, actual)
+		}
+	})
+
+}

@@ -84,8 +84,16 @@ func (r *IntRange) MaxSplit() int {
 }
 
 func (r *IntRange) InitItem(item interface{}) Range {
-	val, _ := item.(int)
-	return NewIntRange(val, val)
+	intVal, ok := item.(int)
+	if ok {
+		return NewIntRange(intVal, intVal)
+	}
+	uintVal, ok := item.(uint)
+	if ok {
+		return NewIntRange(int(uintVal), int(uintVal))
+	}
+	floatVal, _ := item.(float64)
+	return NewIntRange(int(floatVal), int(floatVal))
 }
 
 func (r *IntRange) containsIntRange(other *IntRange) bool {
