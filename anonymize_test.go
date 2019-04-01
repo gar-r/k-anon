@@ -22,7 +22,10 @@ func TestAnonymizer_Anonymize(t *testing.T) {
 					Table: table,
 					K:     2,
 				}
-				anon.Anonymize()
+				err := anon.Anonymize()
+				if err != nil {
+					t.Errorf("unexpected error: %v", err)
+				}
 				t.Log(fmt.Sprintf("%v", anon.Table))
 				assertKAnonymity(table, 2, t)
 			})

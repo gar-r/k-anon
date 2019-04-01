@@ -18,19 +18,26 @@ type Anonymizer struct {
 }
 
 // Anonymize creates a K-anonymized Table from the input Table.
-func (a *Anonymizer) Anonymize() {
-	g := a.computeAnonGraph()
+func (a *Anonymizer) Anonymize() error {
+	g, err := a.computeAnonGraph()
+	if err != nil {
+		return err
+	}
 	components := topo.ConnectedComponents(g)
 	groups := a.getRowGroups(components)
 	a.generalize(groups)
+	return nil
 }
 
-func (a *Anonymizer) computeAnonGraph() graph.Undirected {
-	g := algorithm.BuildAnonGraph(a.Table, a.K)
+func (a *Anonymizer) computeAnonGraph() (graph.Undirected, error) {
+	g, err := algorithm.BuildAnonGraph(a.Table, a.K)
+	if err != nil {
+		return nil, err
+	}
 	undirected := algorithm.UndirectGraph(g)
 	d := algorithm.NewDecomposer(undirected, a.K)
 	d.Decompose()
-	return undirected
+	return undirected, nil
 }
 
 func (a *Anonymizer) getRowGroups(components [][]graph.Node) [][]*model.Row {

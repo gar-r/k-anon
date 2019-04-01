@@ -12,14 +12,14 @@ import (
 func TestBuildAnonGraph_1(t *testing.T) {
 	table := model.GetIntTable1()
 	k := 2
-	g := BuildAnonGraph(table, k)
+	g, _ := BuildAnonGraph(table, k)
 	verifyForestProperties(g, t, k)
 }
 
 func TestBuildAnonGraph_2(t *testing.T) {
 	table := model.GetStudentTable()
 	k := 3
-	g := BuildAnonGraph(table, k)
+	g, _ := BuildAnonGraph(table, k)
 	verifyForestProperties(g, t, k)
 }
 

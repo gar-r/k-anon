@@ -50,7 +50,10 @@ func ExampleAnonymizer_AnonymizeData() {
 		Table: table,
 		K:     2,
 	}
-	anon.Anonymize()
+	err := anon.Anonymize()
+	if err != nil {
+		fmt.Printf("error: %v", err)
+	}
 
 	// access & print the data
 	fmt.Printf("%v", anon.Table)

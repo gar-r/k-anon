@@ -33,7 +33,7 @@ func TestCalculateCost(t *testing.T) {
 				table.AddRow(test.items2...)
 				r1 := table.GetRows()[0]
 				r2 := table.GetRows()[1]
-				actualCost := CalculateCost(r1, r2, schema)
+				actualCost, _ := CalculateCost(r1, r2, schema)
 				testutil.AssertEquals(test.expectedCost, actualCost, t)
 			})
 		}
@@ -53,7 +53,7 @@ func TestCalculateCost(t *testing.T) {
 		table.AddRow(6, 9, "Test2")
 		r1 := table.GetRows()[0]
 		r2 := table.GetRows()[1]
-		cost := CalculateCost(r1, r2, schema)
+		cost, _ := CalculateCost(r1, r2, schema)
 		testutil.AssertEquals(1.5, cost, t)
 	})
 
@@ -69,17 +69,11 @@ func TestCalculateCost(t *testing.T) {
 		table.AddRow("dogs are my pets")
 		r1 := table.GetRows()[0]
 		r2 := table.GetRows()[1]
-		cost := CalculateCost(r1, r2, schema)
+		cost, _ := CalculateCost(r1, r2, schema)
 		testutil.AssertEquals(1.0, cost, t)
 	})
 
 	t.Run("cannot generalize into same partition", func(t *testing.T) {
-
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("expected panic, got none")
-			}
-		}()
 
 		schema := getSchema(1)
 		table := model.NewTable(schema)
@@ -87,7 +81,10 @@ func TestCalculateCost(t *testing.T) {
 		table.AddRow(100)
 		r1 := table.GetRows()[0]
 		r2 := table.GetRows()[1]
-		CalculateCost(r1, r2, schema)
+		_, err := CalculateCost(r1, r2, schema)
+		if err == nil {
+			t.Errorf("expected error, got none")
+		}
 	})
 
 }

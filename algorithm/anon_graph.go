@@ -7,8 +7,11 @@ import (
 	"math"
 )
 
-func BuildAnonGraph(table *model.Table, k int) graph.Directed {
-	costGraph := BuildCostGraph(table)
+func BuildAnonGraph(table *model.Table, k int) (graph.Directed, error) {
+	costGraph, err := BuildCostGraph(table)
+	if err != nil {
+		return nil, err
+	}
 	g := buildEmptyAnonGraph(table)
 	for {
 		components := UndirectedConnectedComponents(g)
@@ -20,7 +23,7 @@ func BuildAnonGraph(table *model.Table, k int) graph.Directed {
 		v := pickTargetVertex(g, c, u, costGraph)
 		g.SetEdge(g.NewEdge(u, v))
 	}
-	return g
+	return g, nil
 }
 
 func pickSourceVertex(g graph.Directed, component []graph.Node) graph.Node {

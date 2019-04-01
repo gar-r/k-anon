@@ -39,7 +39,11 @@ func ExampleAnonymizer_Continuous() {
 	table.AddRow("Ben", "employee", "male", 25, 2, 40250, 0.9, -0.25, "A+", "cats are interesting, but sometimes also egoistic")
 	table.AddRow("Anne", "client", "female", 30, 2, 35700, 0.6, -0.20, "A+", "cats are my favorite kind of animals")
 
-	anon.Anonymize()
+	err := anon.Anonymize()
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return
+	}
 
 	// anonymize second chunk of data
 	table.AddRow("Michelle", "employee", "female", 27, 1, 22400, 0.5, -0.2, "B", "cats are secretly extraterrestrials")
@@ -47,7 +51,11 @@ func ExampleAnonymizer_Continuous() {
 	table.AddRow("Odysseus", "client", "male", 39, 0, 39250, 0.5, -0.15, "A", "dogs are war bringers")
 	table.AddRow("Helene", "employee", "female", 29, 2, 21900, 0.6, -0.2, "B+", "dogs are silky and furry")
 
-	anon.Anonymize()
+	err = anon.Anonymize()
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return
+	}
 
 	// anonymize third chunk of data
 	table.AddRow("Donald", "client", "male", 26, 2, 24550, 0.9, 0.15, "A", "cats are secretly extraterrestrials")
@@ -55,7 +63,11 @@ func ExampleAnonymizer_Continuous() {
 	table.AddRow("George", "client", "male", 65, 1, 39990, 0.5, 0.15, "B", "dogs are war bringers")
 	table.AddRow("Victor", "employee", "male", 45, 0, 21000, 0.85, -0.3, "A-", "cats are silky and furry")
 
-	anon.Anonymize()
+	err = anon.Anonymize()
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return
+	}
 
 	// process & print results
 	fmt.Printf("%v", anon.Table)
