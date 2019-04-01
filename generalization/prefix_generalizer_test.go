@@ -34,9 +34,39 @@ func TestPrefixGeneralizer_Generalize(t *testing.T) {
 		}
 	})
 
-	t.Run("exceeds max words", func(t *testing.T) {
+	t.Run("level exceeds max words", func(t *testing.T) {
 		actual := g.Generalize(partition.NewItem("this is a test string"), 20)
 		testutil.AssertNil(actual, t)
+	})
+
+	t.Run("input word count exceeds max words", func(t *testing.T) {
+
+		s := "this is a test string which is longer than max words"
+
+		t.Run("level 0", func(t *testing.T) {
+			actual := g.Generalize(partition.NewItem(s), 0)
+			expected := partition.NewItem("this is a test string")
+			if !expected.Equals(actual) {
+				t.Errorf("expected %v, got %v", expected, actual)
+			}
+		})
+
+		t.Run("level 1", func(t *testing.T) {
+			actual := g.Generalize(partition.NewItem(s), 1)
+			expected := partition.NewItem("this is a test")
+			if !expected.Equals(actual) {
+				t.Errorf("expected %v, got %v", expected, actual)
+			}
+		})
+
+		t.Run("level 2", func(t *testing.T) {
+			actual := g.Generalize(partition.NewItem(s), 2)
+			expected := partition.NewItem("this is a")
+			if !expected.Equals(actual) {
+				t.Errorf("expected %v, got %v", expected, actual)
+			}
+		})
+
 	})
 
 	t.Run("generalize last word", func(t *testing.T) {
@@ -70,6 +100,7 @@ func TestPrefixGeneralizer_Generalize(t *testing.T) {
 			t.Errorf("partitions are not equal: %v, %v", expected, actual)
 		}
 	})
+
 }
 
 func TestPrefixGeneralizer_Levels(t *testing.T) {

@@ -48,6 +48,9 @@ func (g *PrefixGeneralizer) InitItem(item interface{}) partition.Partition {
 
 func (g *PrefixGeneralizer) getPaddedWords(s string) []string {
 	words := strings.Fields(s)
+	if len(words) > g.MaxWords {
+		words = words[:g.MaxWords]
+	}
 	padded := make([]string, g.MaxWords)
 	copy(padded, words)
 	return padded
