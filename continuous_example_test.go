@@ -8,7 +8,7 @@ import (
 
 func ExampleAnonymizer_Continuous() {
 
-	// define the schema & table
+	// define the schema & Table
 	table := model.NewTable(&model.Schema{
 		Columns: []*model.Column{
 			model.NewColumn("Name", &generalization.Suppressor{}),
@@ -25,8 +25,8 @@ func ExampleAnonymizer_Continuous() {
 	})
 
 	anon := &Anonymizer{
-		table: table,
-		k:     2,
+		Table: table,
+		K:     2,
 	}
 
 	// anonymize first chunk of data
@@ -58,9 +58,9 @@ func ExampleAnonymizer_Continuous() {
 	anon.Anonymize()
 
 	// process & print results
-	fmt.Printf("%v", anon.table)
+	fmt.Printf("%v", anon.Table)
 
-	// the resulting table will be similar to the below:
+	// the resulting Table will be similar to the below:
 
 	//	Name	Status		Gender	Age			Kids	Income			A-Index					Z-Index					Grade		Motto
 	//	*		employee	male	[18..36]	[0..2]	[10000..50000]	(0.000000..1.000000)	(-0.350000)				[A]			cats are

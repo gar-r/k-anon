@@ -7,17 +7,17 @@ import (
 	"gonum.org/v1/gonum/graph/topo"
 )
 
-// Anonymizer is a graph based data anonymizer which operates on table data.
-// The anonymizer is characterized by its k value. In a k-anonymized table
+// Anonymizer is a graph based data anonymizer which operates on Table data.
+// The anonymizer is characterized by its K value. In a K-anonymized Table
 // all records are samePartition or suppressed in a way, that given any record
-// there are other k-1 records in the table that are identical
+// there are other K-1 records in the Table that are identical
 // to it along quasi-identifier attributes.
 type Anonymizer struct {
-	k     int
-	table *model.Table
+	K     int
+	Table *model.Table
 }
 
-// Anonymize creates a k-anonymized Table from the input Table.
+// Anonymize creates a K-anonymized Table from the input Table.
 func (a *Anonymizer) Anonymize() {
 	g := a.computeAnonGraph()
 	components := topo.ConnectedComponents(g)
@@ -26,9 +26,9 @@ func (a *Anonymizer) Anonymize() {
 }
 
 func (a *Anonymizer) computeAnonGraph() graph.Undirected {
-	g := algorithm.BuildAnonGraph(a.table, a.k)
+	g := algorithm.BuildAnonGraph(a.Table, a.K)
 	undirected := algorithm.UndirectGraph(g)
-	d := algorithm.NewDecomposer(undirected, a.k)
+	d := algorithm.NewDecomposer(undirected, a.K)
 	d.Decompose()
 	return undirected
 }
@@ -39,8 +39,8 @@ func (a *Anonymizer) getRowGroups(components [][]graph.Node) [][]*model.Row {
 		var group []*model.Row
 		for _, n := range component {
 			id := int(n.ID())
-			if id < len(a.table.GetRows()) { // skip Steiner's vertices
-				group = append(group, a.table.GetRows()[id])
+			if id < len(a.Table.GetRows()) { // skip Steiner's vertices
+				group = append(group, a.Table.GetRows()[id])
 			}
 		}
 		groups = append(groups, group)
@@ -55,8 +55,8 @@ func (a *Anonymizer) generalize(groups [][]*model.Row) {
 }
 
 func (a *Anonymizer) generalizeRowGroup(rows []*model.Row) {
-	for colIdx := 0; colIdx < len(a.table.GetSchema().Columns); colIdx++ {
-		colDef := a.table.GetSchema().Columns[colIdx]
+	for colIdx := 0; colIdx < len(a.Table.GetSchema().Columns); colIdx++ {
+		colDef := a.Table.GetSchema().Columns[colIdx]
 		if colDef.IsIdentifier() {
 			for level := 0; level < colDef.GetGeneralizer().Levels(); level++ {
 				for _, row := range rows {

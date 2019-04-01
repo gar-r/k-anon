@@ -8,20 +8,20 @@ import (
 
 // This is a testable example to demonstrate the usage of the anonymizer.
 // The outline of the steps you need to take is the following:
-// 1) Define a table
+// 1) Define a Table
 //    a) define the schema (friendly name and generalizer for each column)
 //          * use a 'nil' generalizer for non-identifier (skipped) columns
 //          * see the g interface to implement a custom generalizer
 //    b) define the rows, conforming to the above schema:
 //          * number of columns should match
 //          * data type should be compatible with the assigned generalizer for the column
-// 2) create an Anonymizer instance, and supply the table and k parameters
+// 2) create an Anonymizer instance, and supply the Table and K parameters
 // 3) call the Anonymize() function
-// The supplied table will be anonymized in-place. Note, that items in partitions
-// in the resulting table are not ordered (always treat them as sets).
+// The supplied Table will be anonymized in-place. Note, that items in partitions
+// in the resulting Table are not ordered (always treat them as sets).
 func ExampleAnonymizer_AnonymizeData() {
 
-	// define the schema & table
+	// define the schema & Table
 	table := model.NewTable(&model.Schema{
 		Columns: []*model.Column{
 			model.NewColumn("Name", &generalization.Suppressor{}),
@@ -47,15 +47,15 @@ func ExampleAnonymizer_AnonymizeData() {
 
 	// create an anonymizer and run the anonymization
 	anon := &Anonymizer{
-		table: table,
-		k:     2,
+		Table: table,
+		K:     2,
 	}
 	anon.Anonymize()
 
 	// access & print the data
-	fmt.Printf("%v", anon.table)
+	fmt.Printf("%v", anon.Table)
 
-	// the above will produce a similar table:
+	// the above will produce a similar Table:
 
 	//	Name	Status		Gender	Age			Kids	Income			A-Index					Z-Index					Grade		Motto
 	//	*		employee	*		[18..36]	[0..2]	[10000..50000]	(0.000000..1.000000)	(-0.375000..-0.250000)	[A]			cats are

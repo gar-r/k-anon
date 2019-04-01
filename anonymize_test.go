@@ -8,7 +8,7 @@ import (
 
 func TestAnonymizer_Anonymize(t *testing.T) {
 
-	t.Run("test k-anonymity", func(t *testing.T) {
+	t.Run("test K-anonymity", func(t *testing.T) {
 		tables := []*model.Table{
 			model.GetIntTable1(),
 			model.GetMixedTable1(),
@@ -17,13 +17,13 @@ func TestAnonymizer_Anonymize(t *testing.T) {
 			model.GetStudentTable(),
 		}
 		for i, table := range tables {
-			t.Run(fmt.Sprintf("table %d", i), func(t *testing.T) {
+			t.Run(fmt.Sprintf("Table %d", i), func(t *testing.T) {
 				anon := &Anonymizer{
-					table: table,
-					k:     2,
+					Table: table,
+					K:     2,
 				}
 				anon.Anonymize()
-				t.Log(fmt.Sprintf("%v", anon.table))
+				t.Log(fmt.Sprintf("%v", anon.Table))
 				assertKAnonymity(table, 2, t)
 			})
 		}
@@ -39,7 +39,7 @@ func assertKAnonymity(table *model.Table, k int, t *testing.T) {
 			}
 		}
 		if count < k {
-			t.Errorf("k-anonimity violated in row %v", i)
+			t.Errorf("K-anonimity violated in row %v", i)
 		}
 	}
 }
