@@ -1,0 +1,19 @@
+The library needs to provide a way for the API user to define how to generalize certain data types in their schema.
+The implementation also needs to be flexible, but convenient and easy-to-use at the same time.
+We want to make sure, that the implementation can satisfy at least the following requirements:
+
+\begin{itemize}
+    \setstretch{1.0}
+    \item supports \textbf{generalization hierarchy}, with convenient declaration
+    \item supports \textbf{suppression}
+    \item supports \textbf{sets, ranges}
+    \item supports \textbf{text}
+    \item supports \textbf{non}-hierarchy based generalization
+    \item custom generalizers can be created by \textbf{implementing an interface}
+\end{itemize}
+
+Until now we have only discussed \textit{hierarchy}-based generalization, and for the theoretical discussion of the anonymization algorithm it was perfectly sufficient.
+You can create a generalization hierarchy for basically any data type --- even though the number of levels and the number of partitions on a given level may end up very large, or even infinite.
+
+It is important to note however, that in real-life scenarios this is not always feasible.
+Storage, operating memory and computing time is finite, which means that for some dimensions (like \textit{text}) we will need to apply a different type of abstraction.

@@ -1,0 +1,6 @@
+\begin{lstlisting}[caption=The \texttt{anonymizerAlgorithm interfcae},label=lst:anon_interface,float,floatplacement=H]
+type anonymizerAlgorithm interface {
+	initialize(*anonmodel.Dataset, string, []anonmodel.FieldAnonymizationInfo)
+	anonymize() error
+}
+\end{lstlisting}

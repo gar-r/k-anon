@@ -1,0 +1,20 @@
+The outline of the algorithm can be summarized as follows:
+
+\begin{enumerate}
+    \item construct a cost-graph from the table
+    \item build a forest which partitions the graph into \(c \ge k\) components
+    \item gradually decompose ``oversized'' components until the approximation criteria is reached
+\end{enumerate}
+
+Once the last step is finished the algorithm terminates, and the output will be a \textit{forest} where each component represents a set of rows which should be generalized into the same partition.
+
+\subsection{A note on the algorithm output}\label{subsec:a-note-on-the-algorithm-output}
+
+The careful reader may notice, that the output of the above algorithm is not an anonymized data table, but a graph.
+If we recall the definition of \textit{k-anonymity with generalization} from Section~\ref{subsec:definition_of_anonymity} it actually stated, that we are looking for a \textit{k-anonymous generalization function}.
+
+Producing the generalization function from the output graph is fortunately rather straightforward.
+The components of the output graph tell us exactly which nodes (rows) will belong to the same partition after generalization, while the cost graph will assist us in knowing the exact level of generalization needed.
+Since the generalization hierarchies for each dimension were given as part of the input, the generalization function can simply be composed of applying the \textit{g} generalization function to the given level for each row vector.
+
+Given the k-anonymous generalization function \textit{h} produced with the method above, it is a trivial matter to obtain the generalized data table: the function should be applied to each of the input data vectors: \([h(x_1), h(x_2), \dots, h(x_n)]\).

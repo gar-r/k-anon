@@ -1,0 +1,12 @@
+\begin{lstlisting}[caption=Decompose main loop,label=lst:decompose_main,float,floatplacement=H]
+func (d *Decomposer) Decompose() {
+    threshold := d.getThreshold()
+    for {
+        c := d.pickComponent(threshold)
+        if c == nil {
+            break
+        }
+        d.partitionComponent(c)
+    }
+}
+\end{lstlisting}

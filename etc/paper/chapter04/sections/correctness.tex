@@ -1,0 +1,60 @@
+In this section we will reason about the \emph{correctness of the implementation}.
+
+We will be relying on the unit and integration test suite that has been created along with the algorithm.
+It should be noted, that unit tests alone will not give a \emph{mathematical} proof of correctness, or total correctness (the former proves input-output correctness, while the latter also includes proof of termination). However, with a well-tested codebase we can almost certainly tell with a \emph{high degree of confidence}, that the code performs according to the specifications.
+
+\subsection{Generalizer tests}
+
+For each built-in generalizer implementation a corresponding test suite verifies the correct behavior. Without getting too much into the details, Figure~\ref{fig:generalizer_tests} shows a summary of the tests and their locations.
+
+\vspace{\baselineskip}
+\input{chapter04/figures/generalizer-tests.tex}
+
+\subsection{Core algorithm tests}
+
+\subsubsection{Cost graph tests}
+These tests cover the building and edge-cost calculation of cost graphs. The test suite in \texttt{cost\_test.go} deals with verifying the cost calculation formula. Another test suite verifies that the  cost-graph is built properly. In these tests the input is always a \emph{table}, and we verify, that the structure and edge-costs of the output graph is as expected. Tests also cover edge cases, like invalid data in the table, invalid generalizer for the column and empty input. The cost graph test suite is located in \texttt{cost\_graph\_test.go}.
+
+\subsubsection{Forest building tests}
+The tests for the forest building algorithm are located in \texttt{anon\_graph\_test.go}, and they verify the following aspects of the algorithm:
+\begin{itemize}
+    \setstretch{1.0}
+    \item a correct component should be picked for extension
+    \item a correct vertex should be picked as source vertex
+    \item a correct vertex should be picked as target vertex
+    \item forest (tree) properties are not violated after the new edge is added
+\end{itemize}
+
+\subsubsection{Decompose tests}
+The decompose step is a rather complex step in the core algorithm. The test suite in the file \texttt{decompose\_test.go} tries to deal with this complexity. With the proper set of helper methods however, the tests in it are still readable and relatively easy to follow. An example can be seen on Figure~\ref{lst:decompose_test}.
+
+Tests in the decompose suite are centered around the verification of the following:
+\begin{itemize}
+    \setstretch{1.0}
+    \item oversized threshold calculation logic
+    \item component picked for decomposition is actually oversized
+    \item cut types A through D (see Section~\ref{subsec:algorithm-to-decompose-oversized-components})
+    \item handling of Steiner's vertices
+    \item the algorithm stops when there are no more oversized components in the forest
+\end{itemize}
+
+\input{chapter04/listings/decompose-test.tex}
+
+\subsubsection{Anonoymizer tests}
+Last, but not least the tests in \texttt{anonymize\_test.go} check, that all the above work well together. They call the \texttt{Anonymizer} for a set of test input tables, and verify that \emph{k-anonymity} on the output is not violated. This is done by ensuring, that in the resulting output for any given row at least \(k-1\) other rows must be the same partition. (See Listing~\ref{lst:test_k_anonymity}.)
+
+\input{chapter04/listings/k-anonymity.tex}
+
+\subsection{Examples}
+Several of the above tests also have \emph{testable examples}. Examples in Go are special tests, which contain a runnable snippet of code, that demonstrates API usage or functionality. They will be run by the testing framework along with the rest of the tests, and their example output will be verified automatically. A mismatch in the example output will cause the test to fail.
+
+Each provided testable example is listed on Figure~\ref{fig:testable_examples}.
+
+\vspace{\baselineskip}
+\input{chapter04/figures/testable-examples.tex}
+
+\subsection{Stats \& metrics}
+Table~\ref{fig:test_metrics} shows some interesting metrics about the project.
+
+\vspace{\baselineskip}
+\input{chapter04/figures/metrics.tex}

@@ -1,12 +1,13 @@
 package kanon
 
 import (
+	"fmt"
+
 	"bitbucket.org/dargzero/k-anon/generalization"
 	"bitbucket.org/dargzero/k-anon/model"
-	"fmt"
 )
 
-// This is a testable example to demonstrate the usage of the anonymizer.
+// ExampleAnonymization demonstrates the usage of the anonymizer.
 // The outline of the steps you need to take is the following:
 // 1) Define a Table
 //    a) define the schema (friendly name and generalizer for each column)
@@ -19,7 +20,7 @@ import (
 // 3) call the Anonymize() function
 // The supplied Table will be anonymized in-place. Note, that items in partitions
 // in the resulting Table are not ordered (always treat them as sets).
-func ExampleAnonymizer_AnonymizeData() {
+func ExampleAnonymization() {
 
 	// define the schema & Table
 	table := model.NewTable(&model.Schema{

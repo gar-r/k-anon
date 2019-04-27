@@ -88,7 +88,7 @@ func GetMixedTable3() *Table {
 	return t
 }
 
-// GetEmptyTable return an empty table with 3 rows
+// GetEmptyTable return an empty table
 func GetEmptyTable() *Table {
 	table := &Table{}
 	return table

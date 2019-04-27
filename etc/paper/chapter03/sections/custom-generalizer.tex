@@ -1,0 +1,12 @@
+Finally, if none of the built-in generalization techniques are adequate for a certain use case, the user of the library can still implement the \texttt{Generalizer} interface to provide a custom logic.
+
+Recall from Section~\ref{sec:generalization}, that in order to properly implement the \texttt{Generalizer} interface, one has to implement the following methods:
+
+\underline{\texttt{Levels () int}}: \\
+This method should return the maximum number of times the generalizer can generalize the values. In hierarchy based generalizers it is usually the number of levels in the tree. It is important to note, that the levels are zero-indexed, which needs to be taken account when calculating the number of levels with a non-hierarchy based logic.
+
+\underline{\texttt{Generalize (Partition, int) Partition}}: \\
+This method should generalize the input partition n times (providing that \(n \le Levels ()\)) and return the resulting partition. The result will be used by the core anonymization algorithm when calculating the cost graph.
+
+\underline{\texttt{InitItem (interface\{ \}) Partition}}: \\
+Implement this method to tell how to initialize a raw value. In most cases you just want to wrap it into an \texttt{Item} or \texttt{Set}.

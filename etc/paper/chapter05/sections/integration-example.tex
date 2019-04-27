@@ -1,0 +1,69 @@
+In this section we will give a detailed walk-through of an integration case study. We will show how to use the graph anonymization library in an existing Go code base. This existing code base is a containerized anonymization system leveraging the MongoDb document database. It was developed by \emph{Vilmos Sz. Martinek's} as part of his MSc thesis while studying at \textit{Budapest University of Technology and Economics} in 2018~\cite{martinek}. A cornerstone of the integration is to make the \emph{minimum amount of changes} in the existing system, while introducing an alternative anonymization algorithm as an optionally selectable component.
+
+\subsection{Overview of the target system}
+
+The target anonymization system implements a standard three-tiered architecture. See Figure~\ref{fig:integration_arch}. We highlighted network boundaries with blue dashed lines on the figure.
+
+\subsubsection{REST API}\label{subsubsec:rest_api}
+Client applications can use the system through a provided REST API, which supports two operations: \emph{data set creation} and \emph{data upload}. The former makes it possible to push data into different MongoDb collections, the latter deals with actually receiving the data in the form of JSON documents.
+
+\vspace{\baselineskip}
+\input{chapter05/figures/architecture.tex}
+
+\subsubsection{BLL}
+The business logic layer contains the anonymization related code. This is where we need to implement the integration with the graph based anonymizer. Initially the system supported a single anonymization algorithm, called \emph{Mondrian}. Mondrian is a top-down greedy anonymization algorithm, which uses a \emph{kd-tree} to partition the raw data into partitions for generalization. In this document we will not discuss the Mondrian algorithm in further details --- we can simply think about it as another anonymization algorithm with different characteristics than the graph based anonymizer. In certain circumstances it might be beneficial to use one versus the other, so it would be useful to be able to switch between the two types of algorithms for different data sets.
+
+The BLL layer already contained an interface which encapsulates the public API of an anonymizer, hence the need for a \emph{wrapper} around the graph anonymizer. The wrapper provides a thin layer around the API introduced in Section~\ref{sec:example_run} and makes it compatible with the rest of the system.
+
+\subsubsection{DAL}
+The data access layer uses the \emph{mgo} third party library to interface with MongoDb. Since this layer is not the focus point for our integration case study, we will not detail its internals further in this section.
+
+\subsection{Adapting the input data format}\label{subsec:json_input_format}
+As mentioned in~\ref{subsubsec:rest_api}, both the configuration and upload of the data is done through the REST API, so our first step will be to extend the input declaration, and make it able to switch between algorithms and configure parameters for both types of algorithms.
+
+\paragraph{Original input format:} an example of the unmodified input format can be seen on Listing~\ref{lst:original_format}. The structure contains a \textit{settings} and \textit{fields} object. The former describes the anonymization parameters, the latter the field definitions (or \emph{schema}). Each field can have:
+\begin{itemize}
+    \setstretch{1.0}
+    \item \textbf{name:} the name of the column
+    \item \textbf{mode:} how the column should be treated. Can be \textit{id} or \textit{qid}
+    \item \textbf{type:} data type for anonymization. Can be \textit{numeric}, \textit{prefix}
+\end{itemize}
+
+\vspace{\baselineskip}
+\input{chapter05/listings/original-json.tex}
+
+\paragraph{Modified input format:} fortunately the \textit{settings} object already supports defining the algorithm name (even though initially only the Mondrian value was supported), so this field can be reused. We can also reuse most of the field settings as well, however we need to introduce a couple of extra data types and also make it possible to configure the generalizers when selecting the graph anonymizer.
+
+\vspace{\baselineskip}
+\input{chapter05/listings/modified-json.tex}
+
+
+The modified input format is shown on Listing~\ref{lst:modified_format}. We now allow the \textit{``graph''} value for the \textit{algorithm} field. We also introduced the \textit{``keep''} and \textit{``drop''} values for the \textit{mode} field to be able to have a finer control over what columns to anonymize, leave alone, or suppress completely.
+
+The field configuration objects now allow an \textit{``opts''} object. This will only be processed by the graph wrapper, the Mondrian module will ignore it entirely. This object contains graph anonymizer related parameters for certain field types (\textit{min} and \textit{max} values for range generalizers, \textit{maxWords} setting for prefix generalizers).
+
+\subsection{Implementing the wrapper}
+
+The framework provides the \texttt{anonymizerAlgorithm} interface as an abstraction for the top level API of anonymization. Mondrian is an implementation of this interface, and we will need to implement the wrapper to be an implementation as well. Figure~\ref{lst:anon_interface} shows the interface.
+
+\vspace{\baselineskip}
+\input{chapter05/listings/anon-interface.tex}
+
+The \texttt{initialize} method is called by the framework after instantiating the anonymizer, but before calling the \texttt{anonymize} method. It gets the parsed settings for the fields and data set from the input JSON detailed in~\ref{subsec:json_input_format}. We can use this method to initialize the schema, since the modified JSON input now contains all the required information to declare the columns with the appropriate generalizer for each field. Note, that the actual data to anonymize is not passed to the wrapper by the framework (see~\ref{subsec:anonymizing_the_data}).
+
+\subsection{Anonymizing the data}\label{subsec:anonymizing_the_data}
+
+Recall from~\ref{subsubsec:rest_api}, that the client facing interface provided a separate web method for \emph{uploading data}. It is the responsibility of the implementor of \texttt{anonymizerAlgorithm} to get hold of the data for the data set specified in the parameters. In essence, the graph wrapper will need to have a reference to the DAL, and when the \texttt{anonymize} method is called by the framework, it must first query the data waiting to be anonymized. When the anonymization is finished, it should insert the anonymized data and mark it \emph{done}.
+
+\subsection{Tests}
+
+Finally, after the wrapper has been implemented we needed to verify with testing, that the integration is working correctly. Two types of tests have been created:
+\begin{itemize}
+    \setstretch{1.0}
+    \item \textbf{unit tests:} in these tests we need to mock the data access layer, and verify that input parsing, schema declaration and anonymization is working correctly.
+    \item \textbf{regression:} normally we run the framework-provided unit test suite to verify, that we did not break any existing functionality. Unfortunately there were no unit tests in the original code base. This leaves us with the only option to \emph{first} cover the most important parts of the original code base (for the original functionality) with tests, until a sufficient coverage rate is reached. \emph{Then} proceed with implementing our changes, so we can verify that our added functionality is working properly. Before actually modifying the existing code base, I have taken a great care to cover as much of the original functionality as possible (see Figure~\ref{fig:tests_added}).
+    \item \textbf{integration tests:} we verify, that integration between the BLL \& REST API, and BLL \& MongoDb isn't broken. We can do this by bringing up the system in the provided \emph{docker} container and calling the REST API with an HTTP client, or checking the data queried/inserted from/to the database respectively.
+\end{itemize}
+
+\vspace{\baselineskip}
+\input{chapter05/figures/testing.tex}

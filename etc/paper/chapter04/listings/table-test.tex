@@ -1,0 +1,15 @@
+\begin{lstlisting}[caption=Table-driven test,label=lst:go_table_test,float,floatplacement=H]
+func TestFactorial(t *testing.T) {
+    tests := []struct { n, want int }{
+        {0, 1},
+        {1, 1},
+        {2, 2},
+        {3, 6},
+    }
+    for _, test := range tests {
+        t.Run("factorial test", func(t *testing.T) {
+            // test logic
+        })
+    }
+}
+\end{lstlisting}

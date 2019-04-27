@@ -1,0 +1,136 @@
+\subsection{Insufficiency of identifier truncation}\label{subsec:insuff}
+
+Before diving into the definition of k-anonymity, let's take the previous example a little bit further, and consider the following patient data taken from the hospital's database:
+
+\input{chapter01/figures/patient-data.tex}
+
+In order to attempt to remove personal information from the data, one --- albeit naïve --- approach the hospital could choose is to simply \textit{truncate} all fields that contain identifiers.
+In the above example they will be the \textit{social security number} and \textit{name} fields.
+The resulting table will look something like this:
+
+\input{chapter01/figures/truncated-patient-data.tex}
+
+Unfortunately by using an external public database --- for example census records or a phone book --- an attacker could still piece together which person was diagnosed with which disease, thus rendering the hospital's data protection method useless.
+This is called a \textbf{\textit{table join attack}}:
+
+\input{chapter01/figures/census-data.tex}
+
+\input{chapter01/figures/joined-patient-data.tex}
+
+One might think, that this does not usually happen outside of fabricated examples.
+Unfortunately, as Sweeney observed~\cite{sweeney} for 87\% of the U.S.\ population the combination of date of birth, gender and zip code corresponded to a unique person~\cite{aggarwal} --- which could easily make the above example reality.
+
+\subsection{Data model}\label{subsec:data_model}
+
+Most anonymization algorithms work on data tables with a concrete \textit{schema} so we will adopt this model as well.
+Tables can also be viewed as \textit{n} row vectors, or \textit{tuples}.
+Each tuple represents an individual piece of data, and consists of \textit{m} attributes \((c_1, c_2, \ldots, c_m)\).
+Attributes are sometimes also referred to as \textit{dimensions}.
+
+\subsubsection{Attribute types}
+
+\paragraph{identifiers:} these attributes by themselves alone can be used to identify the person whom the data belongs to without the need to reference any other attributes.
+It is easy to see, that anonymization algorithms will always need to truncate or suppress all of these attributes from the final anonymized data set.
+
+\paragraph{quasi-identifiers:} as illustrated by the examples in Section~\ref{subsec:insuff} some attributes are not identifiers themselves but can still be used in conjunction with external data sources to identify the concrete person.
+These attributes are \textit{quasi-identifier} attributes, and will be subject to some level of generalization or suppression based on the algorithm being used (refer to the next section called \textit{`Data hiding techniques`} for a more precise explanation of generalization and suppression).
+
+\paragraph{non-identifiers:} attributes, which the \textit{data controller} deems irrelevant in the context of anonymization are non-identifiers.
+We can often extract useful statistics from their values, but they are meaningless without pairing them with additional attributes.
+
+\subsubsection{Data hiding techniques} In order to remove sensitive data from a database, anonymization algorithms use common data hiding techniques.
+In this section we will briefly introduce two commonly used, and illustrate how they work on simple examples.
+
+\paragraph{suppression} is very similar to truncating all sensitive data values.
+When looking at a single attribute (like age) in a database, truncating it would redact \textit{all} values.
+Suppression on the other hand redacts \textit{some} of the values, while retaining the rest~\cite{aggarwal}.
+Which values are suppressed and which values are retained is decided by the anonymization algorithm, which considers several different factors.
+
+Figure~\ref{fig:suppression_example} shows the anonymization of a table using suppression only, along the quasi-identifiers Name, Age and Gender:
+
+\input{chapter01/figures/suppression.tex}
+
+\paragraph{generalization} replaces values with less specific, but semantically consistent values from the same domain.
+For example a date can be made more generic by omitting the days and even more so by reducing it to the year only. (Note, that suppression is basically a special case of generalization --- we can create a special generalization function, which maps every value to a suppressed value in one step.)
+
+Figure~\ref{fig:generalization} shows the anonymization of a table using generalization along the quasi-identifiers Name, Age and Gender:
+
+\input{chapter01/figures/generalization.tex}
+
+In most cases we can assume, that for each attribute a \textit{\textbf{generalization hierarchy}} exists~\cite{aggarwal}.
+Each level of the generalization hierarchy corresponds to a partition of the attribute domain, and a refinement over the partitions on the previous level~\cite{samarati-sweeney}.
+On the two opposing ends of the hierarchy we have singleton sets corresponding to the lack of generalization, and a single set containing all values from the domain corresponding to the highest level of generalization.
+
+\input{chapter01/figures/grades-hierarchy.tex}
+
+The generalization hierarchy is a useful model, but it is not without restrictions --- especially when considering very large or infinite value domains (for example integer numbers).
+In later chapters we will see how we can implement more flexible generalization hierarchy for our anonymization algorithm.
+
+\subsection{Definition of k-anonymity}\label{subsec:definition_of_anonymity}
+
+The \textit{k-anonymity} model was originally proposed by Samarati and Sweeney~\cite{samarati-sweeney,sweeney02}.
+The idea is to generalize some of the data in the input table to ensure, that \textit{for each tuple in the anonymized table there are at least \(k-1\) other tuples in the table that are identical to it along the quasi-identifier attributes}.
+While achieving this, the anonymization algorithm should also minimize the \textit{cost of generalization}.
+
+A k-anonymized data table will be `immune' to join attacks or \textit{record linkages} even if the attacker has access to all quasi-identifying attributes of all the individuals represented in the table~\cite{aggarwal}.
+This is because each individual tuple is hidden among \(k-1\) other identical tuples.
+Note however that it is the responsibility of the  data controller the correctly identify all quasi-identifiers in the table and provide a sufficient generalization hierarchy for them.
+
+Selecting an appropriate \textit{k} value is also the data controller's responsibility.
+While picking a large \textit{k} value will ensure a bigger level of privacy, it also reduces the amount of information left in the data set.
+The \textit{k} value should always be selected by considering the needs of the application.
+
+\input{chapter01/figures/anonymized-table.tex}
+
+Now we can formally define k-anonymity~\cite{aggarwal}:
+
+\paragraph{Definition} \textsc{k-anonymity with suppression}: \\
+given \(x_1,\ldots,x_n \in \Sigma^m\) and the anonymity parameter \textit{k}, obtain a k-anonymous suppression function \textit{t} so that \textit{c (t)} is minimized.
+
+A \textbf{k-anonymous suppression function} \textit{t} maps each \(x_i\) to \(\bar{x_i}\) by replacing some components of \(x_i\) by \(*\), so that every \(\bar{x_i}\) is identical to at least \(k-1\) other \(\bar{x_j}\)s.
+
+The \textbf{cost of \textit{t} suppression function} \textit{c (t)} is the total number of hidden entries (\(*s\)) in all the \(\bar{x_i}\)s.
+
+\begin{center}
+    \rule{0.9\textwidth}{0.3pt}
+\end{center}
+
+\paragraph{Definition} \textsc{k-anonymity with generalization}: \\
+given \(x_1,\ldots,x_n \in \Sigma^m\) and the anonymity parameter \textit{k}, obtain a k-anonymous generalization function \textit{h} so that \textit{c (h)} is minimized.
+
+Let the \(j^{th}\) attribute have domain \(D^j\) and \(l_j\) levels of generalization.
+Let the partition corresponding to the \(h^{th}\) level be denoted by \(g_{h(y)}\).
+A \textbf{generalization function} \textit{h} is a function that maps a pair \((i,j), i \le n, j \le m\) to a level of generalization \(h(i,j) \le l_j\).
+
+Let \(h(x_i)\) denote the \textit{generalized} vector corresponding to \(x_i\), i.e. \[h(x_i) = (g_{h(i,1)}(x_1[1]), \ldots, g_{h(i,m)}(x_i[m])).\] \textit{h} is a \textbf{k-anonymous generalization function} if for every \(i, h(x_i)\) is identical to \(h(x_j)\) for at least \(k-1\) values of \(j \neq i\).
+
+Consider a k-anonymous generalization function \textit{h}.
+It incurs a \textbf{cost} of \(r/l_j\) whenever it generalizes a value for the \(j^{th}\) attribute to the \(r^{th}\) level.
+The \textbf{total cost incurred by the generalization function} \textit{h} is defined as the sum of the costs incurred over all the entries of the table, i.e. \(c(h) = \Sigma_i\Sigma_j h(i,j)/l_j\).
+
+\begin{center}
+    \rule{0.9\textwidth}{0.3pt}
+\end{center}
+
+While this definition seems complicated at first, it basically just states, that we are looking for the \textit{`cheapest'} generalization (or suppression) function which partitions the rows in such a way, that at least \textit{k} identical rows are present in each partition after applying the function --- this is in-line with the rule of k-anonymity stated earlier.
+
+The complication comes from calculating the cost incurred by the function.
+For a suppression function we simply need to count the number of suppressed entries.
+For a generalization function however we need to consider the maximum level of generalization possible for the attribute's domain, and the level of generalization applied by the function in order to find the generalization cost for a single entry.
+This cost for a single entry will always be a rational  number between \([0..1]\).
+The total cost of applying the generalization function is the sum of all of these costs.
+
+It is also worth noting, that the problem of \textbf{k-anonymity with suppression} is a special case of the problem of \textbf{k-anonymity with generalization}~\cite{aggarwal}. This can be proven by using a special generalization function which only has one level of generalization for each attribute domain which corresponds to completely hiding the element value.
+It can easily be seen, that this special generalization function is equivalent to a suppression function for the same \textit{k} anonymity parameter.
+
+\subsection{NP-hardness of k-anonymity}\label{subsec:np-hardness-of-k-anonymity}
+
+\paragraph{Theorem} k-anonymity with suppression is NP-hard even for a ternary alphabet (\(\Sigma = {0, 1, 2}\))~\cite{aggarwal}.
+.
+The complete proof will not be presented in this document, but the core idea is, that the NP-hard problem \textit{Edge Partition Into Triangles} (Kann, 1994) can be reduced into the problem of k-anonymity with suppression for \(k=3\)~\cite{aggarwal}. Furthermore, by reduction from \textit{Edge Partition Into r-Cliques} (Kann, 1994) the proof can be extended to any \(k \ge 2\) integer value.
+
+Let's pause for a moment and consider the consequences of the above theorem.
+A decision problem H is NP-hard, when for every problem L in NP, there is a polynomial-time reduction from L to H~\cite{leeuwen}. In other words problems in this class are \textit{``at least as hard as the hardest problems in NP''}~\cite{wiki07}. As a consequence if \textbf{\(P \neq NP\)}, then NP-hard problems cannot be solved in polynomial time~\cite{wiki06, wiki07}.
+.
+In the next chapter we will outline a polynomial \textbf{approximation} algorithm for the k-anonymity problem.
+This means, that we won't always get the \textit{optimal} solution --- i.e.\ the cost of anonymization is not  always \textit{minimal} --- but we get one, that's ``good enough''.

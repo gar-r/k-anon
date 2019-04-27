@@ -1,0 +1,15 @@
+\begin{lstlisting}[caption=Generalization cost calculation,label=lst:cost_calculation,float,floatplacement=H]
+func calculateCostFraction(p1, p2 partition.Partition,
+            g generalization.Generalizer) (float64, error) {
+    maxLevels := g.Levels()
+    for level := 0; level < maxLevels; level++ {
+        g1 := g.Generalize(p1, level)
+        g2 := g.Generalize(p2, level)
+        if g1 != nil && g1.Equals(g2) {
+            return float64(level) / float64(maxLevels-1), nil
+        }
+    }
+    return 0, fmt.Errorf(fmt.Sprintf("data cannot be generalized
+                into same partition: %v, %v", p1, p2))
+}
+\end{lstlisting}

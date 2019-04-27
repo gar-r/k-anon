@@ -5,7 +5,7 @@ import (
 	"bitbucket.org/dargzero/k-anon/partition"
 )
 
-// HierarchyGeneralizer is an implementation of g which uses a
+// HierarchyGeneralizer is an implementation of Generalizer which uses a
 // generalization Hierarchy to calculate generalized values.
 type HierarchyGeneralizer struct {
 	Hierarchy hierarchy.Hierarchy

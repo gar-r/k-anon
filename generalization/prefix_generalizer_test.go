@@ -3,6 +3,7 @@ package generalization
 import (
 	"bitbucket.org/dargzero/k-anon/partition"
 	"bitbucket.org/dargzero/k-anon/testutil"
+	"fmt"
 	"testing"
 )
 
@@ -106,4 +107,47 @@ func TestPrefixGeneralizer_Generalize(t *testing.T) {
 func TestPrefixGeneralizer_Levels(t *testing.T) {
 	g := &PrefixGeneralizer{MaxWords: 10}
 	testutil.AssertEquals(11, g.Levels(), t)
+}
+
+func BenchmarkPrefixGeneralizerWordCount(b *testing.B) {
+	const maxWords = 5000
+	const  wordLen = 5
+	for i:=0; i<= maxWords; i+=100 {
+		b.Run(fmt.Sprintf("%d/%d/%d", maxWords, i, wordLen), func(b *testing.B) {
+			text := testutil.RandText(i, wordLen)
+			benchmarkPrefixRangeGeneralizer(text, maxWords, b)
+		})
+	}
+}
+
+func BenchmarkPrefixGeneralizerWordLength(b *testing.B) {
+	const maxWords = 50
+	const maxWordLen = 250
+	for i:=90; i<=maxWordLen; i+=10 {
+		b.Run(fmt.Sprintf("%d", i), func(b *testing.B) {
+			text := testutil.RandText(maxWords, i)
+			benchmarkPrefixRangeGeneralizer(text, maxWords, b)
+		})
+	}
+}
+
+func BenchmarkPrefixGeneralizerMaxWords(b *testing.B) {
+	const words = 10
+	const wordLen = 10
+	text := testutil.RandText(words, wordLen)
+	for i:=10; i<=500; i+=10 {
+		b.Run(fmt.Sprintf("%d", i), func(b *testing.B) {
+			benchmarkPrefixRangeGeneralizer(text, i, b)
+		})
+	}
+}
+
+func benchmarkPrefixRangeGeneralizer(text string, maxWords int, b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		g := &PrefixGeneralizer{maxWords}
+		p := g.Generalize(partition.NewItem(text), g.Levels()/2)
+		if p == nil {
+			b.Error("partition was nil")
+		}
+	}
 }

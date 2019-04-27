@@ -1,0 +1,12 @@
+\begin{lstlisting}[caption=A basic Go test,label=lst:go_test,float,floatplacement=H]
+package demo
+
+import "testing"
+
+func TestFactorial(t *testing.T) {
+    fact := Factorial(5)
+    if fact != 120 {
+        t.Errorf("got: %d, want: %d.", fact, 120)
+    }
+}
+\end{lstlisting}

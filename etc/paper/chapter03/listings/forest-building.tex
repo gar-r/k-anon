@@ -1,0 +1,20 @@
+\begin{lstlisting}[caption=Forest building algorithm,label=lst:forest_building,float,floatplacement=H]
+func BuildAnonGraph(table *model.Table, k int) (graph.Directed, error) {
+    costGraph, err := BuildCostGraph(table)
+    if err != nil {
+        return nil, err
+    }
+    g := buildEmptyAnonGraph(table)
+    for {
+        components := UndirectedConnectedComponents(g)
+        c := pickComponentToExtend(components, k)
+        if c == nil {
+            break
+        }
+        u := pickSourceVertex(g, c)
+        v := pickTargetVertex(g, c, u, costGraph)
+        g.SetEdge(g.NewEdge(u, v))
+    }
+    return g, nil
+}
+\end{lstlisting}

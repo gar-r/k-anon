@@ -6,7 +6,7 @@ import (
 	"gonum.org/v1/gonum/floats"
 )
 
-const delta = 0.000000001
+const delta = 0.00001
 
 // FloatRange encapsulates a range of float values between min and max.
 type FloatRange struct {

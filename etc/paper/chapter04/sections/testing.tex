@@ -1,0 +1,31 @@
+In Go testing is built into the language and the core tooling. There is no need to depend on third party libraries, one can simply use the \texttt{testing} package. Tests can be invoked with the \texttt{go test} command which automates execution of any function which matches the required naming convention\cite{go-testing} of \texttt{func TestXxx (*testing.T)}. (See Listing~\ref{lst:go_test} for a basic example).
+
+\input{chapter04/listings/simple-test.tex}
+
+A test suite can be crated by putting the test functions into a file whose name ends with \texttt{\_test.go}. This file needs to be in the same package as the one being tested. All tests will be excluded from regular package builds\cite{go-testing}, meaning that production artifacts will not be polluted with test files.
+
+Actual test functions will rely on the \texttt{*testing.T} argument passed into the test function to interact with the testing framework. The testing toolkit follows the general philosophy of Go, being minimal, simple to use yet performant and robust.
+
+\subsection{Verifying expectations}
+
+When compared to testing libraries in other languages, the most obvious difference is the \emph{absence of assertions}. Code that checks expectations should be written explicitly, and the test should be terminated with a respective function call to \texttt{t.Error} or \texttt{t.Fail} when expectations aren't met.
+
+But why isn't \texttt{assert} part of Go's testing package? One of the most important reasons is that the creators of the language wanted to avoid a common problem with other testing frameworks, namely that tests feel like they are written in a different language\cite{go-book}. They often have their own special syntax (like \textit{Mocha, RSpec}) which reads very differently from ``normal'' code.
+
+\subsection{Special test types}
+
+\subsubsection{Sub-test}
+The testing package contains a \texttt{Run} method on the \texttt{testing.T} and \texttt{testing.B} types, that allows the creation of sub-tests and sub-benchmarks respectively. Sub-tests result in a more readable test code and provide a way to handle common setup for test cases.
+
+\subsubsection{Table tests}
+Table driven tests run the same logical test code for multiple similar test cases. In Go, table tests are implemented by declaring an array of test cases, then looping over them and running each iteration as a sub-test. This is called a table-driven test. (See Listing~\ref{lst:go_table_test}.)
+
+\input{chapter04/listings/table-test.tex}
+
+\subsubsection{Benchmarks}\label{subsec:benchmarks}
+Benchmarks are special tests, with the goal of measuring the performance of a given function or code block. They are placed into \texttt{\_test.go} files, just like the normal tests, but their names start with the \texttt{Benchmark} word, and they get the \texttt{*testing.B} type as parameter. A typical benchmark runs the function \texttt{N} times, which value is provided by the benchmark runner. (It will increase the value until the spread is within a given margin of error.) The runner will also take care of calculating and printing the average execution time (ns/op). A skeleton of a typical benchmark is shown in Listing~\ref{lst:go_bench}. Note, that benchmarks can be combined well with table tests to perform a detailed analysis of a function for different kinds of arguments. We will use this feature heavily in Section~\ref{sec:benchmarks} when measuring the performance of the anonymization algorithm.
+
+\input{chapter04/listings/benchmark.tex}
+
+\subsection{Coverage}
+The Go testing framework has built-in support for statement coverage. It can be used in conjunction with \texttt{go test} by passing on the \texttt{-cover} flag. We generally aim to use test coverage as a metric to highlight edge-cases and missed branches during testing. Higher statement coverage is usually better, but it should be noted, that it is not an end-to-all metric. There can be missed test cases, or errors in the code even while having a 100\% statement coverage.

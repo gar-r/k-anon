@@ -1,0 +1,20 @@
+\begin{lstlisting}[caption=A test for Decompose Cut type B,label=lst:decompose_test,float,floatplacement=H]
+//            ------- 0 ------
+//           |                |
+//      ---- 1 ----           6
+//     |     |     |          |
+//     2     3     4          7
+//           |
+//           5
+//
+//  u := 0, v := 1, k := 4, s > 2k-1
+//  s-t == k-1
+func TestPartition_TypeBCut(t *testing.T) {
+    g := GetUndirectedTestGraph2()
+    d := NewDecomposer(g, 4)
+    u := g.Node(0)
+    v := g.Node(1)
+    d.performCutTypeB(u, v)
+    testutil.AssertVertexReplaced(t, g, 1, 8, 2, 3, 4)
+}
+\end{lstlisting}

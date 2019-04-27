@@ -1,0 +1,13 @@
+In this section we present a high-level overview of how our anonymization library works.
+The flowchart on Figure~\ref{fig:birds_eye_view} illustrates what happens to the input data after it is passed into the algorithm.
+
+The terminal states are denoted by rounded rectangles: the anonymization can terminate with an error if the input is not valid or not in the correct format (\emph{error} state).
+Otherwise it will terminate by returning the anonymized data table (\emph{done} state).
+
+Processing steps are represented with rectangles, while data in the different stages is represented by diamond shapes.
+We can observe, that the input data is first transformed into its graph representation, then it goes through the anonymization process discussed in the previous chapter.
+The anonymization process yields partitions.
+Finally, the partitions are be mapped back to data rows. Rows in the same partition are generalized until they are equivalent, and the output anonymized data table is constructed.
+
+\vspace{\baselineskip}
+\input{chapter03/figures/birds-eye-view.tex}

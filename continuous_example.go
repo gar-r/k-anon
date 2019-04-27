@@ -1,12 +1,16 @@
 package kanon
 
 import (
+	"fmt"
+
 	"bitbucket.org/dargzero/k-anon/generalization"
 	"bitbucket.org/dargzero/k-anon/model"
-	"fmt"
 )
 
-func ExampleAnonymizer_Continuous() {
+// ExampleContinuousAnonymization demonstrates the usage of continuos anonymization.
+// Usage is very similar to what is outlined in the function ExampleAnonymization,
+// with the ability to repeatedly add extra data to the table and call the Anonymmize method.
+func ExampleContinuousAnonymization() {
 
 	// define the schema & Table
 	table := model.NewTable(&model.Schema{

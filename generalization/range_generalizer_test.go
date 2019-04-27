@@ -1,10 +1,12 @@
 package generalization
 
 import (
+	"math"
+	"strconv"
+	"testing"
+
 	"bitbucket.org/dargzero/k-anon/partition"
 	"bitbucket.org/dargzero/k-anon/testutil"
-	"math"
-	"testing"
 )
 
 func TestNewIntRangeGeneralizer(t *testing.T) {
@@ -223,6 +225,38 @@ func TestRangeGeneralizer_InitItem(t *testing.T) {
 	actual := g.InitItem(nil)
 	if testRange != actual {
 		t.Errorf("expected %v, got %v", testRange, actual)
+	}
+}
+
+func BenchmarkIntRangeGeneralizer(b *testing.B) {
+	sizes := []int{10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000}
+	for _, size := range sizes {
+		b.Run(strconv.Itoa(size), func(b *testing.B) {
+			benchmarkIntRangeGeneralizer(size, b)
+		})
+	}
+}
+
+func benchmarkIntRangeGeneralizer(max int, b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		g := NewIntRangeGeneralizer(0, max)
+		g.Generalize(g.InitItem(max/2), g.Levels())
+	}
+}
+
+func BenchmarkFloatRangeGeneralizer(b *testing.B) {
+	sizes := []float64{10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000}
+	for _, size := range sizes {
+		b.Run(strconv.FormatFloat(size, 'g', 0, 64), func(b *testing.B) {
+			benchmarkFloatRangeGeneralizer(size, b)
+		})
+	}
+}
+
+func benchmarkFloatRangeGeneralizer(max float64, b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		g :=  NewFloatRangeGeneralizer(0, max)
+		g.Generalize(g.InitItem(max/2), g.Levels())
 	}
 }
 

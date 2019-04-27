@@ -1,0 +1,26 @@
+\texttt{HierarchyGeneralizer} represents generalization hierarchies in the classic sense that has been outlined in~\ref{subsec:data_model}.
+This generalizer will \textit{contain} an actual \texttt{Hierarchy} --- as seen on Figure~\ref{fig:generalization_package}.
+The \texttt{Hierarchy} interface has functions to navigate the partitions within the hierarchy based on the parent-child relationships, a function to return the number of levels within the hierarchy and additional helper functions.
+The \texttt{hierarchy} package also contains helper functions to make it easy for the end-user to build it from a set of items.
+
+\paragraph{Manual hierarchy:} We will now show how to manually declare a simple grade hierarchy similar to the one introduced on Figure~\ref{fig:grades-hierarchy}, albeit with a lesser number of grades for simplicity's sake. The full code listing can be seen on Listing~\ref{lst:grade_hierarchy}.
+
+\input{chapter03/listings/grade-hierarchy.tex}
+
+In order to build the hierarchy, we need to describe it from top to bottom.
+Recall, that the top level of the hierarchy contains a single partition with every item in the domain.
+We then add the children of this partition as new sets, continuing until we reach the lowest level, where each partition contains only a single item.
+
+\paragraph{Automatic hierarchy:} another, more convenient way to build a hierarchy is by using the included \texttt{AutoBuild} function. It takes two parameters: the amount of children a node should have, and a variadic array of the items to partition. The function will build a valid hierarchy on-the-fly by splitting the set of items to the specified child partitions on each level, until only singleton partitions remain. (Note, that we may still get an error in case there is a problem with the arguments, for example when the desired child count is larger than the available items.) The builder may create partitions with less than the specified amount of children in cases when there aren't enough items. This often happens when the original number of items is not divisible by the desired child count.
+
+ We now show how to build the same grade hierarchy automatically. Listing~\ref{lst:auto_build} demonstrates how to specify the child count and the items. By passing in \textit{3} as the desired child count we achieve the exact same result as the previous example.
+
+\input{chapter03/listings/grade-hierarchy-auto.tex}
+
+\paragraph{Validation} A hierarchy will also be \textit{validated} when it is built.
+Validation will enforce, that:
+\begin{itemize}
+    \setstretch{1.0}
+    \item an item can only appear once on a given level
+    \item the superset of partitions on each level contains all items from the domain
+\end{itemize}

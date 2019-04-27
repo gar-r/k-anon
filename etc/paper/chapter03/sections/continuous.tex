@@ -1,0 +1,35 @@
+\emph{Continuous mode} is a special mode in which the Anonymizer can be used. In continuous mode it is possible to feed the rows of the data table in multiple different segments instead of adding them all at once. It is very useful, when the data arrives in a ``stream'' format and needs to be processed either row-by-row or in smaller chunks.
+
+\subsection{Implementation}
+
+The core algorithm outlined earlier can be used with very little modification. The only notable restriction is, that the row count of the first data chunk must be at least the size of the \textit{k} anonymity parameter.
+
+The anonymizer will process the first batch normally. When the second batch of data arrives, it will merge the data rows into the \emph{already anonymized} data table, and run the algorithm again. During the cost-graph calculation there will be rows from the first iteration, which are already in the same partition. The cost of these edges in the cost-graph will all be 0. Note however, that this does not have an effect on the rest of the algorithm. In the forest building algorithm a new row will either be partitioned into a partition created in the first iteration, or a completely new partition created from new rows based on the scaled generalization cost in the cost graph. The decompose step is completely unaffected.
+
+\paragraph{Example}
+
+Let's assume, that the continuous anonymizer receives the first chunk of data and creates the anonymized table as illustrated onFigure~\ref{fig:continuous_step1}.
+
+\input{chapter03/figures/continuous-step1.tex}
+
+Now let's see what happens when the second chunk of data arrives and is added to the already anonymized data table (Figure~\ref{fig:continuous_step2}).
+
+\input{chapter03/figures/continuous-step2.tex}
+
+\subsection{Effect on the output}
+
+Both solutions are correct in terms of \emph{k-anonymity}, but would the order of partitioning change if we knew all rows in advance? The answer is \emph{sometimes}. Figure~\ref{fig:continuous_alt} shows a result from anonymizing the above 7 rows normally, in one go. If the \emph{random} order in which the graph algorithm picks components to extend is more favorable, we might get a more efficient result (with less information loss) compared to when anonymizing in multiple chunks.
+
+\input{chapter03/figures/continuous-alt.tex}
+
+So how does the continuous mode affect the characteristics of the anonymization? Obviously \emph{k-anonymity} is not violated in continuous mode either. However, we can see that the ``optimality'' of the solution may decrease based on the order in which the rows arrive and the size of the data chunks. If two or more rows are anonymized into the same partition in the first iteration, some of the data is lost. There is no way to tell, if it might have been \emph{cheaper} (in terms of anonymization cost) to partition a certain row with another from the second batch instead.
+
+This means, that the continuous version of the algorithm will generalize each dimension to \emph{at least} the same generalization level as the normal version, but sometimes it will generalize them more. This will result in somewhat more information loss than when anonymizing the same data in the standard mode.
+
+
+\subsection{Usage}
+
+Listing~\ref{lst:continuous} shows how to actually write code that uses the continuous anonymization mode. It is not much different from the regular mode: we only need to call the \texttt{Anonymize} method after each data chunk arrives, and add a new batch of rows using the table reference afterwards.
+
+\input{chapter03/listings/continuous.tex}
+

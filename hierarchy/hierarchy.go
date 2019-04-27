@@ -127,13 +127,13 @@ func validatePartitions(node *node) error {
 	return nil
 }
 
-func countLevels(node *node, level int) int {
-	max := level
+func countLevels(node *node, current int) int {
+	level := current
 	for _, child := range node.children {
-		l := countLevels(child, level+1)
-		if max < l {
-			max = l
+		l := countLevels(child, current+1)
+		if level < l {
+			level = l
 		}
 	}
-	return max
+	return level
 }

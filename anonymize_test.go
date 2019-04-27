@@ -1,9 +1,10 @@
 package kanon
 
 import (
-	"bitbucket.org/dargzero/k-anon/model"
 	"fmt"
 	"testing"
+
+	"bitbucket.org/dargzero/k-anon/model"
 )
 
 func TestAnonymizer_Anonymize(t *testing.T) {
@@ -42,7 +43,7 @@ func assertKAnonymity(table *model.Table, k int, t *testing.T) {
 			}
 		}
 		if count < k {
-			t.Errorf("K-anonimity violated in row %v", i)
+			t.Errorf("K-anonymity violated in row %v", i)
 		}
 	}
 }

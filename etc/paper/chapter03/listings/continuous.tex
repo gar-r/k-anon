@@ -1,0 +1,35 @@
+\begin{lstlisting}[caption=Continuous anonymization,label=lst:continuous,float,floatplacement=H]
+// create the table and schema as usual
+table := model.NewTable(&model.Schema{
+    Columns: []*model.Column{
+        model.NewColumn("Name", &generalization.Suppressor{}),
+        model.NewColumn("Age", generalization.NewIntRangeGeneralizer(0, 50)),
+        model.NewColumn("Pet",
+            &generalization.PrefixGeneralizer{MaxWords: 10}),
+    },
+})
+
+// add the first batch of rows
+table.AddRow("John", 27, "cats")
+table.AddRow("Susan", 38, "dogs")
+table.AddRow("Sarah", 30, "cats")
+table.AddRow("Mark", 40, "dogs")
+
+// create an anonymizer and run the anonymization
+anon := &Anonymizer{
+    Table: table,
+    K:     2,
+}
+anon.Anonymize()
+
+// add the second batch of rows
+table.AddRow("Jack", 38, "dogs")
+table.AddRow("Jill", 40, "dogs")
+table.AddRow("Lilly", 27, "cats")
+
+// anonymize again
+anon.Anonymize()
+
+// print the results
+fmt.Printf("%v", anon.Table)
+\end{lstlisting}

@@ -1,0 +1,10 @@
+\begin{lstlisting}[caption=Empty cost graph creation,label=lst:empty_cost_graph,float,floatplacement=H]
+func buildEmptyCostGraph(t *model.Table) *simple.WeightedUndirectedGraph {
+    g := simple.NewWeightedUndirectedGraph(0, math.MaxFloat64)
+    for i := range t.GetRows() {
+        node := simple.Node(i)
+        g.AddNode(node)
+    }
+    return g
+}
+\end{lstlisting}

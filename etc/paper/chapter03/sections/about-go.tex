@@ -1,0 +1,33 @@
+\subsection{The Go language}
+The Go programming language (also known as ``Golang'') has first appeared around 9 years ago, but it wasn't until a couple of years ago that it gained a large boost in popularity. Go is a statically typed, compiled language. It has a C-like syntax, but with an emphasis on simplicity and safety\cite{wiki08}. It is easy to learn, and the number of keywords and features are small.
+
+In terms of paradigms, the language is mostly imperative, with some functional and a few object oriented features. There is no type hierarchy or inheritance in the language. Instead, it emphasizes the usage of composition and interfaces. There are no classes either, but one can use structs and receivers on functions to achieve a somewhat similar effect.
+
+Even though Go has a static type system and pointers, it also features a highly optimized garbage collector and memory safety.
+
+\subsection{Key differences}
+
+Below we list a few interesting differences compared to traditional object oriented languages. The list is not exhaustive, but gives a relatively good overview of what to expect when coming from another language, like Java.
+
+\paragraph{Combined declaration/initialization:} writing \texttt{(s:=3)} will not only declare and initialize the \texttt{s} variable, but also infer its type.
+
+\paragraph{Multiple return values:} functions can return multiple values. In fact, this is very common when handling errors.
+
+\paragraph{Type system:} apart from the standard types, and pointers one can use arrays and \textit{slices} (dynamic array), and \textit{structs} for custom types.
+
+\paragraph{Error handling:} there are no try-catch blocks and exceptions. An \textit{error} can be returned from functions in case of an exceptional execution path and callers are expected to check for it, and either handle it or return an error themselves.
+
+\paragraph{Interfaces:} runtime polymorphism is provided by interfaces. They are very similar to \textit{protocols} from other programming languages. They can be implemented implicitly. Conformance to an interface is checked statically by the Go compiler --- this is referred to as \textit{structural typing}.
+The empty \texttt{interface\{ \}} can refer to any type, and is similar to \textit{Object} from other languages. Interfaces can be converted to other types at runtime with \textit{type assertion}.
+
+\paragraph{Packages:} packages in Go represent a path, and references to other packages must always be prefixed with the name of the other package.
+
+\paragraph{Visibility:} publicly exposed members have a \textit{Capitalized} name, and should be documented properly.
+
+\paragraph{Concurrency:} the language has a built-in toolkit in the form of \textit{goroutines} and \textit{channels} to deal with concurrent execution.
+
+\subsection{Advantages}
+
+One of the most important advantage of Go is its speed. Go programs run almost as fast as C, but also compile very quickly. The language is also cross-platform. The built-in compiler can target almost any major platform and architecture (including ARM). An additional benefit is the garbage collector. There is no need to deal with manual memory management, which makes it easy to focus on implementing business logic. Finally, testing is a first-class citizen in go. It has a built-in testing framework, which supports hierarchical unit tests, testable examples and benchmarks.
+
+Based on the above listed features, Go proved to be an ideal candidate to implement the graph based anonymization algorithm with.
