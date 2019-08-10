@@ -1,12 +1,14 @@
 package algorithm
 
 import (
+	"math"
+
 	"bitbucket.org/dargzero/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
-	"math"
 )
 
+// BuildCostGraph creates a weighted cost-graph from the table.
 func BuildCostGraph(t *model.Table) (graph.WeightedUndirected, error) {
 	g := buildEmptyCostGraph(t)
 	err := addCosts(g, t)

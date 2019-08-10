@@ -4,6 +4,7 @@ import (
 	"gonum.org/v1/gonum/graph/simple"
 )
 
+// GetUndirectedTestGraph1 returns an example undirected graph as follows:
 //                   ---------- 0 ---------------------------------
 //                   |                      |          |           |
 //         --------- 1 ---------          - 5 -      - 6 -       - 7 -
@@ -35,6 +36,7 @@ func GetUndirectedTestGraph1() *simple.UndirectedGraph {
 	return g
 }
 
+// GetUndirectedTestGraph2 returns an example undirected graph as follows:
 //            ------- 0 ------
 //           |                |
 //      ---- 1 ----           6
@@ -55,6 +57,7 @@ func GetUndirectedTestGraph2() *simple.UndirectedGraph {
 	return g
 }
 
+// GetUndirectedTestGraph3 returns an example undirected graph as follows:
 //         ------ 0 -------
 //        |    |      |    |
 //        1    3      5    7

@@ -19,10 +19,12 @@ func (s *Suppressor) Generalize(p partition.Partition, n int) partition.Partitio
 	return nil
 }
 
+// Levels returns the number of levels of the generalizer.
 func (s *Suppressor) Levels() int {
 	return 2
 }
 
+// InitItem initializes the given item into a new partition.
 func (s *Suppressor) InitItem(item interface{}) partition.Partition {
 	return partition.NewItem(item)
 }

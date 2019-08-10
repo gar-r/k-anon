@@ -2,15 +2,18 @@ package partition
 
 import (
 	"fmt"
+
 	"gonum.org/v1/gonum/floats"
 )
 
 const delta = 0.000000001
 
+// FloatRange encapsulates a range of float values between min and max.
 type FloatRange struct {
 	min, max float64
 }
 
+// NewFloatRange creates a new instance of FloatRange with given min and max values.
 func NewFloatRange(min, max float64) *FloatRange {
 	if min > max {
 		return &FloatRange{min: min, max: min}
@@ -18,14 +21,18 @@ func NewFloatRange(min, max float64) *FloatRange {
 	return &FloatRange{min: min, max: max}
 }
 
+// Min returns the min value of the range.
 func (r *FloatRange) Min() float64 {
 	return r.min
 }
 
+// Max returns the max value of the range.
 func (r *FloatRange) Max() float64 {
 	return r.max
 }
 
+// Contains returns true when the float range contains the given item.
+// Note, that item must be a float value, otherwise the result is always false.
 func (r *FloatRange) Contains(item interface{}) bool {
 	f, success := item.(float64)
 	if !success {
@@ -34,6 +41,8 @@ func (r *FloatRange) Contains(item interface{}) bool {
 	return r.min <= f && f <= r.max
 }
 
+// ContainsPartition returns true, when the float range contains the other partition.
+// Note, that the other partition must be a float range as well.
 func (r *FloatRange) ContainsPartition(other Partition) bool {
 	r2, success := other.(*FloatRange)
 	if success {
@@ -46,6 +55,8 @@ func (r *FloatRange) ContainsPartition(other Partition) bool {
 	return false
 }
 
+// Equals returns true, when the float range equals the other partition.
+// Note, that the other partition must be a float range as well, otherwise this method always returns false.
 func (r *FloatRange) Equals(other Partition) bool {
 	r2, success := other.(*FloatRange)
 	if !success {
@@ -56,6 +67,7 @@ func (r *FloatRange) Equals(other Partition) bool {
 		floats.EqualWithinAbs(r.max, r2.max, delta)
 }
 
+// String returns a string representation of the float range.
 func (r *FloatRange) String() string {
 	if floats.EqualWithinAbs(r.min, r.max, delta) {
 		return fmt.Sprintf("(%f)", r.min)
@@ -63,6 +75,7 @@ func (r *FloatRange) String() string {
 	return fmt.Sprintf("(%f..%f)", r.min, r.max)
 }
 
+// CanSplit returns true when the float range can still be split into two float ranges.
 func (r *FloatRange) CanSplit() bool {
 	return !floats.EqualWithinAbs(r.min, r.max, delta)
 }
@@ -76,10 +89,12 @@ func (r *FloatRange) Split() (r1, r2 Range) {
 	return
 }
 
+// MaxSplit returns the number of times this range can be split.
 func (r *FloatRange) MaxSplit() int {
 	return countSplit(r)
 }
 
+// InitItem creates an initial range from the given item.
 func (r *FloatRange) InitItem(item interface{}) Range {
 	floatVal, ok := item.(float64)
 	if ok {

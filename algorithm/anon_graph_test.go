@@ -1,12 +1,13 @@
 package algorithm
 
 import (
+	"testing"
+
 	"bitbucket.org/dargzero/k-anon/model"
 	"bitbucket.org/dargzero/k-anon/testutil"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
-	"testing"
 )
 
 func TestBuildAnonGraph_1(t *testing.T) {
@@ -101,7 +102,7 @@ func TestPickComponentToExtend_5(t *testing.T) {
 }
 
 func verifyForestProperties(g graph.Directed, t *testing.T, k int) {
-	components := topo.ConnectedComponents(graph.Undirect{g})
+	components := topo.ConnectedComponents(graph.Undirect{G: g})
 	for _, c := range components {
 		if len(c) < k {
 			t.Errorf("component size should not be smaller than %d", k)

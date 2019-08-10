@@ -1,8 +1,9 @@
 package generalization
 
 import (
-	"bitbucket.org/dargzero/k-anon/partition"
 	"strings"
+
+	"bitbucket.org/dargzero/k-anon/partition"
 )
 
 // PrefixGeneralizer can be used to generalize plain text.
@@ -19,6 +20,7 @@ type PrefixGeneralizer struct {
 	MaxWords int
 }
 
+// Generalize generalizes the partition n levels further and returns the resulting partition.
 func (g *PrefixGeneralizer) Generalize(p partition.Partition, n int) partition.Partition {
 	const separator = " "
 	if n > g.Levels() {
@@ -38,10 +40,12 @@ func (g *PrefixGeneralizer) Generalize(p partition.Partition, n int) partition.P
 	return g.InitItem(strings.TrimRight(joined, separator))
 }
 
+// Levels returns the maximum levels of the generalizer, in this case MaxWords+1.
 func (g *PrefixGeneralizer) Levels() int {
 	return g.MaxWords + 1
 }
 
+// InitItem wraps the item in an Item partition.
 func (g *PrefixGeneralizer) InitItem(item interface{}) partition.Partition {
 	return partition.NewItem(item)
 }

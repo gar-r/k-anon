@@ -6,10 +6,12 @@ import (
 	"strings"
 )
 
+// Set represents a bundle of items in which each item is unique.
 type Set struct {
 	Items map[interface{}]bool
 }
 
+// NewSet creates a new instance of a Set from the given values.
 func NewSet(items ...interface{}) *Set {
 	p := &Set{Items: make(map[interface{}]bool)}
 	for _, item := range items {
@@ -18,10 +20,13 @@ func NewSet(items ...interface{}) *Set {
 	return p
 }
 
+// Contains returns true when the set contains a given value.
 func (p *Set) Contains(item interface{}) bool {
 	return p.Items[item]
 }
 
+// ContainsPartition returns true when the set contains the other partition.
+// Note, that the other partition must be a set as well, otherwise this method always returns false.
 func (p *Set) ContainsPartition(other Partition) bool {
 	p2, success := other.(*Set)
 	if !success {
@@ -35,6 +40,8 @@ func (p *Set) ContainsPartition(other Partition) bool {
 	return true
 }
 
+// Equals returns true when the set equals to the other partition.
+// Note, that the other partition must be a set as well, otherwise this method always returns false.
 func (p *Set) Equals(other Partition) bool {
 	p2, success := other.(*Set)
 	if !success || len(p2.Items) != len(p.Items) {
@@ -48,6 +55,7 @@ func (p *Set) Equals(other Partition) bool {
 	return true
 }
 
+// String returns the string representation of the set, listing each value in lexicographical order.
 func (p *Set) String() string {
 	b := &strings.Builder{}
 	var items []string

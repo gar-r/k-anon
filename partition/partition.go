@@ -16,6 +16,7 @@ type Partition interface {
 	String() string
 }
 
+// Range represents a bounded range of values.
 type Range interface {
 	Partition
 

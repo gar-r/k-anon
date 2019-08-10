@@ -1,18 +1,21 @@
 package algorithm
 
 import (
+	"math"
+
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
-	"math"
 )
 
+// Decomposer is responsible for partitioning the cost-graph.
 type Decomposer struct {
 	g           *simple.UndirectedGraph
 	k           int
 	originalLen int
 }
 
+// NewDecomposer creates a Decomposer instance from the given graph and K value.
 func NewDecomposer(g *simple.UndirectedGraph, k int) *Decomposer {
 	size := 0
 	if g.Nodes() != nil && g.Nodes().Len() > 0 {
@@ -21,6 +24,7 @@ func NewDecomposer(g *simple.UndirectedGraph, k int) *Decomposer {
 	return &Decomposer{g: g, k: k, originalLen: size}
 }
 
+// Decompose performs the partitioning.
 func (d *Decomposer) Decompose() {
 	threshold := d.getThreshold()
 	for {

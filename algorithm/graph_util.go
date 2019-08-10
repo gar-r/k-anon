@@ -1,26 +1,30 @@
 package algorithm
 
 import (
-	"gonum.org/v1/gonum/graph"
-	"gonum.org/v1/gonum/graph/simple"
-	"gonum.org/v1/gonum/graph/topo"
 	"math"
 	"math/rand"
 	"time"
+
+	"gonum.org/v1/gonum/graph"
+	"gonum.org/v1/gonum/graph/simple"
+	"gonum.org/v1/gonum/graph/topo"
 )
 
+// CreateNodesUndirected creates an undirected graph with nodeCount unconnected nodes.
 func CreateNodesUndirected(nodeCount int) *simple.UndirectedGraph {
 	g := simple.NewUndirectedGraph()
 	batchAddNodes(nodeCount, g)
 	return g
 }
 
+// CreateNodesWeightedUndirected creates a weighted undirected graph with nodeCount unconnected nodes.
 func CreateNodesWeightedUndirected(nodeCount int) *simple.WeightedUndirectedGraph {
 	g := simple.NewWeightedUndirectedGraph(0, math.MaxFloat64)
 	batchAddNodes(nodeCount, g)
 	return g
 }
 
+// CreateNodesDirected creates a directed graph with nodeCount unconnected nodes.
 func CreateNodesDirected(nodeCount int) *simple.DirectedGraph {
 	g := simple.NewDirectedGraph()
 	batchAddNodes(nodeCount, g)
@@ -33,6 +37,7 @@ func batchAddNodes(nodeCount int, g graph.NodeAdder) {
 	}
 }
 
+// AddEdge sets an edge between u and v in g.
 func AddEdge(g interface {
 	graph.EdgeAdder
 	graph.Graph
@@ -40,6 +45,7 @@ func AddEdge(g interface {
 	g.SetEdge(g.NewEdge(g.Node(u), g.Node(v)))
 }
 
+// AddWeightedEdge sets an edge with w weight between u and v in g.
 func AddWeightedEdge(g interface {
 	graph.WeightedEdgeAdder
 	graph.Graph
@@ -47,7 +53,7 @@ func AddWeightedEdge(g interface {
 	g.SetWeightedEdge(g.NewWeightedEdge(g.Node(u), g.Node(v), w))
 }
 
-// undirectedConnectedComponents gets the connected components by treating the directed graph as undirected
+// UndirectedConnectedComponents gets the connected components by treating the directed graph as undirected.
 func UndirectedConnectedComponents(g graph.Directed) [][]graph.Node {
 	var components [][]graph.Node
 	if !isEmpty(g) {
@@ -56,10 +62,10 @@ func UndirectedConnectedComponents(g graph.Directed) [][]graph.Node {
 	return components
 }
 
-// UndirectGraph converts a directed graph to a simple undirected graph implementation
+// UndirectGraph converts a directed graph to a simple undirected graph implementation.
 func UndirectGraph(g graph.Directed) *simple.UndirectedGraph {
 	undirected := simple.NewUndirectedGraph()
-	graph.Copy(undirected, graph.Undirect{g})
+	graph.Copy(undirected, graph.Undirect{G: g})
 	return undirected
 }
 

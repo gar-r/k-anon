@@ -1,13 +1,14 @@
 package algorithm
 
 import (
+	"fmt"
+
 	"bitbucket.org/dargzero/k-anon/generalization"
 	"bitbucket.org/dargzero/k-anon/model"
 	"bitbucket.org/dargzero/k-anon/partition"
-	"errors"
-	"fmt"
 )
 
+// CalculateCost returns the generalization cost between two model rows.
 func CalculateCost(r1, r2 *model.Row, schema *model.Schema) (float64, error) {
 	var cost float64
 	for j, col := range schema.Columns {
@@ -33,5 +34,5 @@ func calculateCostFraction(p1, p2 partition.Partition, g generalization.Generali
 			return float64(level) / float64(maxLevels-1), nil
 		}
 	}
-	return 0, errors.New(fmt.Sprintf("data cannot be generalized into same partition: %v, %v", p1, p2))
+	return 0, fmt.Errorf(fmt.Sprintf("data cannot be generalized into same partition: %v, %v", p1, p2))
 }

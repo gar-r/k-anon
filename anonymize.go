@@ -1,4 +1,4 @@
-package k_anon
+package kanon
 
 import (
 	"bitbucket.org/dargzero/k-anon/algorithm"

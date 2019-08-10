@@ -1,12 +1,14 @@
 package algorithm
 
 import (
+	"math"
+
 	"bitbucket.org/dargzero/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
-	"math"
 )
 
+// BuildAnonGraph builds a graph from the table for anonymization.
 func BuildAnonGraph(table *model.Table, k int) (graph.Directed, error) {
 	costGraph, err := BuildCostGraph(table)
 	if err != nil {

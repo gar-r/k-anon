@@ -4,22 +4,26 @@ import (
 	"bitbucket.org/dargzero/k-anon/partition"
 )
 
+// RangeGeneralizer is a Generalizer which works with ranges.
 type RangeGeneralizer struct {
 	r partition.Range
 }
 
+// NewIntRangeGeneralizer creates a new RangeGeneralizer for integers.
 func NewIntRangeGeneralizer(min, max int) *RangeGeneralizer {
 	return &RangeGeneralizer{
 		r: partition.NewIntRange(min, max),
 	}
 }
 
+// NewFloatRangeGeneralizer creates a new RangeGeneralizer for floats.
 func NewFloatRangeGeneralizer(min, max float64) *RangeGeneralizer {
 	return &RangeGeneralizer{
 		r: partition.NewFloatRange(min, max),
 	}
 }
 
+// Generalize generalizes the partition n levels further and returns the resulting partition.
 func (g *RangeGeneralizer) Generalize(p partition.Partition, n int) partition.Partition {
 	_, success := p.(partition.Range)
 	if !success {
@@ -38,10 +42,12 @@ func (g *RangeGeneralizer) Generalize(p partition.Partition, n int) partition.Pa
 	return path[n]
 }
 
+// Levels returns the number of levels in the hierarchy.
 func (g *RangeGeneralizer) Levels() int {
 	return g.r.MaxSplit() + 1
 }
 
+// InitItem initializes an item into a partition.
 func (g *RangeGeneralizer) InitItem(item interface{}) partition.Partition {
 	return g.r.InitItem(item)
 }
