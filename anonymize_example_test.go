@@ -11,7 +11,7 @@ import (
 // 1) Define a Table
 //    a) define the schema (friendly name and generalizer for each column)
 //          * use a 'nil' generalizer for non-identifier (skipped) columns
-//          * see the g interface to implement a custom generalizer
+//          * see the Generalizer interface on how to implement a custom generalizer
 //    b) define the rows, conforming to the above schema:
 //          * number of columns should match
 //          * data type should be compatible with the assigned generalizer for the column
