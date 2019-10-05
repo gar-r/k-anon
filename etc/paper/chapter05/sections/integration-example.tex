@@ -1,4 +1,4 @@
-In this section we will give a detailed walk-through of an integration case study. We will show how to use the graph anonymization library in an existing Go code base. This existing code base is a containerized anonymization system leveraging the MongoDb document database. It was developed by \emph{Vilmos Sz. Martinek's} as part of his MSc thesis while studying at \textit{Budapest University of Technology and Economics} in 2018~\cite{martinek}. A cornerstone of the integration is to make the \emph{minimum amount of changes} in the existing system, while introducing an alternative anonymization algorithm as an optionally selectable component.
+In this section we will give a detailed walk-through of an integration case study. We will show how to use the graph anonymization library in an existing Go code base. This existing code base is a containerized anonymization system leveraging the MongoDb document database. It was developed by \emph{Vilmos Sz. Martinek} as part of his MSc thesis while studying at \textit{Budapest University of Technology and Economics} in 2018~\cite{martinek}. A cornerstone of the integration is to make the \emph{minimum amount of changes} in the existing system, while introducing an alternative anonymization algorithm as an optionally selectable component.
 
 \subsection{Overview of the target system}
 
@@ -16,7 +16,7 @@ The business logic layer contains the anonymization related code. This is where 
 The BLL layer already contained an interface which encapsulates the public API of an anonymizer, hence the need for a \emph{wrapper} around the graph anonymizer. The wrapper provides a thin layer around the API introduced in Section~\ref{sec:example_run} and makes it compatible with the rest of the system.
 
 \subsubsection{DAL}
-The data access layer uses the \emph{mgo} third party library to interface with MongoDb. Since this layer is not the focus point for our integration case study, we will not detail its internals further in this section.
+The data access layer uses the \emph{mgo} third party library to interface with MongoDb. Since this layer is not the focus point for our integration case study, we will not detail its internals in this document.
 
 \subsection{Adapting the input data format}\label{subsec:json_input_format}
 As mentioned in~\ref{subsubsec:rest_api}, both the configuration and upload of the data is done through the REST API, so our first step will be to extend the input declaration, and make it able to switch between algorithms and configure parameters for both types of algorithms.
@@ -40,7 +40,7 @@ As mentioned in~\ref{subsubsec:rest_api}, both the configuration and upload of t
 
 The modified input format is shown on Listing~\ref{lst:modified_format}. We now allow the \textit{``graph''} value for the \textit{algorithm} field. We also introduced the \textit{``keep''} and \textit{``drop''} values for the \textit{mode} field to be able to have a finer control over what columns to anonymize, leave alone, or suppress completely.
 
-The field configuration objects now allow an \textit{``opts''} object. This will only be processed by the graph wrapper, the Mondrian module will ignore it entirely. This object contains graph anonymizer related parameters for certain field types (\textit{min} and \textit{max} values for range generalizers, \textit{maxWords} setting for prefix generalizers).
+The field configuration objects now allow an \textit{``opts''} object. This will only be processed by the graph wrapper, the Mondrian module will ignore it entirely. This object contains graph anonymizer related parameters for certain field types (\textit{min}, \textit{max} values for range generalizers, and a \textit{max}-words setting for prefix generalizers).
 
 \subsection{Implementing the wrapper}
 
@@ -57,11 +57,11 @@ Recall from~\ref{subsubsec:rest_api}, that the client facing interface provided 
 
 \subsection{Tests}
 
-Finally, after the wrapper has been implemented we needed to verify with testing, that the integration is working correctly. Two types of tests have been created:
+Finally, after the wrapper has been implemented, we needed to verify that the modified system is working correctly. The following types of testing have been performed:
 \begin{itemize}
     \setstretch{1.0}
     \item \textbf{unit tests:} in these tests we need to mock the data access layer, and verify that input parsing, schema declaration and anonymization is working correctly.
-    \item \textbf{regression:} normally we run the framework-provided unit test suite to verify, that we did not break any existing functionality. Unfortunately there were no unit tests in the original code base. This leaves us with the only option to \emph{first} cover the most important parts of the original code base (for the original functionality) with tests, until a sufficient coverage rate is reached. \emph{Then} proceed with implementing our changes, so we can verify that our added functionality is working properly. Before actually modifying the existing code base, I have taken a great care to cover as much of the original functionality as possible (see Figure~\ref{fig:tests_added}).
+    \item \textbf{regression:} normally we run the framework-provided unit test suite to verify, that we did not break any existing functionality. Unfortunately there were no unit tests in the original code base. This leaves us with the only option to first \emph{before touching anything} cover the most important parts of the original code base (for the original functionality) with tests, until a sufficient coverage rate is reached. \emph{Then} proceed with implementing our changes, so we can verify that our added functionality is working properly. Before actually modifying the existing code base, I have taken a great care to cover as much of the original functionality as possible (see Figure~\ref{fig:tests_added}).
     \item \textbf{integration tests:} we verify, that integration between the BLL \& REST API, and BLL \& MongoDb isn't broken. We can do this by bringing up the system in the provided \emph{docker} container and calling the REST API with an HTTP client, or checking the data queried/inserted from/to the database respectively.
 \end{itemize}
 
