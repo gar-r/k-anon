@@ -1,7 +1,7 @@
 \documentclass[a4paper,12pt,twoside]{report}
 
 \usepackage[utf8]{inputenc}
-\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,left=25mm,right=25mm,bindingoffset=10mm]{geometry}
+\usepackage[a4paper,top=25mm,bottom=25mm,left=25mm,right=25mm,bindingoffset=10mm]{geometry}
 \usepackage{xcolor}
 \usepackage{float}
 \usepackage{fancyhdr}
@@ -24,12 +24,43 @@
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{tabularx}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage{gensymb}
+\usepackage{booktabs}
 \usepackage{mathptmx}
 \usepackage{subfig}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{inconsolata}
+\usepackage{hyperref}
 
 \usetikzlibrary{fadings}
 
-\renewcommand{\baselinestretch}{1.5}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lgray}{rgb}{0.98,0.98,0.98}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+	language=Go,
+	frame=single,
+	aboveskip=1cm,
+	belowskip=1cm,
+	numbers=none,
+	basicstyle=\ttfamily\scriptsize\linespread{1.0},
+	backgroundcolor=\color{lgray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{dkgreen},
+	showspaces=false,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	captionpos=b,
+}
+
+\setstretch{1.5}
 
 \apptocmd{\thebibliography}{\raggedright}{}{}
 \graphicspath{ {../images/} }
@@ -38,69 +69,42 @@
 \setlength{\parskip}{\baselineskip}%
 \setlength{\parindent}{0pt}%
 
+
 \begin{document}
 
-\begin{titlepage}
-	\begin{center}
-		\includegraphics[width=0.4\textwidth]{bme-logo.png} \\
-		\textbf{Budapesti Műszaki és Gazdaságtudományi Egyetem} \\
-		Villamosmérnöki és Informatikai Kar \\
-		Automatizálási és Alkalmazott Informatikai Tanszék \\
-		\vspace{7cm}
-		\Large \textbf{Garai Richárd} \\
-		\vspace{0.2cm}
-		\LARGE \MakeUppercase{\textbf{Data Anonymization in Go}} \\
-		\vspace{0.1cm}
-		\large a practical implementation of an approximation algorithm \\
-		\vspace{5cm}
-		\MakeUppercase{Supervisor} \\
-		\textbf{Dr. Dudás Ákos} \\
-		\vspace{1cm}
-		Budapest, 2019
-	\end{center}
- \end{titlepage}
+\input{titlepage.tex}
 
 \tableofcontents
 
 \pagestyle{fancy}
 
-\chapter{Introduction}
-\input{chapters/chapter01.tex}
+\chapter{Introduction}\label{ch:chapter_introduction}
+\input{chapter01/chapter01.tex}
 
-\chapter{The Algorithm}
-\input{chapters/chapter02.tex}
+\chapter{The Algorithm}\label{ch:chapter_algorithm}
+\input{chapter02/chapter02.tex}
 
-\chapter{Implementation in Go}
-\input{chapters/chapter03.tex}
+\chapter{Implementation in Go}\label{ch:chapter_implementation}
+\input{chapter03/chapter03.tex}
 
-\chapter{Tests, Benchmarks}
-\input{chapters/chapter04.tex}
+\chapter{Tests, Benchmarks}\label{ch:chapter_tests}
+\input{chapter04/chapter04.tex}
 
-\chapter{Integration}
-\input{chapters/chapter05.tex}
+\chapter{Integration}\label{ch:chapter_integration}
+\input{chapter05/chapter05.tex}
 
-\chapter{Improvements, Future Work}
-\input{chapters/chapter06.tex}
+\chapter{Improvements, Future Work}\label{ch:chapter_future_work}
+\input{chapter06/chapter06.tex}
 
 \appendix
-\chapter{Appendix}
-\input{chapters/appendix.tex}
+\chapter{Appendix}\label{ch:chapter_appendix}
+\input{appendix.tex}
 
+\footnotesize
 \bibliographystyle{plain}
 \bibliography{references}
 
-\chapter*{Acknowledgements}
-I would like to thank...
-\paragraph{Ákos Dudás} my supervisor, for providing guidance and ideas.
-\paragraph{Morgan Stanley} my employer, for facilitating flexible working hours which allowed me to finish my studies.
-\paragraph{My Girlfriend} for the support during the long nights of studying and coding.
-
-\vspace{3cm}
-
-\small
-The results presented in the thesis were established in the framework of the professional community of Balatonfüred Student Research Group of BME-VIK to promote the economic  development of the region. During the development of the achievements, we took into consideration the goals set by the Balatonfüred System Science Innovation Cluster and the plans of the "BME Balatonfüred Knowledge Center", supported by EFOP 4.2.1-16-2017-00021.
-
-The research has been supported by the European Union, co-financed by the European Social Fund (EFOP-3.6.2-16-2017-00013, Thematic Fundamental Research Collaborations Grounding Innovation in Informatics and Infocommunications).
-
+\normalsize
+\input{acknowledgements.tex}
 
 \end{document}

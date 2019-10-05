@@ -1,0 +1,22 @@
+\begin{lstlisting}[caption=Suppresor implementation,label=lst:suppressor,float,floatplacement=H]
+type Suppressor struct {
+}
+
+func (s *Suppressor) Generalize(p partition.Partition, n int) partition.Partition {
+    if n == 0 {
+        return p
+    }
+    if n == 1 {
+        return s.InitItem("*")
+    }
+    return nil
+}
+
+func (s *Suppressor) Levels() int {
+    return 2
+}
+
+func (s *Suppressor) InitItem(item interface{}) partition.Partition {
+    return partition.NewItem(item)
+}
+\end{lstlisting}

@@ -1,0 +1,19 @@
+\begin{lstlisting}[caption=Example run,label=lst:example_run,float,floatplacement=H]
+table := model.NewTable(&model.Schema{
+    Columns: []*model.Column{
+        model.NewColumn("Name", &generalization.Suppressor{}),
+        model.NewColumn("Status", nil),
+        model.NewColumn("Age", generalization.NewIntRangeGeneralizer(0, 150)),
+        model.NewColumn("Grade", generalization.GradeGeneralizer()),
+        model.NewWeightedColumn("Motto",
+            &generalization.PrefixGeneralizer{MaxWords: 10}, 0.1),
+    },
+})
+table.AddRow("Joe",  "employee", 25, "A",  "cats are wild")
+table.AddRow("Jane", "employee", 29, "A+", "cats are wild")
+table.AddRow("Jack", "client",   35, "A-", "dogs are loyal")
+table.AddRow("Jill", "client",   47, "A",  "cats and dogs are pets")
+
+a := &Anonymizer{ K: 2, Table: table }
+a.Anonymize()
+\end{lstlisting}

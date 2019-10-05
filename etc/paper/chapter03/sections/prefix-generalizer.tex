@@ -1,0 +1,15 @@
+The \texttt{PrefixGeneralizer} is another built-in generalizer, that does not rely on a fixed hierarchy. It deals with generalizing plain text data. As the name suggests, it will try to use different sized prefixes to see if two different strings can be collapsed into the same partition.
+
+The input text will be interpreted as a series of words. The generalizer has a \texttt{MaxWords} setting, and it cannot handle text that has a larger word count. Note, that the actual length of words in characters is \textit{irrelevant} for this generalizer, and is only bounded by operative memory.
+
+\paragraph{Example:} the example on Figure~\ref{fig:prefix_generalizer_1} shows how the prefix generalizer transforms two different sentences when different levels of generalization \textit{l} are selected. We assume, that \(MaxWords = 5\) for this example.
+
+The first sentence only contains 3 words, so the \texttt{PrefixGeneralizer} will pad the last two slots. This makes it easy to compare the two sentences word-by-word. On levels 0, 1 and 2 the string prefixes are not equal. On level 3 the two strings are equal. Calculating the generalization cost for the two values would also be pretty simple: we divide the lowest level of generalization which assigns the two items into the same partition by the maximum levels of generalization: \(h/l_{\max} = 3/5\).
+
+\vspace{\baselineskip}
+\input{chapter03/figures/prefix-generalizer-1.tex}
+
+Figure~\ref{fig:prefix_generalizer_2} illustrates what happens when the two strings differ in all prefixes. In this case the cost of generalization will be \(h/l_{\max} = 1 \), and both of the two strings are \textit{suppressed} (replaced with the ``*'' token).
+
+\vspace{\baselineskip}
+\input{chapter03/figures/prefix-generalizer-2.tex}

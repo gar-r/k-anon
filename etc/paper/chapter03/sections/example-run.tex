@@ -1,0 +1,29 @@
+In this section we look at a basic, but full example run.
+\input{chapter03/listings/example-run.tex}
+
+As a first step we define a table schema, and populate it with a few data rows. Next we create an \texttt{Anonymizer} instance, and pass in the reference to the table, and the \textit{k} anonymity parameter. Finally we call the \texttt{Anonymize} method.
+
+There are a couple of interesting things in the example that haven't been mentioned before.
+
+First, we can use a \texttt{nil} value instead of passing in a generalizer when adding a new column to the schema. This will actually result in the column to be entirely ignored by the algorithm, as if it were a \textit{non-identifier} attribute.
+
+The second notable thing is, that we can also use a \texttt{WeightedColumn} instead of a normal one. In the example this is done for the \textit{Motto} column. When calculating the cost graph of a weighted column, the algorithm will scale the generalization cost with the specified weight whenever a value from this columns is used. This can be handy, if we want to suppress some columns more than others. What will actually happen is that the cost of these columns will be artificially increased or reduced during cost calculation, thus influencing the final scaled generalization cost and skewing the result in favor of generalizing some columns to higher levels than others.
+
+After the \texttt{Anonymize} method finishes, the table passed into the anonymizer is processed in place, and we can access the result through the \texttt{table} reference. Printing the result will yield a table similar to Figure~\ref{fig:example_run} (random elements in the algorithm can cause the result to end up slightly differently each time it is run). Note, that as requested by the input declaration, the \textit{Status} column is skipped, and not anonymized.
+
+\vspace{\baselineskip}
+\begin{figure}[ht]
+    \centering
+    \small
+    \begin{tabular}{c l l l l}
+        \toprule
+        \textbf{Name} & \textbf{Status} & \textbf{Age} & \textbf{Grade} & \textbf{Motto} \\
+        \midrule
+        * & employee & [0..74]  & [A] & cats \\
+        * & employee & [27..36] & [A, A+, A-] & * \\
+        * & client   & [27..36] & [A, A+, A-] & * \\
+        * & client   & [0..74] &  [A]         & cats \\
+        \bottomrule
+    \end{tabular}
+    \caption{Example run anonymized result}
+\end{figure}\label{fig:example_run}

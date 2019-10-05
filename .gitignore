@@ -18,3 +18,4 @@
 *.run.xml
 etc/paper/paper.pdf
 etc/paper/__latexindent_temp.tex
+etc/paper/chapters/__latexindent_temp.tex

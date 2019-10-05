@@ -1,0 +1,10 @@
+This algorithm is a graph based algorithm.
+It works for any \(k\ge2\) parameter and an arbitrary alphabet size and gives an \(\mathcal{O}(k)\)-approximation solution.
+
+The input of the algorithm is given in a form of \textit{row vectors}: \(x_1, x_2, \dots, x_n \in \Sigma^m\).
+Note, that the row vectors can have the same amount of components, and the corresponding elements can have the same data types, therefore representing an \(n \times m\) data table with a fixed \textit{schema}.
+While this is a very common use-case (and also the route we are taking with the \textbf{go implementation}) it is not necessarily required --- the algorithm could function on schema-less data.
+
+As mentioned above, the algorithm also takes a \textit{k} integer value --- the anonymity parameter.
+In addition, the input also needs to contain any generalization hierarchies required to properly generalize all dimensions as specified in Section~\ref{subsec:data_model}.
+In this section we will simply assume that all input is fully given and define the technicalities and possible input formats more precisely in the next chapter, when we describe the \textbf{go implementation}.

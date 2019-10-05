@@ -1,0 +1,14 @@
+\begin{lstlisting}[caption=Input data table declaration,label=lst:example_input_table,float,floatplacement=H]
+// g map contains a generalizer for each column
+var g map[string]generalization.Generalizer
+t := NewTable(&Schema{
+Columns: []*Column{
+    NewColumn("Name",    g["Name"]),
+    NewColumn("Age",     g["Age"]),
+    NewColumn("Salary",  g["Salary"]),
+    NewColumn("Disease", g["Disease"]),
+    },
+})
+t.AddRow("Joe", 30, 60000, "Flu")
+t.AddRow("Eve", 27, 58000, "Sore throat")
+\end{lstlisting}

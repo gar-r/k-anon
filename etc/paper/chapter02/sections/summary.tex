@@ -1,0 +1,9 @@
+As we have seen in this chapter, it is possible to give a polynomial-time approximation algorithm for the k-anonymity with generalization problem, and the algorithm gives an approximation ratio of \(\max \{ 2k-1, 3k-5 \} \).
+
+We have started by defining the input table as a set of row vectors, and transforming the input data into its graph representation.
+We have discussed the limitations of the graph representation, and why we can only achieve an \(\mathcal{O}(k)\) approximation.
+
+Next we have introduced the three main steps in the algorithm: cost-graph calculation, the \textsc{Forest building} algorithm, and the \textsc{Decompose component} algorithm.
+We have introduced each of them in great detail with examples, and finally have proven that the polynomial-time approximation algorithm exists by giving its formalized description.
+
+In the next chapter we will introduce a software library written in the Go programming language by the author, which implements the approximation algorithm discussed in this chapter.

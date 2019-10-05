@@ -1,0 +1,16 @@
+The algorithm can only accept structured data, meaning that the input needs to have a static \emph{schema}.
+The schema defines the name and position of the columns in the data table.
+Recall from Chapter~\ref{subsec:cost_graph_construction}, that in order to calculate the cost graph, the algorithm needs to summarize the \textit{scaled generalization cost} for each dimension.
+This implies, that for each column we also need to provide the corresponding \emph{generalizer}.
+Note, that as part of the input validation, the generalizer is also validated.
+
+Once the schema is established, we can fill up the data table by providing the row data.
+Finally, by providing the \textit{k} anonymity parameter, the input is fully defined.
+
+\input{chapter03/figures/input-declaration.tex}
+\subsubsection{Example input declaration}
+
+Listing~\ref{lst:example_input_table} shows an example usage of how to declare an input table for the anonymizer algorithm.
+For simplicity's sake we assume, that a \texttt{g} map exists, which contains an appropriate generalizer for each column we use in the schema. (We will discuss how exactly generalizers are built in Section~\ref{sec:generalization}).
+
+\input{chapter03/listings/example-input-table.tex}

@@ -1,0 +1,20 @@
+digraph G {
+	graph [layout=twopi, root=c, ranksep=1.5]
+	a b c d e f
+    {c} -> {b} [label="2", arrowhead=none]
+    {b} -> {e} [label="2", arrowhead=none]
+    {d} -> {f} [label="3", arrowhead=none]
+    {f} -> {a} [label="2", arrowhead=none]
+
+	{a} -> {b} [label="3", arrowhead=none]
+	{a} -> {c} [label="3", arrowhead=none]
+    {a} -> {d} [label="4", arrowhead=none]
+    {a} -> {e} [label="2", arrowhead=none]
+    {b} -> {d} [label="4", arrowhead=none]
+    {b} -> {f} [label="5", arrowhead=none]
+    {c} -> {d} [label="4", arrowhead=none]
+    {c} -> {e} [label="4", arrowhead=none]
+    {c} -> {f} [label="5", arrowhead=none]
+    {d} -> {e} [label="4", arrowhead=none]
+    {e} -> {f} [label="4", arrowhead=none]
+}

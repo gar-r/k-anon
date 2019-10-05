@@ -1,0 +1,59 @@
+After discussing the input format and the various built-in generalization methods we can now get to the meat of the anonymization algorithm.
+As Figure~\ref{fig:birds_eye_view} illustrated, the pipeline will closely resemble the steps described in the anonymization algorithm in Chapter~\ref{ch:chapter_algorithm}.
+
+\subsection{Graph representation}
+
+The anonymization algorithm heavily uses graphs, so we need to either implement or pick an existing graph library for Go, that can handle all the required graph operations efficiently. In this library we have chosen the latter, and selected a third-party component.
+
+\subsubsection{Graph library requirements}
+
+\begin{itemize}
+    \setstretch{1.0}
+    \item handle both directed and undirected graphs
+    \item handle edge weight/cost
+    \item find cycles
+    \item get connected components
+\end{itemize}
+
+At the time of implementing the library, the available open source contenders were \\
+\textbf{gonum}~\cite{gonum}, \textbf{yourbasic-graph}~\cite{yourbasic-graph} and \textbf{go-graph}~\cite{StepLg/go-graph}.
+After briefly evaluating each library it turned out that \textbf{gonum} provides the richest feature set, supporting all of the required functions --- including topological ordering.
+
+Gonum is a set of numeric libraries, containing libraries not only for graphs, but for matrices, statistics, linear algebra, probability distributions, network analysis and more~\cite{gonum-webpage}. In our anonymization library however we only used its graph based functionality.
+
+\subsection{Cost graph}\label{subsec:cost_graph_algorithm}
+
+The first step of the anonymization algorithm was to construct a cost graph. For this, we need to convert the input table into its graph based representation. Recall from Section~\ref{subsec:cost_graph_construction}, that the cost graph is a weighted full graph, where the nodes are the table rows and the edge weights between them are the generalization cost of bringing the two rows into the same partition.
+
+The cost graph creation is handled by the \texttt{cost\_graph.go} file, while the edge weight calculation is implemented in \texttt{cost.go}.
+The first part of the algorithm, creating the ``empty'' cost graph can be seen on Listing~\ref{lst:empty_cost_graph}.
+
+\input{chapter03/listings/cost-graph.tex}
+
+The code is using the \texttt{NewWeightedUndirectedGraph} function from the \emph{gonum} package. Nodes are uniquely identified with an index, which will be the number of the row they are representing in the input table.
+
+The essence of the code that calculates edge weights can be seen on Listing~\ref{lst:cost_calculation}.
+
+The function will try to generalize the input partitions starting from 0 to \texttt{maxLevels}, until both partitions are equal. If the two partitions are still different when generalizing them to \texttt{maxLevels} it is an error --- the Generalizer is invalid, as by definition all values should be in the same partition on the highest level.
+
+\input{chapter03/listings/cost-calculation.tex}
+
+\subsection{Forest building}
+
+The forest building algorithm is responsible for constructing the directed unweighted graph, that represents the nodes (before cutting) that belong to the same partition. The algorithm is in \texttt{anon\_graph.go}. Listing~\ref{lst:forest_building} shows the outline of the algorithm.
+
+\input{chapter03/listings/forest-building.tex}
+
+The function will first build up the cost graph (see~\ref{subsec:cost_graph_algorithm}), then create an empty directed graph, which contains the nodes representing the table rows. It will then start to iterate, and picks a component to extend (based on the conditions outlined in~\ref{fig:forest_partitioning}). If there is no component to extend, the iteration has finished. Otherwise it picks a target vertex and connects the source and target vertex with a new directed edge.
+
+\subsection{Decomposition}
+
+The file \texttt{decompose.go} is concerned with cutting the oversized components to smaller ones, and implements all the different cut types.
+
+The main loop of the decompose logic can be seen on Listing~\ref{lst:decompose_main}. At a high-level it is very simple: we look for a component to cut that is over the threshold, and partition it. If there is no component, we exit the loop.
+
+\input{chapter03/listings/decompose-main.tex}
+
+The essential part of the code for the partitioning logic is listed in~\ref{lst:decompose_partition}. After finding the \textit{u} and \textit{v} root vertices, and calculating the \textit{s} and \(\phi \) values (see Section~\ref{subsec:algorithm-to-decompose-oversized-components}) it will decide which cut type to perform. The actual implementation of the different cut types rely heavily on the gonum package and will not be listed here.
+
+\input{chapter03/listings/decompose-partition.tex}

@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/dargzero/k-anon/hierarchy"
 	"bitbucket.org/dargzero/k-anon/partition"
 	"bitbucket.org/dargzero/k-anon/testutil"
+	"fmt"
 	"testing"
 )
 
@@ -69,3 +70,40 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 		}
 	})
 }
+
+func BenchmarkHierarchyGeneralizerChildren(b *testing.B) {
+	for i:=2; i<=25; i++ {
+		b.Run(fmt.Sprintf("nChildren/%d", i), func(b *testing.B) {
+			benchmarkHierarchyGeneralizer(i, 15000 , b)
+		})
+	}
+}
+
+func BenchmarkHierarchyGeneralizerNodes(b *testing.B) {
+	for i:=100; i<=15000; i+=100 {
+		b.Run(fmt.Sprintf("nodes/%d", i), func(b *testing.B) {
+			benchmarkHierarchyGeneralizer(10, i, b)
+		})
+	}
+}
+
+func benchmarkHierarchyGeneralizer(split, nodes int, b *testing.B) {
+	items := makeRange(nodes)
+	h, err := hierarchy.AutoBuild(split, items...)
+	if err != nil {
+		b.Error(err)
+	}
+	g := &HierarchyGeneralizer{Hierarchy: h}
+	for i := 0; i < b.N; i++ {
+		g.Generalize(partition.NewSet(0), g.Levels())
+	}
+}
+
+func makeRange(n int) []interface{} {
+	r := make([]interface{}, n)
+	for i := range r {
+		r[i] = i
+	}
+	return r
+}
+

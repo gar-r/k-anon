@@ -1,0 +1,209 @@
+\subsection{Cost-graph construction}\label{subsec:cost_graph_construction}
+
+The very first step of the algorithm is the construction of a cost-graph.
+Given the input row vectors \(x_1, x_2, \dots, x_n \in \Sigma^m\) we create an edge-weighted complete graph \(G = (V,E)\)~\cite{aggarwal}.
+The vertex set \(V\) is constructed from the row vectors by mapping each row vector to a separate vertex.
+
+Next we need to calculate the edge weight between every two vertices.
+The assigned weight needs to be proportional to the generalization cost of bringing the two connected nodes into the same partition.
+
+\subsubsection{Unscaled Generalization cost}
+
+Given two row vectors \textit{a} and \textit{b} from the input we will now define the unscaled generalization cost for each corresponding components of the vectors.
+Let \(h_{a,b}(j)\) refer to the lowest level of generalization for attribute \(j\) for which the \(j^{th}\) components of both \textit{a} and \textit{b} are in the same partition~\cite{aggarwal}.
+Or in other words, the lowest level of generalization for the corresponding components, for which their generalized values are equal.
+
+\subsubsection{Scaled Generalization cost}
+
+If we scale down the above generalization cost for an attribute pair with the \textit{total number of levels} in the generalization hierarchy for the given attribute domain we get the scaled generalization cost.
+The resulting value will be in the range \([0..1]\).
+Assuming the total number of levels of generalization for the \(j^{th}\) attribute is \(l_j\), the scaled generalization cost can be formalized as \(h_{a,b}(j) / l_j\)~\cite{aggarwal}.
+
+\subsubsection{Edge weight formula}
+
+Using the scaled generalization cost for each component, the weight of an edge between the nodes representing \textit{a} and \textit{b} row vectors can be calculated with the following formula:
+\begin{center}
+    \(w(e)=\sum_{j}h_{a,b}(j)/l_j\).
+\end{center}
+
+
+\paragraph{Example} Consider the example data on Figure~\ref{fig:unscaled_generalization_cost_example}:
+
+\vspace{1cm}
+\input{chapter02/figures/unscaled-generalization-cost.tex}
+Let's assume the domain for the \textit{score} attribute is integer numbers with bounds \( [ 0 \ldots 9 ] \), and that its generalization hierarchy can be represented with the following tree:
+
+\vspace{1cm}
+\input{chapter02/figures/score-hierarchy.tex}
+
+This is a valid generalization hierarchy, because each partition at the leaf nodes contain only a single element, the top level contains a single set with all elements and finally the union of all sets on every level of the hierarchy is equal to the full domain of values.
+
+Let's calculate the generalization cost for the first two rows.
+
+In order to transform the values of the first attribute pair \((4, 7)\) into the same partition, they need to be generalized exactly two times until their values become [4, 5, 6, 7].
+This means, that the unscaled generalization cost for the score attribute \(h_{a,b}(0)=2\).
+The scaling factor corresponds to the highest level in the hierarchy: \(l_0=3\), so the scaled generalization cost will be \(h_{a,b}(0)/l_0=2/3\).
+
+The edge cost between the nodes representing the first two rows will be the sum of the scaled generalization costs of \((4, 7)\), \((C-,B+)\) and \((male, male)\).
+Using the grade hierarchy introduced in Chapter~\ref{subsec:data_model} in figure~\ref{fig:grades-hierarchy} and considering that the values of the gender attribute are already in the same partition, so their generalization cost will be 0:
+\begin{center}
+    \(w(e_{a,b})=2/3+1+0=5/3\).
+\end{center}
+
+
+If we repeat the above calculation for each row pair, we can determine the cost-graph for this table.
+This process is left to the reader, but after finishing it the resulting graph should be isomorphic to the graph on figure~\ref{fig:cost_graph}.
+
+\vspace{\baselineskip}
+\input{chapter02/figures/cost-graph.tex}
+
+\subsection{A note on the limitations of the graph representation}\label{subsec:a-note-on-the-limitations-of-the-graph-representation}
+
+Unfortunately the graph representation has some limitations, as the original authors also note in their article~\cite{aggarwal}.
+When the input data table is transformed into its graph equivalent, some information is lost which results in the algorithm only being able to achieve the \(\mathcal{O}(k)\) approximation factor.
+
+This can be demonstrated by constructing two input tables on a binary alphabet (\(\Sigma={0,1}\)) for a given \textit{k} value in a way, that the optimal anonymization cost and the total cost incurred by the graph representation differs by a factor of \(\mathcal{O}(k)\):
+
+Let \(l=2^{k-2}\).
+
+\paragraph{Table A} should be \(k \times kl\), and for each row \textit{i} contains the value \textbf{1} in positions \([(i-1)l+1 \dots il]\) and \textbf{0} otherwise.
+The anonymization cost for this table is \(k^2 l\).
+
+\vspace{\baselineskip}
+\input{chapter02/figures/graph-limit-a.tex}
+
+\paragraph{Table B} should be \(k \times 4l\).
+Its \(i^{th}\) row is broken down into \(2^i\) equal-sized blocks.
+Every value in odd blocks is \textbf{0}, and every value in even blocks is \textbf{1}.
+The anonymization cost for this table is \(4kl\).
+
+\vspace{\baselineskip}
+\input{chapter02/figures/graph-limit-b.tex}
+
+Note, that both tables are represented by a k-clique with all edge costs being \(2l=2^{k-1}\), while their respective anonymization cost differs by exactly \(\mathcal{O}(k)\).
+
+\vspace{\baselineskip}
+\input{chapter02/figures/graph-limit-cost.tex}
+
+\subsection{Forest building algorithm}\label{subsec:forest-building-algorithm}
+
+The next step in the overall k-anonymity algorithm is to produce a forest. (Section~\ref{sec:algorithm_outline}) We will now use the nodes and calculated weights from the cost-graph, but in this step we will be constructing a directed graph which will ultimately be used to represent a partitioning of the original row vectors.
+
+\paragraph{Algorithm} \textsc{Forest building}~\cite{aggarwal}
+
+Invariant:
+\begin{itemize}
+    \item The chosen edges do not create any cycle.
+    \item The out-degree of each vertex is at most one.
+\end{itemize}
+
+Steps:
+\begin{enumerate}
+    \item Start with an empty edge set so that each vertex is in its own connected component.
+    \item Repeat until all components are of size at least \textit{k}: \par
+    Pick any component \textit{T} having size smaller than \textit{k}.
+    Let \textit{u} be a vertex in \textit{T} without any outgoing edges.
+    Since there are at most \(k-2\) other vertices in \textit{T}, one of the \(k-1\) \emph{nearest neighbors} of \textit{u}, say \textit{v}, must lie outside \textit{T}.
+    We add the edge \(\vec{uv}\) to the forest. \textit{(Observe that this step does not violate any of the invariants.)}
+\end{enumerate}
+
+\vspace{\baselineskip}
+
+In simple terms we start from the original graph without any edges.
+In every step we extend a selected tree (\(size < k\)) in the forest.
+We add a new vertex to the tree by selecting an \textit{u} ``leaf'' (without any outgoing edges) in the current tree, and connecting it with its lowest cost neighbor \textit{v}.
+
+\paragraph{Lemma} The forest produced by the Forest building algorithm has a minimum tree size at least \textit{k} and has cost at most \textit{OPT}, where \textit{OPT} denotes the cost of an optimal k-anonymity solution~\cite{aggarwal}.
+
+\paragraph{Example} Forest building (\(k=3\))\label{sec:forest_building_example}
+
+For this example let's assume that the cost-graph has already been computed from the input table, and is isomorph to the graph shown on figure~\ref{fig:forest_cost_graph}.
+
+\vspace{\baselineskip}
+\input{chapter02/figures/forest-cost-graph.tex}
+
+The starting position has all nodes in their separate component.
+From there, the steps of the algorithm can be traced on figure~\ref{fig:forest_partitioning}.
+
+\input{chapter02/figures/forest-partitioning.tex}
+
+The forest building algorithm starts from an empty edge set.
+Each node is in a separate component.
+Since at this point the size of each component is smaller than \textit{k}, we pick a component to extend at random.
+
+In Step 1 of the example we picked the component which contains the \textit{c} node.
+Inspecting the outgoing edges we find that the closest one is the edge going to \textit{b}.
+In Step 2 we continue extending the same component, since its size is still under the threshold.
+Node \textit{b} is now part of the component, and has no outgoing edges, so we try to find an outgoing edge from that.
+Closest is the component containing \textit{e}, so we add it.
+
+At this point, the component's size has reached \(k=3\), so we move on to another component to extend.
+In Step 4 we have picked \textit{d}.
+Note, at this point when considering the possible edges we also considered edges between \textit{d} and nodes in the previously created component (\textit{b} and \textit{e}).
+This is an example of how this part of the algorithm could end up with component sizes greater than \textit{k}.
+In this example however, the closest neighbor is \textit{f}, and by Step 6 we can cleanly finish the partitioning with two 3-node partitions.
+
+\subsection{Algorithm to decompose oversized components}\label{subsec:algorithm-to-decompose-oversized-components}
+
+In the example in Section~\ref{sec:forest_building_example} we fortunately ended up with two perfectly sized components, which defined a good partitioning for anonymization.
+This will not always be the case however, and there may be oversized components in the forest.
+
+In this section we show an algorithm to break any component with size \(s \ge \max \{ 2k-1, 3k-5 \} \) into two components each of size at least \textit{k}. (The following algorithm treats the component as an \emph{undirected} graph.)
+
+\paragraph{Algorithm} \textsc{Decompose component}~\cite{aggarwal}
+
+\begin{enumerate}
+    \item Pick any vertex \textit{u} as the candidate vertex.
+    \item Root the tree at the candidate vertex \textit{u}.
+    Let U be the set of sub-trees rooted at the children of \textit{u}.
+    Let the size of the largest subtree of \textit{u} be \( \phi \), rooted at vertex \textit{v}. (See figure~\ref{fig:decompose}) If \(s-\phi \ge k-1\), then we do one of the following partition and terminate:
+    \begin{enumerate}
+        \item[A.] If \(\phi \ge k\) and \(s-\phi \ge k\), then partition the tree into the largest subtree and the rest.
+        \item[B.] If \(s-\phi = k-1\), partition the tree into a component containing the subtrees rooted at the children of \textit{v} and the rest.
+        To connect the children of \textit{v} create a \emph{Steiner's Vertex} (see below).
+        \item[C.] If \(\phi = k-1\), then partition into a component containing the subtree rooted at \textit{v} along with the vertex \textit{u} and the rest.
+        In order to connect the children of \textit{u} create a \emph{Steiner's Vertex}.
+        \item[D.] Otherwise, all subtrees have size at most \(k-2\).
+        In this case, we create an empty partition and keep adding subtrees of \textit{u} to it until the first time its size becomes at least \(k-1\).
+        Put the remaining subtrees into the other partition.
+        If one of the partitions has size equal to \(k-1\), add \textit{u} to that partition.
+        Otherwise add \textit{u} to the first partition.
+        In the partition not containing \textit{u} add a \emph{Steiner's Vertex} to keep it connected.
+    \end{enumerate}
+    \item Otherwise, pick \textit{v} as the new candidate vertex and go to Step 2.
+\end{enumerate}
+
+\vspace{\baselineskip}
+\input{chapter02/figures/decompose.tex}
+
+\paragraph{The Steiner's Vertex} is a dummy vertex inserted to structurally hold the component together, but does not contribute to the size of the component during the algorithm.
+
+\vspace{\baselineskip}
+\input{chapter02/figures/steiner.tex}
+
+\subsubsection{Example decompose}
+
+Let's assume, that the forest building algorithm yielded the graph on figure~\ref{fig:decompose_example}, and the respective \textit{u} starting vertex has already been selected.
+
+\vspace{\baselineskip}
+\input{chapter02/figures/decompose-example.tex}
+
+The component size is \(s=16\), and the anonymization parameter is \(k=7\). \(s \ge \max \{ 2k-1,3k-5\} = \max \{ 13, 16 \} \) is true, so the component is considered oversized and needs to be cut.
+The root of the largest sized subtree is \textit{v}, and its size is \(\phi=10\).
+
+Since \(s-\phi \ge k-1\), we can proceed with one of the cut types.
+In fact, in this case \(s-\phi=k-1=6\), so we will need to apply cut type B as highlighted by the dotted line in figure~\ref{fig:decompose_example}.
+
+In order to keep the nodes in the cut partition together, we insert a \emph{Steiner's Vertex}.
+This vertex is also highlighted on figure~\ref{fig:decompose_example} with dotted edges.
+
+The resulting two partitions are of size 7 and 9 --- note, that the \emph{Steiner's Vertex} does not count into the component's size.
+Both partitions are of proper size now.
+
+\subsection{Polynomial-time approximation algorithm}\label{subsec:polynomial-time-approximation-algorithm}
+
+\paragraph{Theorem}  There is a polynomial-time algorithm for the k-Anonymity problem, that achieves an approximation ratio of \(\max \{ 2k-1, 3k-5 \} \)~\cite{aggarwal}.
+
+\paragraph{Proof} First, use algorithm \textsc{Forest} to create a forest with cost at most OPT and minimum tree size at least \textit{k}.
+Then repeatedly apply algorithm \textsc{Decompose component} to any component that has size larger than \(\max \{ 2k-1, 3k-5 \} \).
+Note that both these algorithms terminate in \(\mathcal{O}(kn^2)\) time~\cite{aggarwal}.

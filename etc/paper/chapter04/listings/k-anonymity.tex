@@ -1,0 +1,15 @@
+\begin{lstlisting}[caption=Asserting k-anonymity,label=lst:test_k_anonymity,float,floatplacement=H]
+func assertKAnonymity(table *model.Table, k int, t *testing.T) {
+    for i, r1 := range table.GetRows() {
+        count := 0
+        for _, r2 := range table.GetRows() {
+            if inSamePartition(r1, r2, table.GetSchema()) {
+                count++
+            }
+        }
+        if count < k {
+            t.Errorf("K-anonymity violated in row %v", i)
+        }
+    }
+}
+\end{lstlisting}

@@ -1,0 +1,15 @@
+\begin{lstlisting}[caption=Partition cutting,label=lst:decompose_partition,float,floatplacement=H]
+func (d *Decomposer) partitionComponent(component []graph.Node) {
+    u, v, t := d.getSplitParams(component)
+    s := d.calculateSize(component)
+    if t >= d.k && s-t >= d.k {
+        d.performCutTypeA(u, v)
+    } else if s-t == d.k-1 {
+        d.performCutTypeB(u, v)
+    } else if t == d.k-1 {
+        d.performCutTypeC(u, v)
+    } else {
+        d.performCutTypeD(u, v, component)
+    }
+}
+\end{lstlisting}

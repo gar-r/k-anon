@@ -204,7 +204,7 @@ func TestFloatRange_CanSplit(t *testing.T) {
 func TestFloatRange_MaxSplit(t *testing.T) {
 	r := NewFloatRange(0.0, 1.0)
 	actual := r.MaxSplit()
-	expected := 30
+	expected := 17 // depends on delta
 	if expected != actual {
 		t.Errorf("expected %v, got %v", expected, actual)
 	}
