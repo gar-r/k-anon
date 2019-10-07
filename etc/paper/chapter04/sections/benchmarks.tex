@@ -7,7 +7,7 @@ The configuration that was used for executing the benchmarks is summarized on Fi
 
 \subsection{RangeGeneralizer benchmarks}
 
-Figure~\ref{fig:range_bm} shows a comparison benchmark of both range based generalizers --- \texttt{IntRange} and \texttt{FloatRange}. The horizontal axis plots the size of the range (note the logarithmic scale), the vertical axis shows the \emph{average time to generalize the median value in the range to the highest level} in nanoseconds as measured by the Go bench framework. As expected, both show a linear progression curve. Generalizing float ranges is much more expensive however, this is due to the increased number of splits and additional cost of comparison with delta.
+Figure~\ref{fig:range_bm} shows a comparison benchmark of both range based generalizers --- \texttt{IntRange} and \texttt{FloatRange}. The horizontal axis plots the size of the range (note the logarithmic scale), the vertical axis shows the \emph{average time to generalize the median value in the range to the highest level} in nanoseconds as measured by the Go bench framework. As expected, both show a \textbf{linear progression curve}. Generalizing float ranges is much more expensive however, this is due to the increased number of splits and additional cost of comparison with delta.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/range-bm.tex}
@@ -18,21 +18,21 @@ The \texttt{PrefixGeneralizer} has three different parameters. For each benchmar
 
 \subsubsection{Word Count}
 
-In this test we set the maximum allowed words to a high enough fixed value, and benchmark the performance based on the \emph{actual number of words} (amount of text) on the input of the generalizer. Figure~\ref{fig:prefix_word_count_bm} shows a relatively flat exponential curve. The performance starts to degrade after 5000 words, which is an indicator of the amount of (English) text it is supposed to be able to handle per cell in the input data table.
+In this test we set the maximum allowed words to a high enough fixed value, and benchmark the performance based on the \emph{actual number of words} (amount of text) on the input of the generalizer. Figure~\ref{fig:prefix_word_count_bm} shows a relatively flat \textbf{exponential curve}. The performance starts to degrade after 5000 words, which is an indicator of the amount of (English) text it is supposed to be able to handle per cell in the input data table.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/prefix-word-count-bm.tex}
 
 \subsubsection{Word Length}
 
-As discussed during the introduction of the prefix generalizer in Section~\ref{subsec:prefix_generalizer} the performance of the prefix generalization algorithm should be \emph{unaffected} by the length of words. The benchmark on Figure~\ref{fig:prefix_word_length_bm} proves this adequately. The time needed to generalize with fixed max words, word count and increasing word length assumes a flat line.
+As discussed during the introduction of the prefix generalizer in Section~\ref{subsec:prefix_generalizer} the performance of the prefix generalization algorithm should be \emph{unaffected} by the length of words. The benchmark on Figure~\ref{fig:prefix_word_length_bm} proves this adequately. The time needed to generalize with fixed max words, word count and increasing word length assumes a \textbf{flat line}.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/prefix-word-length-bm.tex}
 
 \subsubsection{Max Words}
 
-Finally we inspect the effect of the \texttt{MaxWords} parameter. We can recall, that this parameter increases the \emph{total levels} of the generalizer, even when the actual number of words in the generalized text is smaller. Thus the linear curve visible on Figure~\ref{fig:prefix_max_words_bm} seems realistic.
+Finally we inspect the effect of the \texttt{MaxWords} parameter. We can recall, that this parameter increases the \emph{total levels} of the generalizer, even when the actual number of words in the generalized text is smaller. Thus the \textbf{linear curve} visible on Figure~\ref{fig:prefix_max_words_bm} seems realistic.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/prefix-max-words-bm.tex}
@@ -45,7 +45,7 @@ One way hierarchies can be benchmarked is based on their depth. Given a fixed no
 \input{chapter04/figures/hierarchy-children-bm.tex}
 
 \subsubsection{Number of nodes}
-By increasing the number of nodes in the hierarchy, the generalization time will increase in a linear fashion as shown on Figure~\ref{fig:hierarchy_nodes_bm}.
+By increasing the number of nodes in the hierarchy, the generalization time will increase in a \textbf{linear} fashion as shown on Figure~\ref{fig:hierarchy_nodes_bm}.
 \vspace{\baselineskip}
 \input{chapter04/figures/hierarchy-nodes-bm.tex}
 
@@ -67,14 +67,14 @@ The following benchmarks measure the anonymization of a full sample data table. 
 
 \subsubsection{Column count}
 
-We can expect the generalization time to increase for increasing the number of columns in the table. The reason is, that we need to compare more data when calculating the \emph{scaled generalization cost} for the cost-graph. This extra amount of work however is only linear, as shown on Figure~\ref{fig:anon_columns}.
+We can expect the generalization time to increase for increasing the number of columns in the table. The reason is, that we need to compare more data when calculating the \emph{scaled generalization cost} for the cost-graph. This extra amount of work however is only \textbf{linear}, as shown on Figure~\ref{fig:anon_columns}.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/anon-columns.tex}
 
 \subsubsection{Row count}
 
-This is the most important benchmark of all of the above, as it (indirectly) measures the core implementation of the graph based approximation algorithm. As proven in Section~\ref{subsec:polynomial-time-approximation-algorithm} increasing the number of rows in the table should result in a \(\mathcal{O}(kn^2)\) curve. The benchmark on Figure~\ref{fig:anon_rows} confirms, that our implementation of the algorithm has the same characteristics.
+This is the most important benchmark of all of the above, as it (indirectly) measures the core implementation of the graph based approximation algorithm. As proven in Section~\ref{subsec:polynomial-time-approximation-algorithm} increasing the number of rows in the table should result in a \(\mathcal{O}(kn^2)\) curve. The benchmark on Figure~\ref{fig:anon_rows} confirms, that \textbf{our implementation of the algorithm has the same characteristics}.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/anon-rows.tex}
