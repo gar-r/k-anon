@@ -3,7 +3,7 @@
 The original work on which our graph algorithm implementation is based on presents an improved algorithm for the \(k=2\) and \(k=3\) special cases~\cite{aggarwal}. If the use case often requires the use of \(k=2\) or \(k=3\) anonymity, it might be beneficial to extend the anonymizer to handle these special cases differently.
 
 \subsection{Improved algorithm for k=2}\label{subsec:improved_algorithm}
-The method presented in Section~\ref{ch:chapter_algorithm} gives a \textit{3-approximation} algorithm for the \(k=2\) case. However, there is polynomial time \textit{1.5-approximation} algorithm when \(k=2\) and using a \textit{binary alphabet}. Note, that for a binary alphabet generalization is equivalent to suppression~\cite{aggarwal}.
+The method presented in Section~\ref{ch:chapter_algorithm} gives a \textit{3-approximation} algorithm for the \(k=2\) case. However, there is a polynomial time \textit{1.5-approximation} algorithm when \(k=2\) and using a \textit{binary alphabet}. Note, that for a binary alphabet generalization is equivalent to suppression~\cite{aggarwal}.
 
 This special algorithm creates the cost-graph by considering the \textit{Hamming distance} between the vectors represented by two nodes in the graph. Then we obtain a \textbf{minimum-weight} \([1,2]\)-factor \textit{F} of \textit{G}.
 
@@ -11,7 +11,7 @@ This special algorithm creates the cost-graph by considering the \textit{Hamming
 
 It has been shown, that finding a minimum-weight \([1,2]\)-factor of a graph can be computed in polynomial time (Cornuejols, 1988).
 
-We treat each component in the obtained \textit{F} graph as a \textit{cluster}, and for each vector in the data retain bits where they are in the same cluster, and suppress bits where they aren't.
+We treat each component in the obtained \textit{F} graph as a \textit{cluster}, and retain the bits where they agree on each vector, and suppress them otherwise.
 
 \paragraph{Theorem} the number of \texttt{*}s introduced by the above algorithm is at most \(1.5\) times the number of \texttt{*}s in an \textit{optimal} 2-anonymity solution~\cite{aggarwal}.
 
