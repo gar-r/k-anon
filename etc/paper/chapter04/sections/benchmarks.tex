@@ -5,9 +5,9 @@ In this section we will present the results of the benchmarks executed on the an
 The configuration that was used for executing the benchmarks is summarized on Figure~\ref{fig:test_rig}.
 \input{chapter04/figures/test-rig.tex}
 
-\subsection{RangeGeneralizer benchmarks}
+\subsection{RangeGeneralizer benchmarks}\label{subsec:range_generalizer_benchmarks}
 
-Figure~\ref{fig:range_bm} shows a comparison benchmark of both range based generalizers --- \texttt{IntRange} and \texttt{FloatRange}. The horizontal axis plots the size of the range (note the logarithmic scale), the vertical axis shows the \emph{average time to generalize the median value in the range to the highest level} in nanoseconds as measured by the Go bench framework. As expected, both show a \textbf{linear progression curve}. Generalizing float ranges is much more expensive however, this is due to the increased number of splits and additional cost of comparison with delta.
+Figure~\ref{fig:range_bm} shows a comparison benchmark of both range based generalizers --- \texttt{IntRange} and \texttt{FloatRange}. The horizontal axis plots the size of the range, the vertical axis shows the \emph{average time to generalize the median value in the range to the highest level} in nanoseconds as measured by the Go bench framework. As expected, both show a \textbf{logarithmic} progression curve (note the logarithmic scale on the horizontal axis). Generalizing float ranges is more expensive however, this is due to the increased number of splits and additional cost of comparison with delta.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/range-bm.tex}
@@ -51,9 +51,11 @@ By increasing the number of nodes in the hierarchy, the generalization time will
 
 \subsection{Comparison of generalizers}
 
-Plotting all the built-in generalizers on the same chart gives a good opportunity to compare their relative performance. Note, that each generalizer has various parameters which affect the performance greatly, so the following comparisons are only approximate guidelines.
+Plotting all the built-in generalizers on the same chart gives a good opportunity to compare their relative performance when the row count is being increased given a fixed set of parameters. Note, that each generalizer has several different parameters which affect the performance greatly, so the following comparisons are only approximate guidelines.
 
-According to Figure~\ref{fig:compare_all} the slowest generalizer is the \texttt{FloatRange} generalizer. In order to get a better overview, Figure~\ref{fig:compare_fast} shows the same setup with \texttt{FloatRange} omitted.
+According to Figure~\ref{fig:compare_all} the slowest generalizer is the \texttt{FloatRange} generalizer. This might be a surprise in light of Section~\ref{subsec:range_generalizer_benchmarks}, which showed that the numeric range generalizers scaled really well, when considering only the parameter which controls the width of the range. Unfortunately, when having a large amount of numeric columns with a fixed range width, they have a poor performance when the number of rows in the table is increased. 
+
+In order to get a better overview, Figure~\ref{fig:compare_fast} shows the same setup with \texttt{FloatRange} omitted.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/compare-all.tex}
