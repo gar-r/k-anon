@@ -18,7 +18,7 @@ The \texttt{PrefixGeneralizer} has three different parameters. For each benchmar
 
 \subsubsection{Word Count}
 
-In this test we set the maximum allowed words to a high enough fixed value, and benchmark the performance based on the \emph{actual number of words} (amount of text) on the input of the generalizer. Figure~\ref{fig:prefix_word_count_bm} shows a relatively flat \textbf{exponential curve}. The performance starts to degrade after 5000 words, which is an indicator of the amount of (English) text it is supposed to be able to handle per cell in the input data table.
+In this test we set the maximum allowed words to a high enough fixed value, and benchmark the performance based on the \emph{actual number of words} (amount of text) on the input of the generalizer. Figure~\ref{fig:prefix_word_count_bm} shows a relatively flat \textbf{polynomial curve}. The performance starts to degrade after 5000 words, which is an indicator of the amount of (English) text it is supposed to be able to handle per cell in the input data table.
 
 \vspace{\baselineskip}
 \input{chapter04/figures/prefix-word-count-bm.tex}
