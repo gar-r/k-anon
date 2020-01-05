@@ -1,0 +1,105 @@
+\section{Closing}
+
+\begin{frame}
+    \frametitle{Question 1 --- Heuristics}
+    \textit{The algorithm uses random selection when picking the component to extend and the target vertex during the forest building phase.\vspace{\baselineskip}
+    What \alert{heuristics} can be used in the above cases, and how can we determine their effectiveness?}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Answer 1 --- Heuristics}
+    \begin{block}{pick source component with smallest/largest size}
+    \vspace{10pt}
+    \footnotesize
+    \centering
+    \begin{tabular}{ c|c|c }
+        \textbf{rows} & \textbf{smallest} & \textbf{largest} \\
+        \hline
+        10 & \color{orange}{-0.43\%} & \color{orange}{-38.3\%} \\
+        \hline
+        20 & \color{dkgreen}{10.55\%} & \color{dkgreen}{2.61\%} \\
+        \hline
+        30 & \color{orange}{-1.74\%} & \color{dkgreen}{9.57\%} \\
+        \hline
+        40 & \color{orange}{-2.22\%} & \color{orange}{-1.9\%} \\
+        \hline
+        50 & \color{orange}{-18.92\%} & \color{orange}{-11.40\%} \\
+        \hline
+        60 & \color{dkgreen}{3.31\%} & \color{dkgreen}{4.92\%} \\
+        \hline
+        70 & \color{orange}{-8.1\%} & \color{orange}{-0.29\%} \\
+        \hline
+        80 & \color{orange}{-0.48\%} & \color{orange}{-0.84\%} \\
+        \hline
+        90 & \color{dkgreen}{0.99\%} & \color{dkgreen}{1.05\%} \\
+        \hline
+        100 & \color{dkgreen}{0.11\%} & \color{orange}{-0.09\%} \\
+    \end{tabular}
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Question 2 --- Algorithm Termination}
+    \textit{The forest building and partition refinement steps of the algorithm cause the size of components to grow and then shrink respectively.\vspace{\baselineskip}
+    What is the proof that \alert{the algorithm terminates} in a finite number of steps?}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Answer 2 --- Algorithm Termination}
+    \begin{columns}
+        \column{.6\textwidth}
+        \begin{block}{Proof: Forest Building Terminates}
+            \begin{itemize}
+                \item in each iteration we consider the connected components in the graph
+                \item since \(k \le n\) one of the following statements will be true:
+                \begin{enumerate}
+                    \item at least one component has size \(s < k\)
+                    \item every component has size \(s \ge k\) and Forest Building terminates
+                \end{enumerate}
+            \end{itemize}
+        \end{block}
+        \column{.4\textwidth}
+            \includegraphics[width=110px]{fb-term.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Answer 2 --- Algorithm Termination}
+    \begin{block}{Proof: Partition Refinement Terminates}
+        \scriptsize{
+            in each iteration when finding candidate vertex \(u\), one of the following is true:
+            \begin{itemize}
+                \item we can apply one of the cut types listed below and the algorithm terminates
+                \item we pick the root of the largest subtree \(v\) as the new candidate vertex and the size of the largest subtree \( \phi \) decreases
+            \end{itemize}
+        }
+    \end{block}
+    \begin{columns}
+        \column{0.5\textwidth}
+            \includegraphics[width=150px]{pr-term.png}
+        \column{0.5\textwidth}
+            \scriptsize{
+                \begin{itemize}
+                    \item \alert{Type A}: \( \phi \ge k \) and \(s - \phi \ge k\)
+                    \item \alert{Type B}: \( s - \phi = k-1 \)
+                    \item \alert{Type C}: \( \phi = k-1 \)
+                    \item \alert{Type D}: size of all sub-trees \(\le k-2\)
+                \end{itemize}
+            }
+    \end{columns}
+    \scriptsize{\alert{formal proof exists}: \textit{Lemma 4} on page 11 of reference\cite{aggarwal}}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{References}
+    \begin{columns}
+        \column{.6\textwidth}
+            \bibliographystyle{plain}
+            \bibliography{../paper/references}
+        \column{.4\textwidth}
+        \includegraphics[width=120px]{gophers.png}
+    \end{columns}
+\end{frame}
+
+

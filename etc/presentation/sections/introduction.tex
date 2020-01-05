@@ -1,0 +1,96 @@
+\section{Introduction}
+
+\begin{frame}
+  \frametitle{Why do we need anonymization?}
+  \begin{columns}
+    \column{.6\textwidth}
+    \begin{itemize}
+      \item{tremendous growth in collection and analysis of personal data\cite{aggarwal}}
+        \begin{itemize}
+          \item[-]{cloud services}
+          \item[-]{mobile apps}
+      \item[-]{smart fridge}
+      \item[-]{etc\ldots}
+        \end{itemize}
+      \item{new regulations}
+    \begin{itemize}
+      \item[-]{EU: GDPR}
+        \end{itemize}
+    \end{itemize}
+    \column{.4\textwidth}
+    \begin{figure}
+      \includegraphics{../images/gopher-multimedia.png}
+    \end{figure}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Anonymization Concepts}
+  \begin{columns}
+    \column{.6\textwidth}
+    \begin{block}{medical data}
+      \vspace{10pt}
+      \tiny
+      \begin{tabular}{ c|c|c|c|c|c }
+        \textbf{name} & \textbf{age} & \textbf{race} & \textbf{gender} & \textbf{zip} & \textbf{disease} \\
+        \hline
+  \color{orange} John & 47 & white & male & 1077 & \color{violet} cancer \\
+        \hline
+  \color{orange} Sandy & 35 & white & female & 1077 & \color{violet} flu \\
+        \hline
+  \color{orange} Mary & 27 & asian & female & 1095 & \color{violet} flu \\
+        \hline
+  \color{orange} Janet & 27 & white & female & 1095 & \color{violet} hypertension
+      \end{tabular}
+    \end{block}
+    \column{.4\textwidth}
+    \begin{itemize}
+      \item{\color{orange} identifier}
+      \item quasi-identifier
+      \item{\color{violet} non-identifier}
+    \end{itemize}
+  \end{columns}
+  \vspace{20pt}
+  \begin{columns}
+    \column{.6\textwidth}
+    \begin{block}{anonymized medical data}
+      \vspace{10pt}
+      \tiny
+        \begin{tabular}{ c|c|c|c|c|c }
+        \textbf{name} & \textbf{age} & \textbf{race} & \textbf{gender} & \textbf{zip} & \textbf{disease} \\
+        \hline
+  \color{red} * & \color{blue} 30..50 & white & \color{red} * & 1077 & cancer \\
+        \hline
+        \color{red} * & \color{blue} 30..50 & white & \color{red} * & 1077 & flu \\
+        \hline
+        \color{red} * & 27 & \color{red} * & female & 1095 & flu \\
+        \hline
+        \color{red} * & 27 & \color{red} * & female & 1095 & hypertension
+      \end{tabular}
+    \end{block}
+    \column{.4\textwidth}
+    \begin{itemize}
+      \item{\color{red} suppression}
+      \item{\color{blue} generalization}
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Definition of k-anonymity}
+  \begin{block}{k-anonymity}
+    \textit{suppress/generalize entries in the table until for each row, there are at least \textcolor{red}{k-1} other rows that are identical to it along the quasi-identifying attributes}
+  \end{block}
+  \begin{columns}
+    \column{.6\textwidth}
+    \begin{block}{}
+      \begin{itemize}
+        \item{k-anonymity even with only suppression and a ternary alphabet, i.e. \(\Sigma = \{0, 1, 2\}\) is NP-hard~\cite{aggarwal} }
+      \end{itemize}
+    \end{block}
+    \column{.4\textwidth}
+    \begin{figure}
+      \includegraphics[width=100px]{../images/gopher-calc.png}
+    \end{figure}
+  \end{columns}
+\end{frame}
