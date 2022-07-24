@@ -1,7 +1,7 @@
 package generalization
 
 import (
-	"bitbucket.org/dargzero/k-anon/partition"
+	"git.okki.hu/garric/k-anon/partition"
 )
 
 // RangeGeneralizer is a Generalizer which works with ranges.

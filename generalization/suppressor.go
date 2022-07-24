@@ -1,6 +1,6 @@
 package generalization
 
-import "bitbucket.org/dargzero/k-anon/partition"
+import "git.okki.hu/garric/k-anon/partition"
 
 // Suppressor is a special kind of g, which only has a single generalization level, suppress.
 // Suppressing a value will simply replace it with the '*' token.

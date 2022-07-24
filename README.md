@@ -16,7 +16,7 @@ The library supports __go modules__. In order to use it, add the following depen
 
 ```
 require (
-	bitbucket.org/dargzero/k-anon v1.2.6
+	git.okki.hu/garric/k-anon v1.2.6
     // ...
 )
 ```
@@ -25,17 +25,17 @@ The above line will import version `1.2.6`.
 
 ## Fetch the source
 
-To obtain the source you can clone this repository, or run `go get bitbucket.org/dargzero/k-anon`.
+To obtain the source you can clone this repository, or run `go get git.okki.hu/garric/k-anon`.
 
 ## Usage:
 
 In order to start anonymizing data, you will need to add the following steps to your code:
 
-  1. Define a schema (friendly name and generalizer for each column):  
+  1. Define a schema (friendly name and generalizer for each column):
      * use a __nil__ generalizer for non-identifier (skipped) columns
      * see the Generalizer interface to implement a custom generalizer
 
-  2. Supply the rows conforming to the above schema:  
+  2. Supply the rows conforming to the above schema:
      * number of columns should match
      * data type should be compatible with the assigned generalizer for the column
 

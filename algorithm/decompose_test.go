@@ -1,11 +1,12 @@
 package algorithm
 
 import (
-	"bitbucket.org/dargzero/k-anon/testutil"
 	"fmt"
+	"testing"
+
+	"git.okki.hu/garric/k-anon/testutil"
 	"gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
-	"testing"
 )
 
 func TestGetThreshold(t *testing.T) {

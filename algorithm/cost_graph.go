@@ -3,7 +3,7 @@ package algorithm
 import (
 	"math"
 
-	"bitbucket.org/dargzero/k-anon/model"
+	"git.okki.hu/garric/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 )

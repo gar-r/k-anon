@@ -1,11 +1,12 @@
 package generalization
 
 import (
-	"bitbucket.org/dargzero/k-anon/hierarchy"
-	"bitbucket.org/dargzero/k-anon/partition"
-	"bitbucket.org/dargzero/k-anon/testutil"
 	"fmt"
 	"testing"
+
+	"git.okki.hu/garric/k-anon/hierarchy"
+	"git.okki.hu/garric/k-anon/partition"
+	"git.okki.hu/garric/k-anon/testutil"
 )
 
 func TestHierarchyGeneralizer_Levels(t *testing.T) {
@@ -72,15 +73,15 @@ func TestHierarchyGeneralizer_Generalize(t *testing.T) {
 }
 
 func BenchmarkHierarchyGeneralizerChildren(b *testing.B) {
-	for i:=2; i<=25; i++ {
+	for i := 2; i <= 25; i++ {
 		b.Run(fmt.Sprintf("nChildren/%d", i), func(b *testing.B) {
-			benchmarkHierarchyGeneralizer(i, 15000 , b)
+			benchmarkHierarchyGeneralizer(i, 15000, b)
 		})
 	}
 }
 
 func BenchmarkHierarchyGeneralizerNodes(b *testing.B) {
-	for i:=100; i<=15000; i+=100 {
+	for i := 100; i <= 15000; i += 100 {
 		b.Run(fmt.Sprintf("nodes/%d", i), func(b *testing.B) {
 			benchmarkHierarchyGeneralizer(10, i, b)
 		})
@@ -106,4 +107,3 @@ func makeRange(n int) []interface{} {
 	}
 	return r
 }
-

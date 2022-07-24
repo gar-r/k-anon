@@ -1,9 +1,10 @@
 package hierarchy
 
 import (
-	"bitbucket.org/dargzero/k-anon/partition"
 	"errors"
 	"fmt"
+
+	"git.okki.hu/garric/k-anon/partition"
 )
 
 // Hierarchy is a tree representing a generalization hierarchy.

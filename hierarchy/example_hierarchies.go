@@ -1,7 +1,7 @@
 package hierarchy
 
 import (
-	"bitbucket.org/dargzero/k-anon/partition"
+	"git.okki.hu/garric/k-anon/partition"
 )
 
 func GetGradeHierarchy() Hierarchy {

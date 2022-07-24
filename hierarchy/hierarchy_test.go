@@ -1,9 +1,10 @@
 package hierarchy
 
 import (
-	"bitbucket.org/dargzero/k-anon/partition"
-	"bitbucket.org/dargzero/k-anon/testutil"
 	"testing"
+
+	"git.okki.hu/garric/k-anon/partition"
+	"git.okki.hu/garric/k-anon/testutil"
 )
 
 func TestBuild(t *testing.T) {

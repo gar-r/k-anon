@@ -1,17 +1,18 @@
 package hierarchy
 
 import (
-	"bitbucket.org/dargzero/k-anon/partition"
 	"testing"
+
+	"git.okki.hu/garric/k-anon/partition"
 )
 
 func TestAutoBuild(t *testing.T) {
 
 	t.Run("empty input items", func(t *testing.T) {
 		_, err := AutoBuild(2)
-		 if err == nil {
-		 	t.Error("expected error, got none")
-		 }
+		if err == nil {
+			t.Error("expected error, got none")
+		}
 	})
 
 	t.Run("too few items", func(t *testing.T) {
@@ -42,17 +43,17 @@ func TestAutoBuild(t *testing.T) {
 			t.Errorf("unexpected error: %v", err)
 		}
 		expected, _ := Build(partition.NewSet("a", "b", "c", "d", "e"),
-					N(partition.NewSet("a", "b", "c"),
-						N(partition.NewSet("a", "b"),
-							N(partition.NewSet("a")),
-							N(partition.NewSet("b"))),
-						N(partition.NewSet("c"),
-							N(partition.NewSet("c")))),
-					N(partition.NewSet("d", "e"),
-						N(partition.NewSet("d"),
-							N(partition.NewSet("d"))),
-						N(partition.NewSet("e"),
-							N(partition.NewSet("e")))))
+			N(partition.NewSet("a", "b", "c"),
+				N(partition.NewSet("a", "b"),
+					N(partition.NewSet("a")),
+					N(partition.NewSet("b"))),
+				N(partition.NewSet("c"),
+					N(partition.NewSet("c")))),
+			N(partition.NewSet("d", "e"),
+				N(partition.NewSet("d"),
+					N(partition.NewSet("d"))),
+				N(partition.NewSet("e"),
+					N(partition.NewSet("e")))))
 		assertHierarchyEquals(expected, h, t)
 	})
 }
@@ -67,7 +68,7 @@ func assertHierarchyEquals(expected, actual Hierarchy, t *testing.T) {
 	if len(ec) != len(ac) {
 		t.Error("child count error")
 	}
-	for i:=0; i<len(ec); i++ {
+	for i := 0; i < len(ec); i++ {
 		assertHierarchyEquals(ec[i], ac[i], t)
 	}
 }

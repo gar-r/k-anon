@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"testing"
 
-	"bitbucket.org/dargzero/k-anon/partition"
-	"bitbucket.org/dargzero/k-anon/testutil"
+	"git.okki.hu/garric/k-anon/partition"
+	"git.okki.hu/garric/k-anon/testutil"
 )
 
 func TestNewIntRangeGeneralizer(t *testing.T) {
@@ -255,7 +255,7 @@ func BenchmarkFloatRangeGeneralizer(b *testing.B) {
 
 func benchmarkFloatRangeGeneralizer(max float64, b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		g :=  NewFloatRangeGeneralizer(0, max)
+		g := NewFloatRangeGeneralizer(0, max)
 		g.Generalize(g.InitItem(max/2), g.Levels())
 	}
 }

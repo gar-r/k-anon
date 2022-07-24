@@ -1,7 +1,7 @@
 package generalization
 
 import (
-	"bitbucket.org/dargzero/k-anon/hierarchy"
+	"git.okki.hu/garric/k-anon/hierarchy"
 )
 
 // ExampleIntGeneralizer demonstrates how to create an integer range hierarchy generalizer.

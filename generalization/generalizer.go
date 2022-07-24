@@ -1,6 +1,6 @@
 package generalization
 
-import "bitbucket.org/dargzero/k-anon/partition"
+import "git.okki.hu/garric/k-anon/partition"
 
 // Generalizer encapsulates a value generalization procedure.
 // Generalization means, that a value from a given domain is replaced with a less specific,

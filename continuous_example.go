@@ -3,8 +3,8 @@ package kanon
 import (
 	"fmt"
 
-	"bitbucket.org/dargzero/k-anon/generalization"
-	"bitbucket.org/dargzero/k-anon/model"
+	"git.okki.hu/garric/k-anon/generalization"
+	"git.okki.hu/garric/k-anon/model"
 )
 
 // ExampleContinuousAnonymization demonstrates the usage of continuos anonymization.

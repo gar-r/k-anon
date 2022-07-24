@@ -1,13 +1,14 @@
 package kanon
 
 import (
-	"bitbucket.org/dargzero/k-anon/generalization"
-	"bitbucket.org/dargzero/k-anon/hierarchy"
 	"fmt"
 	"math/rand"
 	"testing"
 
-	"bitbucket.org/dargzero/k-anon/model"
+	"git.okki.hu/garric/k-anon/generalization"
+	"git.okki.hu/garric/k-anon/hierarchy"
+
+	"git.okki.hu/garric/k-anon/model"
 )
 
 const rangeMin = 0
@@ -25,7 +26,7 @@ func BenchmarkAnonymizerColumns(b *testing.B) {
 
 func BenchmarkAnonymizerRows(b *testing.B) {
 	gen := generalization.NewIntRangeGeneralizer(rangeMin, rangeMax)
-	for rows := 10; rows <= 100; rows+=10 {
+	for rows := 10; rows <= 100; rows += 10 {
 		b.Run(fmt.Sprintf("rows/%d", rows), func(b *testing.B) {
 			table := randomTable(10, rows, gen)
 			anonymizeTableBench(table, 4, b)
@@ -35,7 +36,7 @@ func BenchmarkAnonymizerRows(b *testing.B) {
 
 func BenchmarkAnonymizerK(b *testing.B) {
 	gen := generalization.NewIntRangeGeneralizer(rangeMin, rangeMax)
-	for k := 2; k <= 100; k+=5 {
+	for k := 2; k <= 100; k += 5 {
 		b.Run(fmt.Sprintf("k/%d", k), func(b *testing.B) {
 			table := randomTable(5, 200, gen)
 			anonymizeTableBench(table, k, b)
@@ -49,8 +50,8 @@ func BenchmarkAnonymizerColumnTypes(b *testing.B) {
 		items[i] = i
 	}
 	h, _ := hierarchy.AutoBuild(10, items...)
-	tests := []struct{
-		name string
+	tests := []struct {
+		name        string
 		generalizer generalization.Generalizer
 	}{
 		{"int", generalization.NewIntRangeGeneralizer(rangeMin, rangeMax)},
@@ -60,7 +61,7 @@ func BenchmarkAnonymizerColumnTypes(b *testing.B) {
 		{"hierarchy", &generalization.HierarchyGeneralizer{Hierarchy: h}},
 	}
 	for _, test := range tests {
-		for i:=5; i<100; i+=5 {
+		for i := 5; i < 100; i += 5 {
 			b.Run(fmt.Sprintf("%v/%d", test.name, i), func(b *testing.B) {
 				table := randomTable(1, i, test.generalizer)
 				anonymizeTableBench(table, 4, b)
@@ -71,7 +72,7 @@ func BenchmarkAnonymizerColumnTypes(b *testing.B) {
 
 func anonymizeTableBench(table *model.Table, k int, b *testing.B) {
 	b.Helper()
-	for i:=0; i<b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		anon := &Anonymizer{
 			Table: table,
 			K:     k,
@@ -91,7 +92,7 @@ func randomTable(nCols, nRows int, generalizer generalization.Generalizer) *mode
 }
 
 func addRandomRows(nRows int, nCols int, table *model.Table) {
-	for i :=0; i <nRows; i++ {
+	for i := 0; i < nRows; i++ {
 		row := make([]interface{}, nCols)
 		for j := range row {
 			row[j] = rand.Intn(rangeMax-rangeMin) + rangeMin

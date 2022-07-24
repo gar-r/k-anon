@@ -3,8 +3,8 @@ package algorithm
 import (
 	"testing"
 
-	"bitbucket.org/dargzero/k-anon/model"
-	"bitbucket.org/dargzero/k-anon/testutil"
+	"git.okki.hu/garric/k-anon/model"
+	"git.okki.hu/garric/k-anon/testutil"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"

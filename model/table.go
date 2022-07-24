@@ -1,10 +1,11 @@
 package model
 
 import (
-	"bitbucket.org/dargzero/k-anon/generalization"
-	"bitbucket.org/dargzero/k-anon/partition"
 	"fmt"
 	"strings"
+
+	"git.okki.hu/garric/k-anon/generalization"
+	"git.okki.hu/garric/k-anon/partition"
 )
 
 // Table contains data organized in a rectangular shape. It has a fixed

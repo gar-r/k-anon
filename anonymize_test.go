@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"bitbucket.org/dargzero/k-anon/model"
+	"git.okki.hu/garric/k-anon/model"
 )
 
 func TestAnonymizer_Anonymize(t *testing.T) {

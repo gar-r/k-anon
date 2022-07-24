@@ -1,4 +1,4 @@
-module bitbucket.org/dargzero/k-anon
+module git.okki.hu/garric/k-anon
 
 go 1.12
 

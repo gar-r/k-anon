@@ -1,9 +1,10 @@
 package partition
 
 import (
-	"bitbucket.org/dargzero/k-anon/testutil"
 	"math"
 	"testing"
+
+	"git.okki.hu/garric/k-anon/testutil"
 )
 
 func TestNewIntRange(t *testing.T) {

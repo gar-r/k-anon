@@ -1,8 +1,8 @@
 package kanon
 
 import (
-	"bitbucket.org/dargzero/k-anon/algorithm"
-	"bitbucket.org/dargzero/k-anon/model"
+	"git.okki.hu/garric/k-anon/algorithm"
+	"git.okki.hu/garric/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/topo"
 )

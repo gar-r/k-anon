@@ -1,10 +1,11 @@
 package generalization
 
 import (
-	"bitbucket.org/dargzero/k-anon/partition"
-	"bitbucket.org/dargzero/k-anon/testutil"
 	"fmt"
 	"testing"
+
+	"git.okki.hu/garric/k-anon/partition"
+	"git.okki.hu/garric/k-anon/testutil"
 )
 
 func TestSuppressor_Levels(t *testing.T) {

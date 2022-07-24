@@ -1,8 +1,8 @@
 package generalization
 
 import (
-	"bitbucket.org/dargzero/k-anon/hierarchy"
-	"bitbucket.org/dargzero/k-anon/partition"
+	"git.okki.hu/garric/k-anon/hierarchy"
+	"git.okki.hu/garric/k-anon/partition"
 )
 
 // HierarchyGeneralizer is an implementation of Generalizer which uses a
