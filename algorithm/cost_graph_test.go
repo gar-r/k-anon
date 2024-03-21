@@ -3,9 +3,9 @@ package algorithm
 import (
 	"testing"
 
-	"git.okki.hu/garric/k-anon/generalization"
-	"git.okki.hu/garric/k-anon/model"
-	"git.okki.hu/garric/k-anon/testutil"
+	"github.com/gar-r/k-anon/generalization"
+	"github.com/gar-r/k-anon/model"
+	"github.com/gar-r/k-anon/testutil"
 )
 
 func TestBuildCostGraph(t *testing.T) {

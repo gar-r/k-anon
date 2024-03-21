@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"git.okki.hu/garric/k-anon/partition"
+	"github.com/gar-r/k-anon/partition"
 )
 
 // Hierarchy is a tree representing a generalization hierarchy.

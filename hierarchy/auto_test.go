@@ -3,7 +3,7 @@ package hierarchy
 import (
 	"testing"
 
-	"git.okki.hu/garric/k-anon/partition"
+	"github.com/gar-r/k-anon/partition"
 )
 
 func TestAutoBuild(t *testing.T) {

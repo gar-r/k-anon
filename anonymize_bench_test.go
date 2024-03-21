@@ -5,10 +5,10 @@ import (
 	"math/rand"
 	"testing"
 
-	"git.okki.hu/garric/k-anon/generalization"
-	"git.okki.hu/garric/k-anon/hierarchy"
+	"github.com/gar-r/k-anon/generalization"
+	"github.com/gar-r/k-anon/hierarchy"
 
-	"git.okki.hu/garric/k-anon/model"
+	"github.com/gar-r/k-anon/model"
 )
 
 const rangeMin = 0

@@ -3,9 +3,9 @@ package algorithm
 import (
 	"fmt"
 
-	"git.okki.hu/garric/k-anon/generalization"
-	"git.okki.hu/garric/k-anon/model"
-	"git.okki.hu/garric/k-anon/partition"
+	"github.com/gar-r/k-anon/generalization"
+	"github.com/gar-r/k-anon/model"
+	"github.com/gar-r/k-anon/partition"
 )
 
 // CalculateCost returns the generalization cost between two model rows.

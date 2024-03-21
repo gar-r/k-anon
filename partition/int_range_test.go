@@ -4,7 +4,7 @@ import (
 	"math"
 	"testing"
 
-	"git.okki.hu/garric/k-anon/testutil"
+	"github.com/gar-r/k-anon/testutil"
 )
 
 func TestNewIntRange(t *testing.T) {

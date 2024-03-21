@@ -1,8 +1,8 @@
 package generalization
 
 import (
-	"git.okki.hu/garric/k-anon/hierarchy"
-	"git.okki.hu/garric/k-anon/partition"
+	"github.com/gar-r/k-anon/hierarchy"
+	"github.com/gar-r/k-anon/partition"
 )
 
 // HierarchyGeneralizer is an implementation of Generalizer which uses a

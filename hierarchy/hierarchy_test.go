@@ -3,8 +3,8 @@ package hierarchy
 import (
 	"testing"
 
-	"git.okki.hu/garric/k-anon/partition"
-	"git.okki.hu/garric/k-anon/testutil"
+	"github.com/gar-r/k-anon/partition"
+	"github.com/gar-r/k-anon/testutil"
 )
 
 func TestBuild(t *testing.T) {

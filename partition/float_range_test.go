@@ -1,8 +1,9 @@
 package partition
 
 import (
-	"gonum.org/v1/gonum/floats"
 	"testing"
+
+	"gonum.org/v1/gonum/floats/scalar"
 )
 
 func TestFloatRange_Split(t *testing.T) {
@@ -26,8 +27,8 @@ func TestFloatRange_Split(t *testing.T) {
 		for r.CanSplit() {
 			r, _ = r.Split()
 		}
-		if !floats.EqualWithinAbs(0.314159, r.Min(), delta) ||
-			!floats.EqualWithinAbs(0.314159, r.Max(), delta) {
+		if !scalar.EqualWithinAbs(0.314159, r.Min(), delta) ||
+			!scalar.EqualWithinAbs(0.314159, r.Max(), delta) {
 			t.Errorf("expected %v, got %v", 0.314159, r)
 		}
 	})

@@ -3,7 +3,7 @@ package partition
 import (
 	"fmt"
 
-	"gonum.org/v1/gonum/floats"
+	"gonum.org/v1/gonum/floats/scalar"
 )
 
 const delta = 0.00001
@@ -63,13 +63,13 @@ func (r *FloatRange) Equals(other Partition) bool {
 		return false
 	}
 
-	return floats.EqualWithinAbs(r.min, r2.min, delta) &&
-		floats.EqualWithinAbs(r.max, r2.max, delta)
+	return scalar.EqualWithinAbs(r.min, r2.min, delta) &&
+		scalar.EqualWithinAbs(r.max, r2.max, delta)
 }
 
 // String returns a string representation of the float range.
 func (r *FloatRange) String() string {
-	if floats.EqualWithinAbs(r.min, r.max, delta) {
+	if scalar.EqualWithinAbs(r.min, r.max, delta) {
 		return fmt.Sprintf("(%f)", r.min)
 	}
 	return fmt.Sprintf("(%f..%f)", r.min, r.max)
@@ -77,7 +77,7 @@ func (r *FloatRange) String() string {
 
 // CanSplit returns true when the float range can still be split into two float ranges.
 func (r *FloatRange) CanSplit() bool {
-	return !floats.EqualWithinAbs(r.min, r.max, delta)
+	return !scalar.EqualWithinAbs(r.min, r.max, delta)
 }
 
 // Split creates two new IntRanges from the original one by splitting it at the median

@@ -3,7 +3,7 @@ package generalization
 import (
 	"strings"
 
-	"git.okki.hu/garric/k-anon/partition"
+	"github.com/gar-r/k-anon/partition"
 )
 
 // PrefixGeneralizer can be used to generalize plain text.

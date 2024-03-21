@@ -16,7 +16,7 @@ The library supports __go modules__. In order to use it, add the following depen
 
 ```
 require (
-	git.okki.hu/garric/k-anon v1.2.6
+	github.com/gar-r/k-anon v1.2.6
     // ...
 )
 ```
@@ -25,7 +25,7 @@ The above line will import version `1.2.6`.
 
 ## Fetch the source
 
-To obtain the source you can clone this repository, or run `go get git.okki.hu/garric/k-anon`.
+To obtain the source you can clone this repository, or run `go get github.com/gar-r/k-anon`.
 
 ## Usage:
 

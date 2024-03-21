@@ -3,8 +3,8 @@ package kanon
 import (
 	"fmt"
 
-	"git.okki.hu/garric/k-anon/generalization"
-	"git.okki.hu/garric/k-anon/model"
+	"github.com/gar-r/k-anon/generalization"
+	"github.com/gar-r/k-anon/model"
 )
 
 // ExampleAnonymization demonstrates the usage of the anonymizer.

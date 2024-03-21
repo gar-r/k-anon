@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"git.okki.hu/garric/k-anon/partition"
+	"github.com/gar-r/k-anon/partition"
 )
 
 // AutoBuild generates a Hierarchy based on a given set of items and the nChildren

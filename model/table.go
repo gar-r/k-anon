@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"git.okki.hu/garric/k-anon/generalization"
-	"git.okki.hu/garric/k-anon/partition"
+	"github.com/gar-r/k-anon/generalization"
+	"github.com/gar-r/k-anon/partition"
 )
 
 // Table contains data organized in a rectangular shape. It has a fixed

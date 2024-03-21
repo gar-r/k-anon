@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"git.okki.hu/garric/k-anon/model"
+	"github.com/gar-r/k-anon/model"
 )
 
 func TestAnonymizer_Anonymize(t *testing.T) {

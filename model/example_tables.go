@@ -1,7 +1,7 @@
 package model
 
 import (
-	"git.okki.hu/garric/k-anon/generalization"
+	"github.com/gar-r/k-anon/generalization"
 )
 
 func GetIntTable1() *Table {

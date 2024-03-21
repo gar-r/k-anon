@@ -3,7 +3,7 @@ package algorithm
 import (
 	"math"
 
-	"git.okki.hu/garric/k-anon/model"
+	"github.com/gar-r/k-anon/model"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 )

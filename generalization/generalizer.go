@@ -1,6 +1,6 @@
 package generalization
 
-import "git.okki.hu/garric/k-anon/partition"
+import "github.com/gar-r/k-anon/partition"
 
 // Generalizer encapsulates a value generalization procedure.
 // Generalization means, that a value from a given domain is replaced with a less specific,
